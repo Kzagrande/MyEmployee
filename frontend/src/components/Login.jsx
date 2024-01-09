@@ -20,7 +20,7 @@ const Login = () => {
         <div className='d-flex justify-content-center align-items-center vh-100 loginPage'>
             <div className='p-3 rounded w-25 border loginForm'>
                 <h2>Login</h2>
-                <form>
+                <form onSubmit={handleSubmit}>
                     <div className='mb-3'>
                         <label htmlFor='id'><strong>ID:</strong></label>
                         <input type='text' name='id_employee' autoComplete='off' placeholder='Digite o Id'
