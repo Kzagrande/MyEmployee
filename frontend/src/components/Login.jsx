@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
 import './style.css'; // Corrigindo o nome do arquivo de estilo
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [values,SetValues] = useState ({
-        id:'',
+        id_employee:'',
         password:''
     });
 
+    const navigate = useNavigate()
+
     const handleSubmit = (event)=>{
         event.preventDefault()
-        axios.post('http://localhost:3001/auth/adminlogin')
-        .then(result => console.log(result))
+        axios.post('http://localhost:3001/auth/adminlogin',values)
+        .then(result =>
+            navigate('/dashboard')
+            )
         .catch(err => console.log(err))
     }
 
@@ -22,9 +27,9 @@ const Login = () => {
                 <h2>Login</h2>
                 <form onSubmit={handleSubmit}>
                     <div className='mb-3'>
-                        <label htmlFor='id'><strong>ID:</strong></label>
-                        <input type='text' name='id_employee' autoComplete='off' placeholder='Digite o Id'
-                           onChange={(e)=> SetValues({...values,id: e.target.value})} className='form-control rounded-0' />
+                        <label htmlFor='id_employee'><strong> ID Employee:</strong></label>
+                        <input type='text' name='id_employee' autoComplete='off' placeholder='Digite o Id' 
+                           onChange={(e)=> SetValues({...values,id_employee: e.target.value})} className='form-control rounded-0' />
                     </div>
                     <div className='mb-3'>
                         <label htmlFor='password'><strong>Password:</strong></label>
