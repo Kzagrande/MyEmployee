@@ -6,28 +6,28 @@ import axios from 'axios'
 function Dashboard() {
 	const navigate = useNavigate()
 	axios.defaults.withCredentials = true;
-	useEffect(()=>{
-		axios.get('http://localhost:8081/dashboard')
-		.then(res => {
-			if(res.data.Status === "Success") {
-				if(res.data.role === "admin") {
-					navigate('/');
-				} else {
-					const id = res.data.id;
-					navigate('/employeedetail/'+id)
-				}
-			} else {
-				navigate('/start')
-			}
-		})
-	}, [])
+	// useEffect(()=>{
+	// 	axios.get('http://localhost:8081/dashboard')
+	// 	.then(res => {
+	// 		if(res.data.Status === "Success") {
+	// 			if(res.data.role === "admin") {
+	// 				navigate('/');
+	// 			} else {
+	// 				const id = res.data.id;
+	// 				navigate('/employeedetail/'+id)
+	// 			}
+	// 		} else {
+	// 			navigate('/start')
+	// 		}
+	// 	})
+	// }, [])
 
-	const handleLogout = () => {
-		axios.get('http://localhost:8081/logout')
-		.then(res => {
-			navigate('/start')
-		}).catch(err => console.log(err));
-	}
+	// const handleLogout = () => {
+	// 	axios.get('http://localhost:8081/logout')
+	// 	.then(res => {
+	// 		navigate('/start')
+	// 	}).catch(err => console.log(err));
+	// }
 	return (
 		<div className="container-fluid">
 			<div className="row flex-nowrap">
@@ -53,7 +53,7 @@ function Dashboard() {
 								<Link to="/dashboard/settings" className="nav-link px-0 align-middle text-white"> 
                                 <i class="bi bi-gear"></i> <span className="ms-1 d-none d-sm-inline">Configurações</span></Link>
 							</li>
-							<li onClick={handleLogout}>
+							<li >
 								<a href="#" className="nav-link px-0 align-middle text-white">
                                 <i class="bi bi-box-arrow-left"></i> <span className="ms-1 d-none d-sm-inline">Sair</span></a>
 							</li>
