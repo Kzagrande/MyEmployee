@@ -68,6 +68,25 @@ router.post("/add_employee", (req, res) => {
   });
 });
 
+// Adicione a rota GET para obter dados da tabela employees_list
+router.get("/list_employee", (req, res) => {
+  const sql = `
+    SELECT * FROM employees.employees_list
+  `;
+
+  // Executa a query
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.error('Erro ao obter dados:', err.message);
+      return res.json({ Status: false, Error: err });
+    }
+
+    console.log('Dados obtidos com sucesso!');
+    return res.json({ Status: true, data: result });
+  });
+});
+
+
 
 
 
