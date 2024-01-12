@@ -13,8 +13,12 @@ useEffect(() => {
       console.log('result',result.data)
       if(result.data.role === "admin") {
         navigate('/dashboard')
-      } else {
+      } if (result.data.role === "planning") {
         navigate('/planning_dashboard')
+      } else {
+        navigate('/agency_dashboard')
+      } {
+    
       }
     }
   }).catch(err =>console.log(err))
@@ -23,11 +27,12 @@ useEffect(() => {
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 loginPage">
-      <div className="p-3 rounded w-25 border loginForm text-center">
-        <h2 className="text-center">Login As</h2>
-        <div className="d-flex justify-content-between mt-5">
-          <button className="btn btn-primary btn-lg" onClick={()=> {navigate('/planning_login')}}>Planejamento</button>
-          <button className="btn btn-success btn-lg px-5"onClick={()=> {navigate('/adminlogin')}}>RH</button>
+      <div className="p-3 rounded border loginForm text-center">
+        <h2 className="text-center mb-5">Login As</h2>
+        <div className="d-flex justify-content-between ">
+          <button className="btn btn-primary btn-lg mx-4" onClick={()=> {navigate('/planning_login')}}>Planejamento</button>
+          <button className="btn btn-success btn-lg px-5 mx-4"onClick={()=> {navigate('/adminlogin')}}>RH</button>
+          <button className="btn btn- btn-lg mx-4 text-white bg-warning"onClick={()=> {navigate('/agency_login')}}>Agência</button>
         </div>
       </div>
     </div>

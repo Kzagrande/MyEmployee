@@ -3,7 +3,7 @@ import "./style.css"; // Corrigindo o nome do arquivo de estilo
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const PlanningLogin = () => {
+const AgencyLogin = () => {
   const [values, SetValues] = useState({
     id_employee: "",
     password: "",
@@ -15,10 +15,10 @@ const PlanningLogin = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     axios
-      .post("http://localhost:3001/planning/planning_login", values)
+      .post("http://localhost:3001/agency/agency_login", values)
       .then((result) => {
         if (result.data.loginStatus) {
-          navigate("/planning_dashboard");
+          navigate("/agency_dashboard");
         } else {
           setError(result.data.Error);
         }
@@ -65,7 +65,7 @@ const PlanningLogin = () => {
               className="form-control rounded-0"
             />
           </div>
-          <button className="btn btn-primary w-100 rounded-0 mt-3">
+          <button className="btn text-white bg-warning w-100 rounded-0 mt-3">
             Enviar
           </button>
           <div className="mb-1">
@@ -81,4 +81,4 @@ const PlanningLogin = () => {
   );
 }
 
-export default PlanningLogin
+export default AgencyLogin

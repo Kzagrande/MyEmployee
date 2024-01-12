@@ -11,6 +11,8 @@ import Start from "./components/Start";
 import PlanningLogin from "./components/PlanningLogin";
 import PlanningDash from "./components/PlanningDash";
 import { useEffect } from "react";
+import AgencyDash from "./components/AgencyDash";
+import AgencyLogin from "./components/AgencyLogin";
 
 function App() {
 
@@ -19,7 +21,6 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Start />}></Route>
-        <Route path="/planning_login" element={<PlanningLogin />}></Route>
         <Route path="/" element={<Login />}></Route>
         <Route path="/adminlogin" element={<Login />}></Route>
         <Route path="/dashboard" element={<Dashboard />}>
@@ -28,7 +29,10 @@ function App() {
           <Route path="restrictlist" element={<RestrictEmployee />}></Route>
           <Route path="settings" element={<Settings />}></Route>
         </Route>
+        <Route path="/planning_login" element={<PlanningLogin />}></Route>
         <Route path="/planning_dashboard" element={<PlanningDash />}></Route>
+        <Route path="/agency_login" element={<AgencyLogin />}></Route>
+        <Route path="/agency_dashboard" element={<AgencyDash />}></Route>
       </Routes>
     </BrowserRouter>
   );
