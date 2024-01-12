@@ -1,12 +1,13 @@
 import express from "express";
 import con from "../utils/db.js";
 import jwt from "jsonwebtoken";
+import bcrypt from 'bcrypt'
 
 const router = express.Router();
 
 router.post("/adminlogin", (req, res) => {
   const sql =
-    "SELECT * from employees.admin Where id_employee = ? and password_ = ?";
+    "SELECT * from employees.admin Where id_employee = ? and password_ = ? and status = 0";
   con.query(sql, [req.body.id_employee, req.body.password], (err, result) => {
     if (err) return res.json({ loginStatus: false, Error: "Query error" });
     if (result.length > 0) {
@@ -85,6 +86,14 @@ router.get("/list_employee", (req, res) => {
     return res.json({ Status: true, data: result });
   });
 });
+
+router.get('/logout',(req,res)=>{
+    res.clearCookie('token')
+    return res.json({Status:true})
+})
+
+
+
 
 
 

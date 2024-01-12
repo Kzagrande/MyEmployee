@@ -3,17 +3,17 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
-const Dashboard = () => {
+const PlanningDash = () => {
 	const navigate = useNavigate()
 	axios.defaults.withCredentials = true
 	const handleLogout = () => {
-	  axios.get('http://localhost:3001/auth/logout')
+	  axios.get('http://localhost:3001/planning/logout')
 	  .then(result => {
 		if(result.data.Status) { 
 		  localStorage.removeItem("valid")
 		  navigate('/')
 		}
-	  })
+	  }).catch(err => console.log(err))
 	}
 
 
@@ -51,7 +51,7 @@ const Dashboard = () => {
 				</div>
 				<div class="col p-0 m-0">
 					<div className='p-2 d-flex justify-content-center shadow text-white' style={{ backgroundColor: '#1d4289' }}>
-						<h4>Employee Management System</h4>						
+						<h4>Planning Management System</h4>						
 					</div>
 					<Outlet />
 				</div>
@@ -60,4 +60,4 @@ const Dashboard = () => {
 	)
 }
 
-export default Dashboard
+export default PlanningDash
