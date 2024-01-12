@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./style.css"; // Corrigindo o nome do arquivo de estilo
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -26,13 +25,10 @@ const AgencyLogin = () => {
       .catch((err) => console.log(err));
   };
 
-
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 loginPage">
       <div className="p-3 rounded w-25 border loginForm">
-        <div className="text-danger">
-            {error && error}
-        </div>
+        <div className="text-danger">{error && error}</div>
         <h2>Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
@@ -79,6 +75,6 @@ const AgencyLogin = () => {
       </div>
     </div>
   );
-}
+};
 
-export default AgencyLogin
+export default AgencyLogin;

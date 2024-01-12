@@ -7,7 +7,7 @@ const router = express.Router()
 
 router.post("/planning_login", (req, res) => {
     const sql =
-      "SELECT * from employees.admin Where id_employee = ? and password_ = ? and status = 1";
+      "SELECT * from employees.users_sys Where id_employee = ? and password_ = ? and status = 1";
     con.query(sql, [req.body.id_employee, req.body.password], (err, result) => {
       if (err) return res.json({ loginStatus: false, Error: "Query error" });
       if (result.length > 0) {

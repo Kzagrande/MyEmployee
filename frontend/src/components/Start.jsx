@@ -11,7 +11,7 @@ useEffect(() => {
   .then(result => {
     if(result.data.Status) {
       console.log('result',result.data)
-      if(result.data.role === "admin") {
+      if(result.data.role === "users_sys") {
         navigate('/dashboard')
       } if (result.data.role === "planning") {
         navigate('/planning_dashboard')

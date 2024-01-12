@@ -7,13 +7,13 @@ const router = express.Router();
 
 router.post("/adminlogin", (req, res) => {
   const sql =
-    "SELECT * from employees.admin Where id_employee = ? and password_ = ? and status = 0";
+    "SELECT * from employees.users_sys Where id_employee = ? and password_ = ? and status = 0";
   con.query(sql, [req.body.id_employee, req.body.password], (err, result) => {
     if (err) return res.json({ loginStatus: false, Error: "Query error" });
     if (result.length > 0) {
       const id_employee = result[0].id_employee;
       const token = jwt.sign(
-        { role: "admin", id_employee: id_employee, id: result[0].id },
+        { role: "users_sys", id_employee: id_employee, id: result[0].id },
         "jwt_secret_key",
         { expiresIn: "1d" }
       );

@@ -10,18 +10,17 @@ import EmployeeForm from "./components/AddEmployee/EmployeeForm";
 import Start from "./components/Start";
 import PlanningLogin from "./components/PlanningLogin";
 import PlanningDash from "./components/PlanningDash";
-import { useEffect } from "react";
-import AgencyDash from "./components/AgencyDash";
-import AgencyLogin from "./components/AgencyLogin";
+import AgencyDash from "./components/Agency/AgencyDash";
+import AgencyLogin from "./components/Agency/AgencyLogin";
+import AddAgencyEmployee from "./components/Agency/AddAgencyEmployee";
 
 function App() {
-
-
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Start />}></Route>
         <Route path="/" element={<Login />}></Route>
+
         <Route path="/adminlogin" element={<Login />}></Route>
         <Route path="/dashboard" element={<Dashboard />}>
           <Route path="addemployee" element={<EmployeeForm />}></Route>
@@ -29,10 +28,15 @@ function App() {
           <Route path="restrictlist" element={<RestrictEmployee />}></Route>
           <Route path="settings" element={<Settings />}></Route>
         </Route>
+
         <Route path="/planning_login" element={<PlanningLogin />}></Route>
         <Route path="/planning_dashboard" element={<PlanningDash />}></Route>
+
         <Route path="/agency_login" element={<AgencyLogin />}></Route>
-        <Route path="/agency_dashboard" element={<AgencyDash />}></Route>
+        <Route path="/agency_dashboard" element={<AgencyDash />}>
+          <Route path="add_agency_employee" element={<AddAgencyEmployee />}
+          ></Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   );
