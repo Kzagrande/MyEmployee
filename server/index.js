@@ -5,6 +5,7 @@ import { PlanningRouter } from "./routes/PlanningRoute.js"
 import Jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
 import { AgencyRouter } from "./routes/AgencyRoute.js";
+import bodyParser from 'body-parser';
 
 const app = express()
 app.use(cors({
@@ -14,6 +15,7 @@ app.use(cors({
 }))
 app.use(express.json())
 app.use(cookieParser())
+app.use(bodyParser.json());
 app.use('/auth',adminRouter)
 app.use('/planning',PlanningRouter)
 app.use('/agency',AgencyRouter)
