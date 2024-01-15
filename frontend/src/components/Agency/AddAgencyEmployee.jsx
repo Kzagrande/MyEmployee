@@ -40,7 +40,7 @@ const AddAgencyEmployee = () => {
         style={{ minHeight: '100vh' }}
       >
         <Grid item xs={12} md={4}>
-          <Card variant="outlined">
+          <Card variant="outlined" sx={{backgroundColor:'#f5f5f5'}}>
             <CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
               <h2>Importar tabela de funcionários</h2>
               <form style={{ display: 'flex', flexDirection: 'column' }}>
@@ -72,8 +72,9 @@ const AddAgencyEmployee = () => {
 
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={6000}
+        autoHideDuration={3000}
         onClose={handleSnackbarClose}
+        message="Dados Salvos com sucesso!"
       />
     </Container>
   );
