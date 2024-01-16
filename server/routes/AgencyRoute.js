@@ -1,9 +1,6 @@
 import express from "express";
 import con from "../utils/db.js";
 import jwt from "jsonwebtoken";
-
-
-
 const router = express.Router()
 
 router.post("/agency_login", (req, res) => {
@@ -47,51 +44,28 @@ router.post('/upload_agency', async (req, res) => {
 
     // Iterar sobre os registros e inserir no banco de dados
     for (const registro of dadosCSV) {
-      const [name, age, company] = registro;
-
+      const [name, cpf, role, bu, shift, description, schedule_time, company,
+        status, hire_date, date_of_birth, termination_date, reason, ethnicity,
+        gender, neighborhood, city, email, phone] = registro;
       // Validar se todos os campos são fornecidos
-      if (!name || !age || !company) {
-        console.error('Campos obrigatórios ausentes em um registro:', registro);
-        res.status(400).send('Campos obrigatórios ausentes em um registro');
-        return;
-      }
-
-      // Validar o formato da idade (por exemplo, deve ser um número)
-      // if (isNaN(age)) {
-      //   console.error('Formato inválido para a idade em um registro:', registro);
-      //   res.status(400).send('Formato inválido para a idade em um registro');
-      //   return;
-      // }
-
-      // Verificar se já existe um registro com o mesmo nome
-      // const existingRecord = await new Promise((resolve, reject) => {
-      //   const query = 'SELECT * FROM employees.hc_test WHERE name = ?';
-      //   con.query(query, [name], (err, result) => {
-      //     if (err) {
-      //       reject(err);
-      //     } else {
-      //       resolve(result);
-      //     }
-      //   });
-      // });
-
-      // if (existingRecord.length > 0) {
-      //   console.error('Já existe um registro com o mesmo nome:', name);
-      //   res.status(400).send('Já existe um registro com o mesmo nome');
-      //   return;
-      // }
-
-      // Inserir o novo registro no banco de dados
-      const insertQuery = 'INSERT INTO employees.hc_test (name, age, company) VALUES (?, ?, ?)';
+      const insertQuery = `
+  INSERT INTO employees.employee_list (
+    employee_id, name, cpf, role, bu, shift, description, schedule_time, company,
+    status, hire_date, date_of_birth, termination_date, reason, ethnicity,
+    gender, neighborhood, city, email, phone
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+`;
       await new Promise((resolve, reject) => {
-        con.query(insertQuery, [name, age, company], (err, result) => {
-          if (err) {
-            reject(err);
-          } else {
-            console.log('Registro inserido com sucesso:', result);
-            resolve();
-          }
-        });
+        con.query(insertQuery, [employee_id, name, cpf, role, bu, shift, description, schedule_time, company,
+          status, hire_date, date_of_birth, termination_date, reason, ethnicity,
+          gender, neighborhood, city, email, phone], (err, result) => {
+            if (err) {
+              reject(err);
+            } else {
+              console.log('Registro inserido com sucesso:', result);
+              resolve();
+            }
+          });
       });
     }
 
