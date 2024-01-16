@@ -41,22 +41,29 @@ router.post('/upload_agency', async (req, res) => {
 
     // Remover o cabeçalho do CSV
     dadosCSV.shift();
+    // console.log('DADOS ---->',dadosCSV)
 
     // Iterar sobre os registros e inserir no banco de dados
     for (const registro of dadosCSV) {
-      const [name, cpf, role, bu, shift, description, schedule_time, company,
-        status, hire_date, date_of_birth, termination_date, reason, ethnicity,
+      const [employee_id, name, cpf, role_, bu, shift, schedule_time, company,
+        status, hire_dateStr, date_of_birthStr, termination_dateStr, reason, ethnicity,
         gender, neighborhood, city, email, phone] = registro;
       // Validar se todos os campos são fornecidos
+
+      const hire_date = new Date(hire_dateStr);
+      const date_of_birth = new Date(date_of_birthStr);
+      const termination_date = new Date(termination_dateStr);
+     
+
       const insertQuery = `
-  INSERT INTO employees.employee_list (
-    employee_id, name, cpf, role, bu, shift, description, schedule_time, company,
+  INSERT INTO employees.employee_list(
+    employee_id, name, cpf, role_, bu, shift,schedule_time, company,
     status, hire_date, date_of_birth, termination_date, reason, ethnicity,
     gender, neighborhood, city, email, phone
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `;
       await new Promise((resolve, reject) => {
-        con.query(insertQuery, [employee_id, name, cpf, role, bu, shift, description, schedule_time, company,
+        con.query(insertQuery, [employee_id, name, cpf, role_, bu, shift, schedule_time,company ,
           status, hire_date, date_of_birth, termination_date, reason, ethnicity,
           gender, neighborhood, city, email, phone], (err, result) => {
             if (err) {
