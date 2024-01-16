@@ -36,20 +36,55 @@ router.get('/logout', (req, res) => {
 
 
 router.post('/upload_agency', async (req, res) => {
-  const dadosCSV = req.body.csvFile;
-  console.log('Dados recebidos:', dadosCSV);
+  try {
+    const dadosCSV = req.body.csvFile;
+    if (!dadosCSV || dadosCSV.length === 0) {
+      throw new Error('Arquivo CSV vazio ou ausente.');
+    }
 
-  // Remover o cabeçalho do CSV
-  dadosCSV.shift();
+    // Remover o cabeçalho do CSV
+    dadosCSV.shift();
 
-  // Iterar sobre os registros e inserir no banco de dados
-  for (const registro of dadosCSV) {
-    const [name, age, company] = registro;
-    const query = 'INSERT INTO employees.hc_test (name, age, company) VALUES (?, ?, ?)';
+    // Iterar sobre os registros e inserir no banco de dados
+    for (const registro of dadosCSV) {
+      const [name, age, company] = registro;
 
-    try {
+      // Validar se todos os campos são fornecidos
+      if (!name || !age || !company) {
+        console.error('Campos obrigatórios ausentes em um registro:', registro);
+        res.status(400).send('Campos obrigatórios ausentes em um registro');
+        return;
+      }
+
+      // Validar o formato da idade (por exemplo, deve ser um número)
+      // if (isNaN(age)) {
+      //   console.error('Formato inválido para a idade em um registro:', registro);
+      //   res.status(400).send('Formato inválido para a idade em um registro');
+      //   return;
+      // }
+
+      // Verificar se já existe um registro com o mesmo nome
+      // const existingRecord = await new Promise((resolve, reject) => {
+      //   const query = 'SELECT * FROM employees.hc_test WHERE name = ?';
+      //   con.query(query, [name], (err, result) => {
+      //     if (err) {
+      //       reject(err);
+      //     } else {
+      //       resolve(result);
+      //     }
+      //   });
+      // });
+
+      // if (existingRecord.length > 0) {
+      //   console.error('Já existe um registro com o mesmo nome:', name);
+      //   res.status(400).send('Já existe um registro com o mesmo nome');
+      //   return;
+      // }
+
+      // Inserir o novo registro no banco de dados
+      const insertQuery = 'INSERT INTO employees.hc_test (name, age, company) VALUES (?, ?, ?)';
       await new Promise((resolve, reject) => {
-        con.query(query, [name, age, company], (err, result) => {
+        con.query(insertQuery, [name, age, company], (err, result) => {
           if (err) {
             reject(err);
           } else {
@@ -58,14 +93,13 @@ router.post('/upload_agency', async (req, res) => {
           }
         });
       });
-    } catch (err) {
-      console.error('Erro ao inserir registro:', err);
-      res.status(500).send('Erro ao inserir registros');
-      return;
     }
-  }
 
-  res.send('Registros inseridos com sucesso');
+    res.send('Registros inseridos com sucesso');
+  } catch (err) {
+    console.error('Erro durante o processamento do CSV:', err);
+    res.status(500).send('Erro durante o processamento do CSV');
+  }
 });
 
 

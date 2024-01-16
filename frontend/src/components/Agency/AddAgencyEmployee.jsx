@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Container, Grid, Card, CardContent, Button, TextField, Snackbar } from '@mui/material';
+import { Container, Grid, Card, CardContent, Button, TextField, Snackbar, Alert } from '@mui/material';
 import CSVReader from 'react-csv-reader';
 import axios from 'axios';
 
 const AddAgencyEmployee = () => {
+  const [msgEP, msgEPData] = useState('');
   const [csvData, setCsvData] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
@@ -11,15 +12,20 @@ const AddAgencyEmployee = () => {
     setCsvData(data);
   };
 
+
+
   const handleSaveToDatabase = () => {
     axios
       .post('http://localhost:3001/agency/upload_agency', { csvFile: csvData })
       .then((response) => {
+        msgEPData(response.data)
         console.log(response.data);
         setSnackbarOpen(true); // Open the Snackbar on success
       })
       .catch((error) => {
-        console.error(error);
+        console.error(error.response.data);
+        msgEPData(error.response.data)
+        setSnackbarOpen(true); // Open the Snackbar on success
       });
   };
 
@@ -69,13 +75,20 @@ const AddAgencyEmployee = () => {
           </Card>
         </Grid>
       </Grid>
-
+        
       <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        message="Dados Salvos com sucesso!"
-      />
+  open={snackbarOpen}
+  autoHideDuration={3000}
+  onClose={handleSnackbarClose}
+>
+  <Alert
+    onClose={handleSnackbarClose}
+    severity={msgEP === 'Registros inseridos com sucesso' ? 'success' : 'error'}
+  >
+    {msgEP}
+  </Alert>
+</Snackbar>
+      
     </Container>
   );
 };
