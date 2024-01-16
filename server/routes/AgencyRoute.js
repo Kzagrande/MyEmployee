@@ -53,7 +53,7 @@ router.post('/upload_agency', async (req, res) => {
       const hire_date = new Date(hire_dateStr);
       const date_of_birth = new Date(date_of_birthStr);
       const termination_date = new Date(termination_dateStr);
-     
+
 
       const insertQuery = `
   INSERT INTO employees.employee_list(
@@ -63,7 +63,7 @@ router.post('/upload_agency', async (req, res) => {
   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `;
       await new Promise((resolve, reject) => {
-        con.query(insertQuery, [employee_id, name, cpf, role_, bu, shift, schedule_time,company ,
+        con.query(insertQuery, [employee_id, name, cpf, role_, bu, shift, schedule_time, company,
           status, hire_date, date_of_birth, termination_date, reason, ethnicity,
           gender, neighborhood, city, email, phone], (err, result) => {
             if (err) {
