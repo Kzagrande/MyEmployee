@@ -3,7 +3,7 @@ import { Container, Grid, Card, CardContent, Button, TextField, Snackbar, Alert 
 import CSVReader from 'react-csv-reader';
 import axios from 'axios';
 
-const AddAgencyEmployee = () => {
+const TerminatedAgencyEmployee = () => {
   const [msgEP, msgEPData] = useState('');
   const [csvData, setCsvData] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -16,7 +16,7 @@ const AddAgencyEmployee = () => {
 
   const handleSaveToDatabase = () => {
     axios
-      .post('http://localhost:3001/agency/upload_agency', { csvFile: csvData })
+      .post('http://localhost:3001/agency/upload_terminated_agency', { csvFile: csvData })
       .then((response) => {
         msgEPData(response.data)
         console.log(response.data);
@@ -48,7 +48,7 @@ const AddAgencyEmployee = () => {
         <Grid item xs={12} md={4}>
           <Card variant="outlined" sx={{backgroundColor:'#f5f5f5'}}>
             <CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
-              <h2>Importar base novos ativos</h2>
+              <h2>Importar base de Desligados</h2>
               <form style={{ display: 'flex', flexDirection: 'column' }}>
                 <TextField
                   label="CSV File"
@@ -93,4 +93,4 @@ const AddAgencyEmployee = () => {
   );
 };
 
-export default AddAgencyEmployee;
+export default TerminatedAgencyEmployee;
