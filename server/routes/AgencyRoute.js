@@ -88,7 +88,7 @@ router.post("/upload_agency", async (req, res) => {
       const termination_date = new Date(termination_dateStr);
 
       const insertQuery = `
-        INSERT INTO employees.employees_list(
+        INSERT INTO employees.agency_input_activies(
           employee_id, name, cpf, role_, bu, shift, schedule_time, company,
           status, hire_date, date_of_birth, termination_date, reason, ethnicity,
           gender, neighborhood, city, email, phone
@@ -173,13 +173,12 @@ router.post("/upload_terminated_agency", async (req, res) => {
         phone,
       ] = registro;
 
-
       const hire_date = new Date(hire_dateStr);
       const date_of_birth = new Date(date_of_birthStr);
       const termination_date = new Date(termination_dateStr);
 
       const insertQuery = `
-        INSERT INTO employees.terminated_employess(
+        INSERT INTO employees.agency_terminated_employees(
           employee_id, name, cpf, role_, bu, shift, schedule_time, company,
           status, hire_date, date_of_birth, termination_date, reason, ethnicity,
           gender, neighborhood, city, email, phone
