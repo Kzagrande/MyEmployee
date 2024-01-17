@@ -35,6 +35,7 @@ router.get("/logout", (req, res) => {
 router.post("/upload_agency", async (req, res) => {
   try {
     const dadosCSV = req.body.csvFile;
+    const dbTable = req.body.dbTable;
     if (!dadosCSV || dadosCSV.length === 0) {
       throw new Error("Arquivo CSV vazio ou ausente.");
     }
@@ -88,7 +89,7 @@ router.post("/upload_agency", async (req, res) => {
       const termination_date = new Date(termination_dateStr);
 
       const insertQuery = `
-        INSERT INTO employees.agency_input_activies(
+        INSERT INTO employees.${dbTable}(
           employee_id, name, cpf, role_, bu, shift, schedule_time, company,
           status, hire_date, date_of_birth, termination_date, reason, ethnicity,
           gender, neighborhood, city, email, phone
@@ -141,6 +142,7 @@ router.post("/upload_agency", async (req, res) => {
 router.post("/upload_terminated_agency", async (req, res) => {
   try {
     const dadosCSV = req.body.csvFile;
+    const dbTable = req.body.dbTable;
     if (!dadosCSV || dadosCSV.length === 0) {
       throw new Error("Arquivo CSV vazio ou ausente.");
     }
@@ -178,7 +180,7 @@ router.post("/upload_terminated_agency", async (req, res) => {
       const termination_date = new Date(termination_dateStr);
 
       const insertQuery = `
-        INSERT INTO employees.agency_terminated_employees(
+        INSERT INTO employees.${dbTable}(
           employee_id, name, cpf, role_, bu, shift, schedule_time, company,
           status, hire_date, date_of_birth, termination_date, reason, ethnicity,
           gender, neighborhood, city, email, phone
