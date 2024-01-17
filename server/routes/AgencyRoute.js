@@ -1,7 +1,8 @@
 import express from "express";
 import con from "../utils/db.js";
 import jwt from "jsonwebtoken";
-const router = express.Router()
+
+const router = express.Router();
 
 router.post("/agency_login", (req, res) => {
   const sql =
@@ -26,67 +27,205 @@ router.post("/agency_login", (req, res) => {
   });
 });
 
-router.get('/logout', (req, res) => {
-  res.clearCookie('token')
-  return res.json({ Status: true })
-})
+router.get("/logout", (req, res) => {
+  res.clearCookie("token");
+  return res.json({ Status: true });
+});
 
-
-router.post('/upload_agency', async (req, res) => {
+router.post("/upload_agency", async (req, res) => {
   try {
     const dadosCSV = req.body.csvFile;
     if (!dadosCSV || dadosCSV.length === 0) {
-      throw new Error('Arquivo CSV vazio ou ausente.');
+      throw new Error("Arquivo CSV vazio ou ausente.");
     }
 
     // Remover o cabeçalho do CSV
     dadosCSV.shift();
-    // console.log('DADOS ---->',dadosCSV)
+    dadosCSV.pop();
 
     // Iterar sobre os registros e inserir no banco de dados
     for (const registro of dadosCSV) {
-      const [employee_id, name, cpf, role_, bu, shift, schedule_time, company,
-        status, hire_dateStr, date_of_birthStr, termination_dateStr, reason, ethnicity,
-        gender, neighborhood, city, email, phone] = registro;
+      const [
+        employee_id,
+        name,
+        cpf,
+        role_,
+        bu,
+        shift,
+        schedule_time,
+        company,
+        status,
+        hire_dateStr,
+        date_of_birthStr,
+        termination_dateStr,
+        reason,
+        ethnicity,
+        gender,
+        neighborhood,
+        city,
+        email,
+        phone,
+      ] = registro;
       // Validar se todos os campos são fornecidos
+
+      // Função para converter string 'dd/mm/yyyy' em Date
+      // const convertStringToDate = (dateString) => {
+      //   if (!dateString || typeof dateString !== "string") {
+      //     return null; // ou outra lógica de tratamento para datas vazias ou indefinidas
+      //   }
+
+      //   const parts = dateString.split("/");
+      //   if (parts.length !== 3) {
+      //     return null; // ou outra lógica de tratamento para strings de data inválidas
+      //   }
+
+      //   const [day, month, year] = parts;
+      //   return new Date(`${year}-${month}-${day}`);
+      // };
 
       const hire_date = new Date(hire_dateStr);
       const date_of_birth = new Date(date_of_birthStr);
       const termination_date = new Date(termination_dateStr);
 
-
       const insertQuery = `
-  INSERT INTO employees.employee_list(
-    employee_id, name, cpf, role_, bu, shift,schedule_time, company,
-    status, hire_date, date_of_birth, termination_date, reason, ethnicity,
-    gender, neighborhood, city, email, phone
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-`;
-      await new Promise((resolve, reject) => {
-        con.query(insertQuery, [employee_id, name, cpf, role_, bu, shift, schedule_time, company,
+        INSERT INTO employees.agency_input_activies(
+          employee_id, name, cpf, role_, bu, shift, schedule_time, company,
           status, hire_date, date_of_birth, termination_date, reason, ethnicity,
-          gender, neighborhood, city, email, phone], (err, result) => {
+          gender, neighborhood, city, email, phone
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `;
+
+      await new Promise((resolve, reject) => {
+        con.query(
+          insertQuery,
+          [
+            employee_id,
+            name,
+            cpf,
+            role_,
+            bu,
+            shift,
+            schedule_time,
+            company,
+            status,
+            hire_date,
+            date_of_birth,
+            termination_date,
+            reason,
+            ethnicity,
+            gender,
+            neighborhood,
+            city,
+            email,
+            phone,
+          ],
+          (err, result) => {
             if (err) {
               reject(err);
             } else {
-              console.log('Registro inserido com sucesso:', result);
+              console.log("Registro inserido com sucesso:", result);
               resolve();
             }
-          });
+          }
+        );
       });
     }
 
-    res.send('Registros inseridos com sucesso');
+    res.send("Registros inseridos com sucesso");
   } catch (err) {
-    console.error('Erro durante o processamento do CSV:', err);
-    res.status(500).send('Erro durante o processamento do CSV');
+    console.error("Erro durante o processamento do CSV:", err);
+    res.status(500).send(err.sqlMessage);
   }
 });
 
+router.post("/upload_terminated_agency", async (req, res) => {
+  try {
+    const dadosCSV = req.body.csvFile;
+    if (!dadosCSV || dadosCSV.length === 0) {
+      throw new Error("Arquivo CSV vazio ou ausente.");
+    }
 
+    // Remover o cabeçalho do CSV
+    dadosCSV.shift();
+    dadosCSV.pop();
 
+    // Iterar sobre os registros e inserir no banco de dados
+    for (const registro of dadosCSV) {
+      const [
+        employee_id,
+        name,
+        cpf,
+        role_,
+        bu,
+        shift,
+        schedule_time,
+        company,
+        status,
+        hire_dateStr,
+        date_of_birthStr,
+        termination_dateStr,
+        reason,
+        ethnicity,
+        gender,
+        neighborhood,
+        city,
+        email,
+        phone,
+      ] = registro;
 
-export { router as AgencyRouter }
+      const hire_date = new Date(hire_dateStr);
+      const date_of_birth = new Date(date_of_birthStr);
+      const termination_date = new Date(termination_dateStr);
 
+      const insertQuery = `
+        INSERT INTO employees.agency_terminated_employees(
+          employee_id, name, cpf, role_, bu, shift, schedule_time, company,
+          status, hire_date, date_of_birth, termination_date, reason, ethnicity,
+          gender, neighborhood, city, email, phone
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `;
 
+      await new Promise((resolve, reject) => {
+        con.query(
+          insertQuery,
+          [
+            employee_id,
+            name,
+            cpf,
+            role_,
+            bu,
+            shift,
+            schedule_time,
+            company,
+            status,
+            hire_date,
+            date_of_birth,
+            termination_date,
+            reason,
+            ethnicity,
+            gender,
+            neighborhood,
+            city,
+            email,
+            phone,
+          ],
+          (err, result) => {
+            if (err) {
+              reject(err);
+            } else {
+              console.log("Registro inserido com sucesso:", result);
+              resolve();
+            }
+          }
+        );
+      });
+    }
 
+    res.send("Registros inseridos com sucesso");
+  } catch (err) {
+    console.error("Erro durante o processamento do CSV:", err);
+    res.status(500).send(err.sqlMessage);
+  }
+});
+
+export { router as AgencyRouter };

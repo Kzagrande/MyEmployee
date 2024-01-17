@@ -13,6 +13,7 @@ import PlanningDash from "./components/PlanningDash";
 import AgencyDash from "./components/Agency/AgencyDash";
 import AgencyLogin from "./components/Agency/AgencyLogin";
 import AddAgencyEmployee from "./components/Agency/AddAgencyEmployee";
+import TerminatedAgencyEmployee from "./components/Agency/TerminatedAgencyEmployee";
 
 function App() {
   return (
@@ -34,8 +35,8 @@ function App() {
 
         <Route path="/agency_login" element={<AgencyLogin />}></Route>
         <Route path="/agency_dashboard" element={<AgencyDash />}>
-          <Route path="add_agency_employee" element={<AddAgencyEmployee />}
-          ></Route>
+          <Route path="add_agency_employee" element={<AddAgencyEmployee/>}></Route>
+          <Route path="terminated_agency_employee" element={<TerminatedAgencyEmployee/>}></Route>
         </Route>
       </Routes>
     </BrowserRouter>

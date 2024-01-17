@@ -50,6 +50,18 @@ const AgencyDash = () => {
                   </span>{" "}
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/agency_dashboard/terminated_agency_employee"
+                  data-bs-toggle="collapse"
+                  className="nav-link text-white px-0 align-middle"
+                >
+                  <i class="bi bi-person-x"></i>{" "}
+                  <span className="ms-1 d-none d-sm-inline">
+                    Desligamento
+                  </span>{" "}
+                </Link>
+              </li>
 
               <li onClick={handleLogout}>
                 <a href="#" className="nav-link px-0 align-middle text-white">
