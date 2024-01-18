@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import ReplyIcon from '@mui/icons-material/Reply';
 
-const AgencyLogin = () => {
+const PlanningLogin = () => {
   const [values, setValues] = useState({
     id_employee: "",
     password: "",
@@ -20,16 +20,17 @@ const AgencyLogin = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     axios
-      .post("http://localhost:3001/agency/agency_login", values)
+      .post("http://localhost:3001/planning/planning_login", values)
       .then((result) => {
         if (result.data.loginStatus) {
-          navigate("/agency_dashboard");
+          navigate("/planning_dashboard");
         } else {
           setError(result.data.Error);
         }
       })
       .catch((err) => console.log(err));
   };
+
 
   return (
     <div className="vh-100 loginPage">
@@ -86,7 +87,7 @@ const AgencyLogin = () => {
               <Button
                 fullWidth
                 variant="contained"
-                color="warning"
+                color="primary"
                 type="submit"
                 className="mb-3"
               >
@@ -103,6 +104,6 @@ const AgencyLogin = () => {
       </Container>
     </div>
   );
-};
+}
 
-export default AgencyLogin;
+export default PlanningLogin

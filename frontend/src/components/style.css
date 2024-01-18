@@ -11,6 +11,20 @@
     color: white;
 }
 
+.btnLogin{
+    width: 100%;
+    padding: 0px 5px;
+    
+    
+}
+
+.btnLoginFont{
+    font-weight:bold;
+    font-size:11px;
+    
+    
+}
+
 :root {
     --primary-color: #1d4289;
   }
