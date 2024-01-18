@@ -46,7 +46,7 @@ const AgencyDash = () => {
                 >
                   <i className="bi bi-person-fill "></i>{" "}
                   <span className="ms-1 d-none d-sm-inline">
-                    Adicionar Colaborador
+                    Novos colaboradores
                   </span>{" "}
                 </Link>
               </li>
