@@ -1,8 +1,10 @@
 import express from "express";
-import con from "../utils/db.js";
 import jwt from "jsonwebtoken";
+import con from "../utils/db.js";
+import UploadController from "../controllers/uploadAgencyController.js";
 
 const router = express.Router();
+const uploadController = new UploadController(con); // Certifique-se de passar a conexão do banco de dados correta
 
 router.post("/agency_login", (req, res) => {
   const sql =
@@ -34,200 +36,15 @@ router.get("/logout", (req, res) => {
 
 router.post("/upload_agency", async (req, res) => {
   try {
-    const dadosCSV = req.body.csvFile;
-    const dbTable = req.body.dbTable;
-    if (!dadosCSV || dadosCSV.length === 0) {
-      throw new Error("Arquivo CSV vazio ou ausente.");
-    }
+    // Aqui, você pode adicionar lógica de autenticação, se necessário, antes de chamar o método de upload
+    // Exemplo: verificar se o usuário tem permissão para realizar o upload
+    // ...
 
-    // Remover o cabeçalho do CSV
-    dadosCSV.shift();
-    dadosCSV.pop();
-
-    // Iterar sobre os registros e inserir no banco de dados
-    for (const registro of dadosCSV) {
-      const [
-        employee_id,
-        name,
-        cpf,
-        role_,
-        bu,
-        shift,
-        schedule_time,
-        company,
-        status,
-        hire_dateStr,
-        date_of_birthStr,
-        termination_dateStr,
-        reason,
-        ethnicity,
-        gender,
-        neighborhood,
-        city,
-        email,
-        phone,
-      ] = registro;
-      // Validar se todos os campos são fornecidos
-
-      // Função para converter string 'dd/mm/yyyy' em Date
-      // const convertStringToDate = (dateString) => {
-      //   if (!dateString || typeof dateString !== "string") {
-      //     return null; // ou outra lógica de tratamento para datas vazias ou indefinidas
-      //   }
-
-      //   const parts = dateString.split("/");
-      //   if (parts.length !== 3) {
-      //     return null; // ou outra lógica de tratamento para strings de data inválidas
-      //   }
-
-      //   const [day, month, year] = parts;
-      //   return new Date(`${year}-${month}-${day}`);
-      // };
-
-      const hire_date = new Date(hire_dateStr);
-      const date_of_birth = new Date(date_of_birthStr);
-      const termination_date = new Date(termination_dateStr);
-
-      const insertQuery = `
-        INSERT INTO employees.${dbTable}(
-          employee_id, name, cpf, role_, bu, shift, schedule_time, company,
-          status, hire_date, date_of_birth, termination_date, reason, ethnicity,
-          gender, neighborhood, city, email, phone
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `;
-
-      await new Promise((resolve, reject) => {
-        con.query(
-          insertQuery,
-          [
-            employee_id,
-            name,
-            cpf,
-            role_,
-            bu,
-            shift,
-            schedule_time,
-            company,
-            status,
-            hire_date,
-            date_of_birth,
-            termination_date,
-            reason,
-            ethnicity,
-            gender,
-            neighborhood,
-            city,
-            email,
-            phone,
-          ],
-          (err, result) => {
-            if (err) {
-              reject(err);
-            } else {
-              console.log("Registro inserido com sucesso:", result);
-              resolve();
-            }
-          }
-        );
-      });
-    }
-
-    res.send("Registros inseridos com sucesso");
+    await uploadController.uploadAgency(req, res);
   } catch (err) {
-    console.error("Erro durante o processamento do CSV:", err);
-    res.status(500).send(err.sqlMessage);
+    console.error("Erro durante o upload de agências:", err);
+    res.status(500).send(err.message);
   }
 });
 
-router.post("/upload_terminated_agency", async (req, res) => {
-  try {
-    const dadosCSV = req.body.csvFile;
-    const dbTable = req.body.dbTable;
-    if (!dadosCSV || dadosCSV.length === 0) {
-      throw new Error("Arquivo CSV vazio ou ausente.");
-    }
-
-    // Remover o cabeçalho do CSV
-    dadosCSV.shift();
-    dadosCSV.pop();
-
-    // Iterar sobre os registros e inserir no banco de dados
-    for (const registro of dadosCSV) {
-      const [
-        employee_id,
-        name,
-        cpf,
-        role_,
-        bu,
-        shift,
-        schedule_time,
-        company,
-        status,
-        hire_dateStr,
-        date_of_birthStr,
-        termination_dateStr,
-        reason,
-        ethnicity,
-        gender,
-        neighborhood,
-        city,
-        email,
-        phone,
-      ] = registro;
-
-      const hire_date = new Date(hire_dateStr);
-      const date_of_birth = new Date(date_of_birthStr);
-      const termination_date = new Date(termination_dateStr);
-
-      const insertQuery = `
-        INSERT INTO employees.${dbTable}(
-          employee_id, name, cpf, role_, bu, shift, schedule_time, company,
-          status, hire_date, date_of_birth, termination_date, reason, ethnicity,
-          gender, neighborhood, city, email, phone
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `;
-
-      await new Promise((resolve, reject) => {
-        con.query(
-          insertQuery,
-          [
-            employee_id,
-            name,
-            cpf,
-            role_,
-            bu,
-            shift,
-            schedule_time,
-            company,
-            status,
-            hire_date,
-            date_of_birth,
-            termination_date,
-            reason,
-            ethnicity,
-            gender,
-            neighborhood,
-            city,
-            email,
-            phone,
-          ],
-          (err, result) => {
-            if (err) {
-              reject(err);
-            } else {
-              console.log("Registro inserido com sucesso:", result);
-              resolve();
-            }
-          }
-        );
-      });
-    }
-
-    res.send("Registros inseridos com sucesso");
-  } catch (err) {
-    console.error("Erro durante o processamento do CSV:", err);
-    res.status(500).send(err.sqlMessage);
-  }
-});
-
-export { router as AgencyRouter };
+export { router as agencyRouter };
