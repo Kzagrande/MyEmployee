@@ -1,15 +1,15 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Login from "./components/Login";
+import HrLogin from "./components/CevaHR/HrLogin";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./components/CevaHR/Dashboard";
 import ListEmployee from "./components/EmployeeList/ListEmployee";
 import RestrictEmployee from "./components/RestrictEmployee";
 import Settings from "./components/Settings";
-import EmployeeForm from "./components/AddEmployee/EmployeeForm";
+import EmployeeForm from "./components/CevaHR/EmployeeForm";
 import Start from "./components/Start";
-import PlanningLogin from "./components/PlanningLogin";
-import PlanningDash from "./components/PlanningDash";
+import PlanningLogin from "./components/Planning/PlanningLogin";
+import PlanningDash from "./components/Planning/PlanningDash";
 import AgencyDash from "./components/Agency/AgencyDash";
 import AgencyLogin from "./components/Agency/AgencyLogin";
 import AddAgencyEmployee from "./components/Agency/AddAgencyEmployee";
@@ -20,9 +20,9 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Start />}></Route>
-        <Route path="/" element={<Login />}></Route>
+        <Route path="/" element={<HrLogin />}></Route>
 
-        <Route path="/adminlogin" element={<Login />}></Route>
+        <Route path="/adminlogin" element={<HrLogin />}></Route>
         <Route path="/dashboard" element={<Dashboard />}>
           <Route path="addemployee" element={<EmployeeForm />}></Route>
           <Route path="listemployee" element={<ListEmployee />}></Route>

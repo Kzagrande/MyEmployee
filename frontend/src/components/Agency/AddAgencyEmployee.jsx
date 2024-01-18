@@ -7,6 +7,7 @@ import {
   TextField,
   Snackbar,
   Alert,
+  CardHeader,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -60,10 +61,12 @@ const AddAgencyEmployee = () => {
         alignItems="center"
         style={{ minHeight: "100vh" }}
       >
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} md={6}>
           <Card variant="outlined" sx={{ backgroundColor: "#f5f5f5" }}>
+            <CardHeader title="Importar base novos ativos" />
+
+          
             <CardContent sx={{ display: "flex", flexDirection: "column" }}>
-              <h2>Importar base novos ativos</h2>
               <form style={{ display: "flex", flexDirection: "column" }}>
                 <TextField
                   label="CSV File"
