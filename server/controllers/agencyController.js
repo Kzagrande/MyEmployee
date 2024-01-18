@@ -11,27 +11,6 @@ const slack = new Slack.App({
 
 })
 
-// dotenv.config();
-// const slack = new Slack.App({
-//   signingSecret: process.env.SLACK_SIGNING_SECRET,
-//   token: process.env.SLACK_BOT_TOKEN,
-// });
-
-// try {
-//   slack.client.chat.postMessage({
-//     token: process.env.SLACK_BOT_TOKEN,
-//     channel: process.env.SLACK_CHANNEL,
-//     text:
-//       "A Agência x acabou de subir as informações dos novos colaboradores 😁",
-//   });
-//   console.log("Mensagem enviada para o Slack com sucesso.");
-// } catch (slackError) {
-//   console.error(
-//     "Erro ao enviar mensagem para o Slack:",
-//     slackError
-//   );
-// }
-
 class UploadController {
   constructor() {
     this.dbTable = ""; // Inicialize a propriedade no construtor
