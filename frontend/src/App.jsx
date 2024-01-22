@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import HrLogin from "./components/CevaHR/HrLogin";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import Dashboard from "./components/CevaHR/Dashboard";
-import ListEmployee from "./components/EmployeeList/ListEmployee";
+import ListEmployee from "./components/CevaHR/ListEmployee";
 import RestrictEmployee from "./components/RestrictEmployee";
 import Settings from "./components/Settings";
 import EmployeeForm from "./components/CevaHR/EmployeeForm";
@@ -12,7 +12,7 @@ import PlanningLogin from "./components/Planning/PlanningLogin";
 import PlanningDash from "./components/Planning/PlanningDash";
 import AgencyDash from "./components/Agency/AgencyDash";
 import AgencyLogin from "./components/Agency/AgencyLogin";
-import AddAgencyEmployee from "./components/Agency/AddAgencyEmployee";
+import AgencyAddEmployee from "./components/Agency/AgencyAddEmployee";
 import TerminatedAgencyEmployee from "./components/Agency/TerminatedAgencyEmployee";
 
 function App() {
@@ -35,7 +35,7 @@ function App() {
 
         <Route path="/agency_login" element={<AgencyLogin />}></Route>
         <Route path="/agency_dashboard" element={<AgencyDash />}>
-          <Route path="add_agency_employee" element={<AddAgencyEmployee/>}></Route>
+          <Route path="add_agency_employee" element={<AgencyAddEmployee/>}></Route>
           <Route path="terminated_agency_employee" element={<TerminatedAgencyEmployee/>}></Route>
         </Route>
       </Routes>

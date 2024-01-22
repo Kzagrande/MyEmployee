@@ -64,19 +64,21 @@ class AdminController {
       return res.status(500).json({ Status: false, Error: err.message });
     }
   }
+ listEmployee = (req, res) => {
+  const query = 'SELECT * FROM employees.agency_input_activies';
 
-  async listEmployee(req, res) {
-    try {
-      const sql = "SELECT * FROM employees.employees_list";
-      const [rows] = await con.execute(sql);
-
-      console.log("Employee data retrieved successfully!");
-      return res.json({ Status: true, data: rows });
-    } catch (err) {
-      console.error("Error during listEmployee:", err.message);
-      return res.status(500).json({ Status: false, Error: err.message });
+  con.query(query, (error, results) => {
+    if (error) {
+      console.error('Erro ao executar a consulta SQL:', error);
+      res.status(500).json({ error: 'Erro interno do servidor' });
+    } else {
+     
+      res.status(200).json(results);
     }
-  }
+  });
+};
+
+
 
   logout(req, res) {
     res.clearCookie("token");

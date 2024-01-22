@@ -14,7 +14,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import CSVReader from "react-csv-reader";
 import axios from "axios";
 
-const AddAgencyEmployee = () => {
+const AgencyAddEmployee = () => {
   const [msgEP, msgEPData] = useState("");
   const [csvData, setCsvData] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -115,4 +115,4 @@ const AddAgencyEmployee = () => {
   );
 };
 
-export default AddAgencyEmployee;
+export default AgencyAddEmployee;
