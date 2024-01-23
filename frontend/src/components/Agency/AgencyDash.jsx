@@ -56,7 +56,7 @@ const AgencyDash = () => {
                   data-bs-toggle="collapse"
                   className="nav-link text-white px-0 align-middle"
                 >
-                  <i class="bi bi-person-x"></i>{" "}
+                  <i className="bi bi-person-x"></i>{" "}
                   <span className="ms-1 d-none d-sm-inline">Desligamento</span>{" "}
                 </Link>
               </li>
@@ -78,7 +78,7 @@ const AgencyDash = () => {
                   data-bs-toggle="collapse"
                   className="nav-link text-white px-0 align-middle"
                 >
-                  <i class="bi bi-table"></i>{" "}
+                  <i className="bi bi-table"></i>{" "}
                   <span className="ms-1 d-none d-sm-inline">
                     Listar Colaboradores
                   </span>{" "}
@@ -87,14 +87,14 @@ const AgencyDash = () => {
 
               <li onClick={handleLogout}>
                 <a href="#" className="nav-link px-0 align-middle text-white">
-                  <i class="bi bi-box-arrow-left"></i>{" "}
+                  <i className="bi bi-box-arrow-left"></i>{" "}
                   <span className="ms-1 d-none d-sm-inline">Sair</span>
                 </a>
               </li>
             </ul>
           </div>
         </div>
-        <div class="col p-0 m-0">
+        <div className="col p-0 m-0">
           <div
             className="p-2 d-flex justify-content-center shadow text-white"
             style={{ backgroundColor: "#1d4289" }}

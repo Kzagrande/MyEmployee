@@ -44,6 +44,78 @@ class UploadController {
     return res.json({ Status: true });
   }
 
+
+
+  async addEmployee(req, res) {
+    try {
+      const {
+        employee_id,
+        name,
+        cpf,
+        role_,
+        bu,
+        shift,
+        schedule_time,
+        company,
+        status,
+        hire_date,
+        date_of_birth,
+        ethnicity,
+        gender,
+        neighborhood,
+        city,
+        email,
+        phone
+      } = req.body;
+  
+      const sql = `
+        INSERT INTO employees.agency_input_activies
+        (employee_id, name, cpf, role_, bu, shift, schedule_time, company, status, hire_date, date_of_birth, ethnicity, gender, neighborhood, city, email, phone)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `;
+  
+      const values = [
+        employee_id,
+        name,
+        cpf,
+        role_,
+        bu,
+        shift,
+        schedule_time,
+        company,
+        status,
+        hire_date,
+        date_of_birth,
+        ethnicity,
+        gender,
+        neighborhood,
+        city,
+        email,
+        phone
+      ];
+  
+      con.query(sql, values, (error, results, fields) => {
+        if (error) {
+          console.error("Error during addEmployee:", error.message);
+          return res.status(500).json({ status: false, error: error.message });
+        }
+  
+        console.log("Employee data inserted successfully!");
+        const insertedEmployeeId = results.insertId;
+        return res.json({
+          status: true,
+          message: "Registros inseridos com sucesso",
+          insertedEmployeeId,
+          values
+        });
+      });
+    } catch (err) {
+      console.error("Error during addEmployee:", err.message);
+      return res.status(500).json({ status: false, error: err.message });
+    }
+  }
+  
+
   async uploadAgency(req, res) {
     const dadosCSV = req.body.csvFile;
     this.dbTable = req.body.dbTable;

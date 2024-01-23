@@ -14,6 +14,10 @@ router.get('/logout', verifyUser, (req, res) => {
   UploadController.logout(req, res);
 });
 
+router.post('/add_new_employee', verifyUser, (req, res) => {
+  UploadController.addEmployee(req, res);
+});
+
 
 router.post("/upload_agency", async (req, res) => {
   try {

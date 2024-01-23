@@ -14,7 +14,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import CSVReader from "react-csv-reader";
 import axios from "axios";
 
-const AgencyAddEmployee = () => {
+const AgencyInputEmployee = () => {
   const [msgEP, msgEPData] = useState("");
   const [csvData, setCsvData] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -54,7 +54,7 @@ const AgencyAddEmployee = () => {
   };
 
   return (
-    <Container>
+    <Container >
       <Grid
         container
         justifyContent="center"
@@ -115,4 +115,4 @@ const AgencyAddEmployee = () => {
   );
 };
 
-export default AgencyAddEmployee;
+export default AgencyInputEmployee;
