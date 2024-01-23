@@ -57,8 +57,30 @@ const AgencyDash = () => {
                   className="nav-link text-white px-0 align-middle"
                 >
                   <i class="bi bi-person-x"></i>{" "}
+                  <span className="ms-1 d-none d-sm-inline">Desligamento</span>{" "}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/agency_dashboard/agency_new_employee"
+                  data-bs-toggle="collapse"
+                  className="nav-link text-white px-0 align-middle"
+                >
+                  <i className="bi bi-person-fill "></i>{" "}
                   <span className="ms-1 d-none d-sm-inline">
-                    Desligamento
+                    Adicionar Colaborador
+                  </span>{" "}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/agency_dashboard/agency_list_employee"
+                  data-bs-toggle="collapse"
+                  className="nav-link text-white px-0 align-middle"
+                >
+                  <i class="bi bi-table"></i>{" "}
+                  <span className="ms-1 d-none d-sm-inline">
+                    Listar Colaboradores
                   </span>{" "}
                 </Link>
               </li>

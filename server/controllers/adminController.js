@@ -26,44 +26,67 @@ class AdminController {
         });
       }
 
-  async addEmployee(req, res) {
-    try {
-      const sql = `
-        INSERT INTO employees.employees_list
-        (name, id_employee, admission_dt, company, warehouse, bz, collar, category, sector, role_1, shift, schedule, manager_1, manager_2, manager_3, status, role_2, user_)
-        VALUES (?)
-      `;
+      async addEmployee(req, res) {
+        try {
+          const {
+            name,
+            id_employee,
+            admission_dt,
+            company,
+            warehouse,
+            bz,
+            collar,
+            category,
+            sector,
+            role_1,
+            shift,
+            schedule,
+            manager_1,
+            manager_2,
+            manager_3,
+            status,
+            role_2,
+            user_,
+          } = req.body;
+      
+          const sql = `
+            INSERT INTO employees.agency_input_activies
+            (name, id_employee, admission_dt, company, warehouse, bz, collar, category, sector, role_1, shift, schedule, manager_1, manager_2, manager_3, status, role_2, user_)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `;
+      
+          const values = [
+            name,
+            id_employee,
+            admission_dt,
+            company,
+            warehouse,
+            bz,
+            collar,
+            category,
+            sector,
+            role_1,
+            shift,
+            schedule,
+            manager_1,
+            manager_2,
+            manager_3,
+            status,
+            role_2,
+            user_,
+          ];
+      
+          await con.execute(sql, values);
+      
+          console.log("Employee data inserted successfully!");
+          return res.json({ Status: true, values });
+        } catch (err) {
+          console.error("Error during addEmployee:", err.message);
+          return res.status(500).json({ Status: false, Error: err.message });
+        }
+      }
 
-      const values = [
-        req.body.name,
-        req.body.id_employee,
-        req.body.admission_dt,
-        req.body.company,
-        req.body.warehouse,
-        req.body.bz,
-        req.body.collar,
-        req.body.category,
-        req.body.sector,
-        req.body.role_1,
-        req.body.shift,
-        req.body.schedule,
-        req.body.manager_1,
-        req.body.manager_2,
-        req.body.manager_3,
-        req.body.status,
-        req.body.role_2,
-        req.body.user_,
-      ];
 
-      await con.execute(sql, [values]);
-
-      console.log("Employee data inserted successfully!");
-      return res.json({ Status: true, values });
-    } catch (err) {
-      console.error("Error during addEmployee:", err.message);
-      return res.status(500).json({ Status: false, Error: err.message });
-    }
-  }
  listEmployee = (req, res) => {
   const query = 'SELECT * FROM employees.agency_input_activies';
 
