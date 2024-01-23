@@ -32,4 +32,8 @@ router.post("/upload_agency", async (req, res) => {
   }
 });
 
+router.get("/export_agency", (req, res) => {
+  UploadController.exportAgency(req, res);
+});
+
 export { router as agencyRouter };

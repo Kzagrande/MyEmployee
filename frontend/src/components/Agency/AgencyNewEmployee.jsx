@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Snackbar,Alert, Button, Container, Grid, Box, Card,OutlinedInput,CardHeader,CardContent,InputLabel   } from '@mui/material';
+import { Snackbar, Alert, Button, Container, Grid, Box, Card, OutlinedInput, CardHeader, CardContent, InputLabel } from '@mui/material';
 import SaveIcon from "@mui/icons-material/Save";
 import LoadingButton from "@mui/lab/LoadingButton";
 import axios from 'axios'
@@ -26,69 +26,69 @@ const AgencyNewEmployee = () => {
     { id: 'phone', label: 'Phone' },
   ];
 
-    const [formData, setFormData] = useState({
-      employee_id: '123456',
-      name: 'yan',
-      cpf: '48007840850',
-      role_: 'Data Specialist',
-      bu: '55480 - NAVE D',
-      shift: 'Admin',
-      schedule_time: 'Comercial',
-      company: 'CEVA',
-      status: 'Ativo',
-      hire_date: '2023-10-06',
-      date_of_birth: '1970-06-18',
-      ethnicity: 'Parda',
-      gender: 'Masculino',
-      neighborhood: 'Cocaia',
-      city: 'Guarulhos',
-      email: 'bortoletoyan@gmail.com',
-      phone: '11958878432',
-    });
+  const [formData, setFormData] = useState({
+    employee_id: '123456',
+    name: 'yan',
+    cpf: '48007840850',
+    role_: 'Data Specialist',
+    bu: '55480 - NAVE D',
+    shift: 'Admin',
+    schedule_time: 'Comercial',
+    company: 'CEVA',
+    status: 'Ativo',
+    hire_date: '2023-10-06',
+    date_of_birth: '1970-06-18',
+    ethnicity: 'Parda',
+    gender: 'Masculino',
+    neighborhood: 'Cocaia',
+    city: 'Guarulhos',
+    email: 'bortoletoyan@gmail.com',
+    phone: '11958878432',
+  });
 
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [msgEP, msgEPData] = useState("");
-  
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [msgEP, msgEPData] = useState("");
+
 
   const handleInputChange = (id) => (event) => {
     setFormData({ ...formData, [id]: event.target.value });
   };
 
- const handleSubmit = () => {
+  const handleSubmit = () => {
     setLoading(true);
 
-      axios
+    axios
       .post(
         'http://localhost:3001/agency/add_new_employee',
         formData
       ).then((response) => {
-        console.log('response.data-->',response.data);
+        console.log('response.data-->', response.data);
         msgEPData(response.data.message);
         setSnackbarOpen(true); // Open the Snackbar on success
         setLoading(false);
       })
       .catch((error) => {
-        console.error('error.response.data -->',error.response.data);
+        console.error('error.response.data -->', error.response.data);
         msgEPData(error.response.data.error);
         setSnackbarOpen(true); // Open the Snackbar on success
         setLoading(false);
       });
-    }
+  }
 
-    const handleSnackbarClose = (event, reason) => {
-      if (reason === "clickaway") {
-        return;
-      }
-      setSnackbarOpen(false);
-    };
-  
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
 
   return (
-    <Container component="main" maxWidth="lg" disableGutters>
+    
       <Box
         sx={{
-          
+
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -103,9 +103,9 @@ const AgencyNewEmployee = () => {
                   <Grid item xs={6} key={field.id}>
                     <InputLabel htmlFor={field.id}>{field.label}</InputLabel>
                     <OutlinedInput
-                    
+
                       fullWidth
-                      
+
                       id={field.id}
                       value={formData[field.id] || ''}
                       onChange={handleInputChange(field.id)}
@@ -114,20 +114,19 @@ const AgencyNewEmployee = () => {
                 ))}
               </Grid>
               <LoadingButton
-                  loading={loading}
-                  loadingPosition="start"
-                  startIcon={<SaveIcon />}
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSubmit}
-                  style={{ marginTop: "16px" }}
-                >
-                  <span>Salvar no banco de dados</span>
-                </LoadingButton>
+                loading={loading}
+                loadingPosition="start"
+                startIcon={<SaveIcon />}
+                variant="contained"
+                color="primary"
+                onClick={handleSubmit}
+                style={{ marginTop: "16px" }}
+              >
+                <span>Salvar no banco de dados</span>
+              </LoadingButton>
             </form>
           </CardContent>
         </Card>
-      </Box>
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={3000}
@@ -142,7 +141,8 @@ const AgencyNewEmployee = () => {
           {msgEP}
         </Alert>
       </Snackbar>
-    </Container>
+      </Box>
+ 
   );
 };
 

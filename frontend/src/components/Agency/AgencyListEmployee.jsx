@@ -120,7 +120,7 @@ const AgencyListEmployee = () => { //Return componente jsx
   };
 
   const isSelected = (id) => {
-    console.log('id', id)
+    // console.log('id', id)
     return selected.includes(id)
   } // verifica true or false se os id existem no selected;
 
@@ -131,13 +131,10 @@ const AgencyListEmployee = () => { //Return componente jsx
 
 
   return (
-
-    <Paper sx={{ width: '100%' }}>
-      {/* Conteúdo da Toolbar */}
-      <TableContainer>
-        <Table sx={{ minWidth: 750 }}>
-          <TableHead>
-            <TableRow>
+    <TableContainer  >
+        <Table >
+          <TableHead sx={{ backgroundColor: '#f0eef1' }}>
+            <TableRow> 
               <TableCell padding="checkbox">
                 <Checkbox
                   color="primary"
@@ -150,7 +147,13 @@ const AgencyListEmployee = () => { //Return componente jsx
                 <TableCell
                   key={headCell.id}
                   align={headCell.id === 'employee_id' ? 'left' : 'right'}
-                >
+                  sx={{
+                    fontSize: '14x', // Adjust font size as needed
+                    padding: '10px', // Adjust padding between columns
+                    fontWeight:'bold'
+                  }}
+                  
+                >          
                   <TableSortLabel
                     active={orderBy === headCell.id}
                     direction={orderBy === headCell.id ? order : 'asc'}
@@ -210,8 +213,7 @@ const AgencyListEmployee = () => { //Return componente jsx
             )}
           </TableBody>
         </Table>
-      </TableContainer>
-      <TablePagination
+        <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
         count={data.length}
@@ -220,7 +222,9 @@ const AgencyListEmployee = () => { //Return componente jsx
         onPageChange={(event, newPage) => handleChangePage(event, newPage)}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-    </Paper>
+    </TableContainer>
+
+
   );
 };
 

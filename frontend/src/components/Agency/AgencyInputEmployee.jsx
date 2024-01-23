@@ -45,6 +45,18 @@ const AgencyInputEmployee = () => {
       });
   };
 
+  const handleExportAgency = (event) => {
+    event.preventDefault();
+
+    axios
+      .get("http://localhost:3001/agency/export_agency")
+      .then((result) => {
+        console.log(result)
+      })
+      .catch((err) => console.log(err));
+  };
+
+
   const handleSnackbarClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -61,11 +73,9 @@ const AgencyInputEmployee = () => {
         alignItems="center"
         style={{ minHeight: "100vh" }}
       >
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={10} sx={{display:'flex',flexDirection:'row',gap:"3em"}} >
           <Card variant="outlined" sx={{ backgroundColor: "#f5f5f5" }}>
             <CardHeader title="Importar base novos ativos" />
-
-          
             <CardContent sx={{ display: "flex", flexDirection: "column" }}>
               <form style={{ display: "flex", flexDirection: "column" }}>
                 <TextField
@@ -90,6 +100,25 @@ const AgencyInputEmployee = () => {
                   style={{ marginTop: "16px" }}
                 >
                   <span>Salvar no banco de dados</span>
+                </LoadingButton>
+              </form>
+            </CardContent>
+          </Card>
+
+
+          <Card variant="outlined" sx={{ backgroundColor: "#f5f5f5" }}>
+            <CardHeader title="Importar base novos ativos" />
+            <CardContent sx={{ display: "flex", flexDirection: "column" }}>
+              <form style={{ display: "flex", flexDirection: "column" }}>
+                <LoadingButton
+                  loadingPosition="start"
+                  startIcon={<SaveIcon />}
+                  variant="contained"
+                  color="primary"
+                  onClick={handleExportAgency}
+                  style={{ marginTop: "16px" }}
+                >
+                  <span>Export</span>
                 </LoadingButton>
               </form>
             </CardContent>

@@ -3,6 +3,9 @@ import con from "../utils/db.js";
 import jwt from "jsonwebtoken";
 import Slack from "@slack/bolt";
 import dotenv from "dotenv";
+import fastcsv from "fast-csv"
+import fs from 'fs'
+
 
 dotenv.config()
 const slack = new Slack.App({
@@ -67,13 +70,13 @@ class UploadController {
         email,
         phone
       } = req.body;
-  
+
       const sql = `
         INSERT INTO employees.agency_input_activies
         (employee_id, name, cpf, role_, bu, shift, schedule_time, company, status, hire_date, date_of_birth, ethnicity, gender, neighborhood, city, email, phone)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
-  
+
       const values = [
         employee_id,
         name,
@@ -93,13 +96,13 @@ class UploadController {
         email,
         phone
       ];
-  
+
       con.query(sql, values, (error, results, fields) => {
         if (error) {
           console.error("Error during addEmployee:", error.message);
           return res.status(500).json({ status: false, error: error.message });
         }
-  
+
         console.log("Employee data inserted successfully!");
         const insertedEmployeeId = results.insertId;
         return res.json({
@@ -114,7 +117,7 @@ class UploadController {
       return res.status(500).json({ status: false, error: err.message });
     }
   }
-  
+
 
   async uploadAgency(req, res) {
     const dadosCSV = req.body.csvFile;
@@ -206,6 +209,35 @@ class UploadController {
       throw error;
     }
   }
+
+  exportAgency(req, res) {
+    console.log(res)
+    con.query('SELECT * from employees.agency_input_activies', function (err, data) {
+      if (err) {
+        throw err;
+      }
+  
+      // JSON
+      const jsonData = JSON.parse(JSON.stringify(data));
+      console.log("jsonData", jsonData);
+  
+      // CSV
+      const ws = fs.createWriteStream('agency_data.csv'); // Create a writable stream
+      fastcsv.write(jsonData, { headers: true })
+        .on("finish", function () {
+          console.log("Write to agency_data.csv successfully!");
+        })
+        .pipe(ws);
+  
+      return res.json({ Status: true });
+    });
+  }
+
+
+
 }
+
+
+
 
 export default new UploadController();
