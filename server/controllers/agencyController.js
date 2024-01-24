@@ -6,8 +6,9 @@ import dotenv from "dotenv";
 import fastcsv from "fast-csv";
 import iconv from "iconv-lite";
 import sgMail from "@sendgrid/mail";
-import { createObjectCsvWriter } from "csv-writer";
+import { createArrayCsvWriter } from "csv-writer";
 import fs from "fs/promises";
+
 dotenv.config();
 const slack = new Slack.App({
   signingSecret: process.env.SLACK_SINGNING_SECRET,
@@ -121,17 +122,15 @@ class UploadController {
     this.dbTable = req.body.dbTable;
     this.validateInput(dadosCSV);
 
-    const cleanedData = dadosCSV.slice(1, -1);
-
-
-    const csvPath = 'temp.csv';
-    const csvWriter = createObjectCsvWriter({
-      path: csvPath,
+    console.log("");
+    const csvWriter = createArrayCsvWriter({
+      path: "temp.csv", // Especifique o caminho e o nome do arquivo temporário
       header: dadosCSV[0],
     });
 
     // console.log('CSV',dadosCSV)
-    await csvWriter.writeRecords(dadosCSV);
+    const sliceHeader = dadosCSV.slice(1,-1)
+    await csvWriter.writeRecords(sliceHeader);
 
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     const msg = {
