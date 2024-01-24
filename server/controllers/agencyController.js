@@ -3,16 +3,16 @@ import con from "../utils/db.js";
 import jwt from "jsonwebtoken";
 import Slack from "@slack/bolt";
 import dotenv from "dotenv";
-import fastcsv from "fast-csv"
-import iconv from 'iconv-lite'
-
-
-dotenv.config()
+import fastcsv from "fast-csv";
+import iconv from "iconv-lite";
+import sgMail from "@sendgrid/mail";
+import { createObjectCsvWriter } from "csv-writer";
+import fs from "fs/promises";
+dotenv.config();
 const slack = new Slack.App({
   signingSecret: process.env.SLACK_SINGNING_SECRET,
-  token: process.env.SLACK_BOT_TOKEN
-
-})
+  token: process.env.SLACK_BOT_TOKEN,
+});
 
 class UploadController {
   constructor() {
@@ -47,8 +47,6 @@ class UploadController {
     return res.json({ Status: true });
   }
 
-
-
   async addEmployee(req, res) {
     try {
       const {
@@ -68,7 +66,7 @@ class UploadController {
         neighborhood,
         city,
         email,
-        phone
+        phone,
       } = req.body;
 
       const sql = `
@@ -94,7 +92,7 @@ class UploadController {
         neighborhood,
         city,
         email,
-        phone
+        phone,
       ];
 
       con.query(sql, values, (error, results, fields) => {
@@ -109,7 +107,7 @@ class UploadController {
           status: true,
           message: "Registros inseridos com sucesso",
           insertedEmployeeId,
-          values
+          values,
         });
       });
     } catch (err) {
@@ -118,39 +116,87 @@ class UploadController {
     }
   }
 
-
   async uploadAgency(req, res) {
     const dadosCSV = req.body.csvFile;
     this.dbTable = req.body.dbTable;
     this.validateInput(dadosCSV);
-    try {
 
+    const cleanedData = dadosCSV.slice(1, -1);
+
+
+    const csvPath = 'temp.csv';
+    const csvWriter = createObjectCsvWriter({
+      path: csvPath,
+      header: dadosCSV[0],
+    });
+
+    // console.log('CSV',dadosCSV)
+    await csvWriter.writeRecords(dadosCSV);
+
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    const msg = {
+      to: ["yan.bortoleto@cevalogistics.com"],
+      from: {
+        name: "Yan",
+        email: "bortoletoyan@gmail.com",
+      },
+      templateId: "d-95083a36e91245949cffc5d3fccfbcf4",
+      dynamicTemplateData: {
+        name: "Yan",
+      },
+      attachments: [
+        {
+          content: (await fs.readFile("temp.csv")).toString("base64"),
+          filename: "data.csv",
+          type: "application/csv",
+          disposition: "attachment",
+        },
+      ],
+    };
+
+    (async () => {
+      try {
+        console.log("OPA ENTREI AQUI EM -->");
+        await sgMail.send(msg);
+      } catch (error) {
+        console.error(error);
+
+        if (error.response) {
+          console.error(error.response.body);
+        }
+      }
+    })();
+
+    try {
       // Remover o cabeçalho do CSV
       dadosCSV.shift();
       dadosCSV.pop();
 
       // Mapear registros para modelos de agência
-      const agencyModels = dadosCSV.map((registro) => new AgencyModel({
-        employee_id: registro[0],
-        name: registro[1],
-        cpf: registro[2],
-        role_: registro[3],
-        bu: registro[4],
-        shift: registro[5],
-        schedule_time: registro[6],
-        company: registro[7],
-        status: registro[8],
-        hire_date: new Date(registro[9]),
-        date_of_birth: new Date(registro[10]),
-        termination_date: new Date(registro[11]),
-        reason: registro[12],
-        ethnicity: registro[13],
-        gender: registro[14],
-        neighborhood: registro[15],
-        city: registro[16],
-        email: registro[17],
-        phone: registro[18],
-      }));
+      const agencyModels = dadosCSV.map(
+        (registro) =>
+          new AgencyModel({
+            employee_id: registro[0],
+            name: registro[1],
+            cpf: registro[2],
+            role_: registro[3],
+            bu: registro[4],
+            shift: registro[5],
+            schedule_time: registro[6],
+            company: registro[7],
+            status: registro[8],
+            hire_date: new Date(registro[9]),
+            date_of_birth: new Date(registro[10]),
+            termination_date: new Date(registro[11]),
+            reason: registro[12],
+            ethnicity: registro[13],
+            gender: registro[14],
+            neighborhood: registro[15],
+            city: registro[16],
+            email: registro[17],
+            phone: registro[18],
+          })
+      );
 
       // Inserir registros em lote
       await this.insertRecords(this.dbTable, agencyModels);
@@ -186,18 +232,23 @@ class UploadController {
           if (err) {
             reject(err);
           } else {
-            console.log("Registros inseridos com sucesso:", result);
+            // console.log("Registros inseridos com sucesso:", result);
             try {
-              console.log('dbTable', this.dbTable)
+              // console.log("dbTable", this.dbTable);
               slack.client.chat.postMessage({
                 token: process.env.SLACK_BOT_TOKEN,
                 channel: process.env.SLACK_CHANNEL,
-                text: this.dbTable == 'agency_input_activies' ? 'A Agência X acabou de subir as informações dos novos colaboradores 😁'
-                  : 'A Agência x acabou de subir as informações dos novos desligados 😪'
-              })
-              console.log('Mensagem enviada para o Slack com sucesso.');
+                text:
+                  this.dbTable == "agency_input_activies"
+                    ? "A Agência X acabou de subir as informações dos novos colaboradores 😁"
+                    : "A Agência x acabou de subir as informações dos novos desligados 😪",
+              });
+              console.log("Mensagem enviada para o Slack com sucesso.");
             } catch (slackError) {
-              console.error('Erro ao enviar mensagem para o Slack:', slackError);
+              console.error(
+                "Erro ao enviar mensagem para o Slack:",
+                slackError
+              );
             }
             // Integração com a API do Slack após o sucesso da inserção
             resolve();
@@ -212,24 +263,31 @@ class UploadController {
 
   async exportAgency(req, res) {
     try {
-      const data = await this.executeQuery('SELECT * FROM employees.agency_input_activies');
+      const data = await this.executeQuery(
+        "SELECT * FROM employees.agency_input_activies"
+      );
       const jsonData = JSON.parse(JSON.stringify(data));
 
-      const utf8Data = iconv.encode(JSON.stringify(jsonData), 'utf-8');
+      const utf8Data = iconv.encode(JSON.stringify(jsonData), "utf-8");
 
-  
-      res.setHeader('Content-Disposition', 'attachment; filename=agency_data.csv');
-      res.setHeader('Content-Type', 'text/csv');
-  
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=agency_data.csv"
+      );
+      res.setHeader("Content-Type", "text/csv");
+
       // Criar um stream de escrita no response
-      fastcsv.write(jsonData, { headers: true })
+      fastcsv
+        .write(jsonData, { headers: true })
         .on("finish", () => {
           console.log("Enviado com sucesso para o usuário!");
         })
-        .pipe(res);  // Pipe para o response diretamente
+        .pipe(res); // Pipe para o response diretamente
     } catch (err) {
       console.error("Erro:", err);
-      return res.status(500).json({ error: "Erro ao exportar dados da agência" });
+      return res
+        .status(500)
+        .json({ error: "Erro ao exportar dados da agência" });
     }
   }
 
@@ -244,13 +302,6 @@ class UploadController {
       });
     });
   }
-
-
 }
-
-
-
-
-
 
 export default new UploadController();
