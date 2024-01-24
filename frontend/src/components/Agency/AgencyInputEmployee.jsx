@@ -48,14 +48,20 @@ const AgencyInputEmployee = () => {
   const handleExportAgency = (event) => {
     event.preventDefault();
 
-    axios
-      .get("http://localhost:3001/agency/export_agency")
-      .then((result) => {
-        console.log(result)
-      })
-      .catch((err) => console.log(err));
-  };
+    // Criar um link temporário
+    const link = document.createElement("a");
+    link.href = "http://localhost:3001/agency/export_agency";
+    link.download = "agency_data.csv";
 
+    // Adicionar o link à página
+    document.body.appendChild(link);
+
+    // Disparar o clique no link
+    link.click();
+
+    // Remover o link após o download iniciar
+    document.body.removeChild(link);
+  };
 
   const handleSnackbarClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -66,14 +72,19 @@ const AgencyInputEmployee = () => {
   };
 
   return (
-    <Container >
+    <Container>
       <Grid
         container
         justifyContent="center"
         alignItems="center"
         style={{ minHeight: "100vh" }}
       >
-        <Grid item xs={12} md={10} sx={{display:'flex',flexDirection:'row',gap:"3em"}} >
+        <Grid
+          item
+          xs={12}
+          md={10}
+          sx={{ display: "flex", flexDirection: "row", gap: "3em" }}
+        >
           <Card variant="outlined" sx={{ backgroundColor: "#f5f5f5" }}>
             <CardHeader title="Importar base novos ativos" />
             <CardContent sx={{ display: "flex", flexDirection: "column" }}>
@@ -105,9 +116,16 @@ const AgencyInputEmployee = () => {
             </CardContent>
           </Card>
 
-
-          <Card variant="outlined" sx={{ backgroundColor: "#f5f5f5" }}>
-            <CardHeader title="Importar base novos ativos" />
+          <Card
+            variant="outlined"
+            sx={{
+              backgroundColor: "#f5f5f5",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            <CardHeader title="Exportar dados de integração" />
             <CardContent sx={{ display: "flex", flexDirection: "column" }}>
               <form style={{ display: "flex", flexDirection: "column" }}>
                 <LoadingButton
@@ -116,7 +134,6 @@ const AgencyInputEmployee = () => {
                   variant="contained"
                   color="primary"
                   onClick={handleExportAgency}
-                  style={{ marginTop: "16px" }}
                 >
                   <span>Export</span>
                 </LoadingButton>
