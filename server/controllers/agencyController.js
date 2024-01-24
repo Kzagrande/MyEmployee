@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import Slack from "@slack/bolt";
 import dotenv from "dotenv";
 import fastcsv from "fast-csv"
-import fs from 'fs'
+import iconv from 'iconv-lite'
 
 
 dotenv.config()
@@ -210,32 +210,45 @@ class UploadController {
     }
   }
 
-  exportAgency(req, res) {
-    console.log(res)
-    con.query('SELECT * from employees.agency_input_activies', function (err, data) {
-      if (err) {
-        throw err;
-      }
-  
-      // JSON
+  async exportAgency(req, res) {
+    try {
+      const data = await this.executeQuery('SELECT * FROM employees.agency_input_activies');
       const jsonData = JSON.parse(JSON.stringify(data));
-      console.log("jsonData", jsonData);
+
+      const utf8Data = iconv.encode(JSON.stringify(jsonData), 'utf-8');
+
   
-      // CSV
-      const ws = fs.createWriteStream('agency_data.csv'); // Create a writable stream
+      res.setHeader('Content-Disposition', 'attachment; filename=agency_data.csv');
+      res.setHeader('Content-Type', 'text/csv');
+  
+      // Criar um stream de escrita no response
       fastcsv.write(jsonData, { headers: true })
-        .on("finish", function () {
-          console.log("Write to agency_data.csv successfully!");
+        .on("finish", () => {
+          console.log("Enviado com sucesso para o usuário!");
         })
-        .pipe(ws);
-  
-      return res.json({ Status: true });
+        .pipe(res);  // Pipe para o response diretamente
+    } catch (err) {
+      console.error("Erro:", err);
+      return res.status(500).json({ error: "Erro ao exportar dados da agência" });
+    }
+  }
+
+  executeQuery(query) {
+    return new Promise((resolve, reject) => {
+      con.query(query, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
     });
   }
 
 
-
 }
+
+
 
 
 
