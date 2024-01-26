@@ -22,15 +22,15 @@ const AgencyDash = () => {
     <div className="container-fluid">
       <div className="row flex-nowrap">
         <div
-          className="col-auto col-md-3 col-xl-2 px-sm-2 px-0 "
+          className="col-auto col-md-3 col-xl-2  px-0 "
           style={{ backgroundColor: "#1d4289" }}
         >
-          <div className="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+          <div className="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100 elevation">
             <a
               href="/"
               className="d-flex align-items-center pb-3 mb-md-1 mt-md-3 me-md-auto text-white text-decoration-none"
             >
-              <span className="fs-5 fw-bolder d-none d-sm-inline">
+              <span className="fs-5 fw-bolder d-none d-sm-inline border-bottom ">
                 Admin Dashboard
               </span>
             </a>

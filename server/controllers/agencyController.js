@@ -28,7 +28,7 @@ class UploadController {
       if (result.length > 0) {
         const id_employee = result[0].id_employee;
         const token = jwt.sign(
-          { role: "planning", id_employee: id_employee, id: result[0].id },
+          { role: "agency", id_employee: id_employee, id: result[0].id },
           "jwt_secret_key",
           { expiresIn: "1d" }
         );
@@ -129,7 +129,7 @@ class UploadController {
     });
 
     // console.log('CSV',dadosCSV)
-    const sliceHeader = dadosCSV.slice(1,-1)
+    const sliceHeader = dadosCSV.slice(1, -1);
     await csvWriter.writeRecords(sliceHeader);
 
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -199,7 +199,6 @@ class UploadController {
 
       // Inserir registros em lote
       await this.insertRecords(this.dbTable, agencyModels);
-
       res.send("Registros inseridos com sucesso");
     } catch (err) {
       console.error("Erro durante o processamento do CSV:", err);
@@ -300,6 +299,53 @@ class UploadController {
         }
       });
     });
+  }
+
+  async listEmployee(req, res) {
+    try {
+      const data = await this.executeQuery(
+        "SELECT * FROM employees.agency_input_activies WHERE presence_integration IS NULL"
+      );
+      res.status(200).json(data);
+    } catch (err) {
+      console.error("Erro:", err);
+      return res.status(500).json({ status: false, error: err.message })
+    }
+  }
+
+  async setPresence(req, res) {
+    const presenceList = req.body.ids;
+    console.log("presenceList", presenceList);
+
+    if (
+      !presenceList ||
+      !Array.isArray(presenceList) ||
+      presenceList.length === 0
+    ) {
+      return res.status(500).json({ status: false, error: error.message })
+    }
+
+    const presenceStatus = "PRESENTE";
+
+    try {
+      // Crie a consulta SQL diretamente com os valores da lista
+      const updateQuery = `
+        UPDATE employees.agency_input_activies
+        SET presence_integration = '${presenceStatus}'
+        WHERE employee_id IN (${presenceList.join(",")})
+      `;
+
+      // Execute a consulta
+      await this.executeQuery(updateQuery);
+
+      return res.json({
+        status: true,
+        message: "Registros inseridos com sucesso",
+      });
+    } catch (err) {
+      console.error("Erro ao marcar presença:", err);
+      return res.status(500).json({ status: false, err: error.message })
+    }
   }
 }
 
