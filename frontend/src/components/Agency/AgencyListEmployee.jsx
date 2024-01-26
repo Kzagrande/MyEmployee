@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
 import {
   Table,
   TableBody,
@@ -13,10 +12,13 @@ import {
   Alert,
   TableSortLabel,
   Grid,
-} from "@mui/material";
+  InputAdornment,
+  TextField} from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import LoadingButton from "@mui/lab/LoadingButton";
+import SearchIcon from "@mui/icons-material/Search";
 import axios from "axios";
+import { display } from "@mui/system";
 
 const visuallyHidden = {
   position: "absolute",
@@ -32,6 +34,8 @@ const visuallyHidden = {
 const AgencyListEmployee = () => {
   //Return componente jsx
 
+
+  const [searchTerm, setSearchTerm] = useState('');
   const [data, setData] = useState([]); // States
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("employee_id");
@@ -166,10 +170,19 @@ const AgencyListEmployee = () => {
     setSnackbarOpen(false);
   };
 
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredData = visibleRows.filter((row) =>
+  row.employee_id.toString().includes(searchTerm)
+);
+
+
 
   return (
     <Grid container>
-      <Grid item xs={4}>
+      <Grid item xs={12} sx={{display:'flex',alignContent:'center',marginX: "1em", marginTop: "1em",justifyContent:'space-between'}}>
         <LoadingButton
           loading={loading}
           loadingPosition="start"
@@ -177,11 +190,26 @@ const AgencyListEmployee = () => {
           variant="contained"
           color="primary"
           onClick={handleSavePresence}
-          sx={{ marginX: "1em", marginTop: "1em" }}
+          sx={{  }}
         >
           <span>Salvar no banco de dados</span>
         </LoadingButton>
-      </Grid>
+      <TextField
+          label="Search by Employee ID"
+          variant="outlined"
+          size="small"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          sx={{}}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+          />
+          </Grid>
       <Grid item xs={12}>
         <TableContainer sx={{ paddingX: "1em", marginTop: "1em" }}>
           <Table>
@@ -224,7 +252,7 @@ const AgencyListEmployee = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {visibleRows.map((row, index) => {
+              {filteredData.map((row, index) => {
                 const isItemSelected = isSelected(row.employee_id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
