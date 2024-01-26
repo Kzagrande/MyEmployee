@@ -33,9 +33,9 @@ app.use('/verify', verifyUser, (req, res) => {
 });
 
 // Rota para lidar com rotas não encontradas
-app.use((req, res, next) => {
-    return res.status(404).json({ Status: false, Error: "Route not found" });
-});
+// app.use((req, res, next) => {
+//     return res.status(404).json({ Status: false, Error: "Route not found" });
+// });
 
 // Middleware para lidar com erros internos do servidor
 app.use(errorHandler);

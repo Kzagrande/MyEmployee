@@ -36,4 +36,17 @@ router.get("/export_agency", (req, res) => {
   UploadController.exportAgency(req, res);
 });
 
+router.get("/list_employee", (req, res) => {
+  UploadController.listEmployee(req, res);
+});
+
+router.post("/set_presence", async (req, res) => {
+  try {
+    await UploadController.setPresence(req, res);
+  } catch (err) {
+    console.error("Erro durante o upload de agências:", err);
+    res.status(500).send(err.message);
+  }
+});
+
 export { router as agencyRouter };

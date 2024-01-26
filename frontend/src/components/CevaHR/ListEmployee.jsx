@@ -62,7 +62,7 @@ const EnhancedTable = () => { //Return componente jsx
     { id: 'role_', numeric: false, disablePadding: false, label: 'Role' },
     { id: 'bu', numeric: false, disablePadding: false, label: 'Business Unit' },
     { id: 'shift', numeric: false, disablePadding: false, label: 'Shift' },
-    { id: 'schedule_time', numeric: false, disablePadding: false, label: 'Schedule Time' },
+
     { id: 'company', numeric: false, disablePadding: false, label: 'Company' },
     { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
     { id: 'hire_date', numeric: false, disablePadding: false, label: 'Hire Date' },
