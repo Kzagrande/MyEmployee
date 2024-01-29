@@ -13,7 +13,11 @@ import {
   TableSortLabel,
   Grid,
   InputAdornment,
-  TextField} from "@mui/material";
+  Select,
+  TextField,
+  MenuItem,
+  Box
+} from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SearchIcon from "@mui/icons-material/Search";
@@ -45,6 +49,9 @@ const AgencyListEmployee = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [msgEP, msgEPData] = useState("");
   const [loading, setLoading] = useState(false);
+  const [uniqueCompanies, setUniqueCompanies] = useState([]);
+  const [companyFilter, setCompanyFilter] = useState('');
+  const [dateFilter, setDateFilter] = useState('');
 
 
   useEffect(() => {
@@ -55,8 +62,12 @@ const AgencyListEmployee = () => {
     try {
       const response = await axios.get(
         "http://localhost:3001/agency/list_employee"
-      ); // Get ep and return data from agency_input_activies
+      ); // Get ep and return data from employee_register
       setData(response.data);
+
+      const uniqueCompanies = [...new Set(response.data.map(row => row.company))];
+      setUniqueCompanies(uniqueCompanies);
+
     } catch (error) {
       console.error("Error in the request:", error);
     }
@@ -81,6 +92,7 @@ const AgencyListEmployee = () => {
     { id: "bu", numeric: false, disablePadding: false, label: "Business Unit" },
     { id: "shift", numeric: false, disablePadding: false, label: "Shift" },
     { id: "company", numeric: false, disablePadding: false, label: "Company" },
+
   ];
 
   const descendingComparator = (a, b, orderBy) =>
@@ -142,13 +154,13 @@ const AgencyListEmployee = () => {
 
   const handleSavePresence = () => {
     setLoading(true);
-    console.log('selected-->',selected);
+    // console.log('selected-->', selected);
     axios
       .post("http://localhost:3001/agency/set_presence", {
         ids: selected
       })
       .then((response) => {
-        console.log('response.data-->', response.data);
+        // console.log('response.data-->', response.data);
         msgEPData(response.data.message);
         setSnackbarOpen(true); // Open the Snackbar on success
         setLoading(false);
@@ -174,15 +186,65 @@ const AgencyListEmployee = () => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredData = visibleRows.filter((row) =>
-  row.employee_id.toString().includes(searchTerm)
-);
+  const formattedDateFilter = dateFilter; // Ajuste conforme necessário
 
+  const filteredData = visibleRows.filter((row) =>
+    row.employee_id.toString().includes(searchTerm) &&
+    (companyFilter === '' || row.company.toLowerCase().includes(companyFilter.toLowerCase())) &&
+    (formattedDateFilter === '' ||
+      (row.integration_day && row.integration_day.substring(0, 10) === formattedDateFilter))
+  );
 
 
   return (
     <Grid container>
-      <Grid item xs={12} sx={{display:'flex',alignContent:'center',marginX: "1em", marginTop: "1em",justifyContent:'space-between'}}>
+      <Grid item xs={12} sx={{ display: 'flex', alignContent: 'center', marginX: "1em", marginTop: "1em", justifyContent: 'space-between' }}>
+        <Box>
+          <TextField
+            label="Search by Employee ID"
+            variant="outlined"
+            size="small"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            sx={{}}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Select
+            label="Filter by Company"
+            variant="outlined"
+            size="small"
+            value={companyFilter}
+            onChange={(e) => setCompanyFilter(e.target.value)}
+            sx={{ marginLeft: "1em", minWidth: "150px" }}
+          >
+            <MenuItem value="">All Companies</MenuItem>
+            {uniqueCompanies.map((company) => (
+              <MenuItem key={company} value={company}>
+                {company}
+              </MenuItem>
+            ))}
+          </Select>
+          <TextField
+            label="Filter by Integration Day"
+            type="date"
+            variant="outlined"
+            size="small"
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            sx={{ marginLeft: "1em" }}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+
+
+        </Box>
         <LoadingButton
           loading={loading}
           loadingPosition="start"
@@ -190,26 +252,11 @@ const AgencyListEmployee = () => {
           variant="contained"
           color="primary"
           onClick={handleSavePresence}
-          sx={{  }}
+          sx={{}}
         >
           <span>Salvar no banco de dados</span>
         </LoadingButton>
-      <TextField
-          label="Search by Employee ID"
-          variant="outlined"
-          size="small"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          sx={{}}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-          />
-          </Grid>
+      </Grid>
       <Grid item xs={12}>
         <TableContainer sx={{ paddingX: "1em", marginTop: "1em" }}>
           <Table>
@@ -295,7 +342,7 @@ const AgencyListEmployee = () => {
             </TableBody>
           </Table>
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
+            rowsPerPageOptions={[5, 10, 25, 50, 100]}
             component="div"
             count={data.length}
             rowsPerPage={rowsPerPage}
@@ -305,19 +352,19 @@ const AgencyListEmployee = () => {
           />
         </TableContainer>
         <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert
+          open={snackbarOpen}
+          autoHideDuration={3000}
           onClose={handleSnackbarClose}
-          severity={
-            msgEP === "Registros inseridos com sucesso" ? "success" : "error"
-          }
         >
-          {msgEP}
-        </Alert>
-      </Snackbar>
+          <Alert
+            onClose={handleSnackbarClose}
+            severity={
+              msgEP === "Registros inseridos com sucesso" ? "success" : "error"
+            }
+          >
+            {msgEP}
+          </Alert>
+        </Snackbar>
       </Grid>
     </Grid>
   );

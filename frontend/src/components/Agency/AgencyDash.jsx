@@ -80,7 +80,7 @@ const AgencyDash = () => {
                 >
                   <i className="bi bi-table"></i>{" "}
                   <span className="ms-1 d-none d-sm-inline">
-                    Listar Colaboradores
+                    Lista  de presença
                   </span>{" "}
                 </Link>
               </li>

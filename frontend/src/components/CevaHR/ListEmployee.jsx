@@ -43,7 +43,7 @@ const EnhancedTable = () => { //Return componente jsx
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/auth/list_employee'); // Get ep and return data from agency_input_activies
+      const response = await axios.get('http://localhost:3001/auth/list_employee'); // Get ep and return data from employee_register
       setData(response.data);
     } catch (error) {
       console.error('Error in the request:', error);

@@ -71,7 +71,7 @@ class UploadController {
       } = req.body;
 
       const sql = `
-        INSERT INTO employees.agency_input_activies
+        INSERT INTO employees.employee_register
         (employee_id, name, cpf, role_, bu, shift, schedule_time, company, status, hire_date, date_of_birth, ethnicity, gender, neighborhood, city, email, phone)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
@@ -237,7 +237,7 @@ class UploadController {
                 token: process.env.SLACK_BOT_TOKEN,
                 channel: process.env.SLACK_CHANNEL,
                 text:
-                  this.dbTable == "agency_input_activies"
+                  this.dbTable == "employee_register"
                     ? "A Agência X acabou de subir as informações dos novos colaboradores 😁"
                     : "A Agência x acabou de subir as informações dos novos desligados 😪",
               });
@@ -262,7 +262,7 @@ class UploadController {
   async exportAgency(req, res) {
     try {
       const data = await this.executeQuery(
-        "SELECT * FROM employees.agency_input_activies"
+        "SELECT * FROM employees.employee_register"
       );
       const jsonData = JSON.parse(JSON.stringify(data));
 
@@ -304,7 +304,7 @@ class UploadController {
   async listEmployee(req, res) {
     try {
       const data = await this.executeQuery(
-        "SELECT * FROM employees.agency_input_activies WHERE presence_integration IS NULL"
+        "SELECT * FROM employees.employee_register WHERE presence_integration IS NULL"
       );
       res.status(200).json(data);
     } catch (err) {
@@ -330,7 +330,7 @@ class UploadController {
     try {
       // Crie a consulta SQL diretamente com os valores da lista
       const updateQuery = `
-        UPDATE employees.agency_input_activies
+        UPDATE employees.employee_register
         SET presence_integration = '${presenceStatus}'
         WHERE employee_id IN (${presenceList.join(",")})
       `;

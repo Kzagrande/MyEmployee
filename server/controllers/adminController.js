@@ -51,7 +51,7 @@ class AdminController {
       } = req.body;
 
       const sql = `
-            INSERT INTO employees.agency_input_activies
+            INSERT INTO employees.employee_register
             (   employee_id,
               name,
               cpf,
@@ -108,7 +108,7 @@ class AdminController {
 
 
   listEmployee = (req, res) => {
-    const query = 'SELECT * FROM employees.agency_input_activies';
+    const query = 'SELECT * FROM employees.employee_register';
 
     con.query(query, (error, results) => {
       if (error) {

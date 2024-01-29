@@ -29,7 +29,7 @@ const AgencyInputEmployee = () => {
     axios
       .post("http://localhost:3001/agency/upload_agency", {
         csvFile: csvData,
-        dbTable: "agency_input_activies",
+        dbTable: "employee_register",
       })
       .then((response) => {
         msgEPData(response.data);
