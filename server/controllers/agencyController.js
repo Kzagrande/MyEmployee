@@ -304,7 +304,7 @@ class UploadController {
   async listEmployee(req, res) {
     try {
       const data = await this.executeQuery(
-        "SELECT * FROM employees.employee_register WHERE presence_integration IS NULL"
+        "SELECT * FROM employees.employee_register"
       );
       res.status(200).json(data);
     } catch (err) {

@@ -164,7 +164,7 @@ const AgencyListEmployee = () => {
         msgEPData(response.data.message);
         setSnackbarOpen(true); // Open the Snackbar on success
         setLoading(false);
-        fetchData()
+        // fetchData()
       })
       .catch((error) => {
         // console.error('error.response.data -->', error.response.data);
