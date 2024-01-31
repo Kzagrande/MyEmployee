@@ -280,7 +280,7 @@ const AgencyListEmployee = () => {
           onClick={handleSavePresence}
           sx={{}}
         >
-          <span>Salvar no banco de dados</span>
+          <span>Presentes</span>
         </LoadingButton>
       </Grid>
       <Grid item xs={12}>

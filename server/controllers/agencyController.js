@@ -117,62 +117,60 @@ class UploadController {
     }
   }
 
+  async createAndSendCSV(dadosCSV, to, from, templateId, dynamicTemplateData) {
+    const csvWriter = createArrayCsvWriter({
+      path: "temp.csv",
+      header: dadosCSV[0],
+    });
+    const sliceHeader = dadosCSV.slice(1, -1);
+    try {
+      await csvWriter.writeRecords(sliceHeader);
+
+      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+      const msg = {
+        to: Array.isArray(to) ? to : [to],
+        from: {
+          name: from.name,
+          email: from.email,
+        },
+        templateId: templateId,
+        dynamicTemplateData: {
+          name: dynamicTemplateData.name,
+        },
+        attachments: [
+          {
+            content: (await fs.readFile("temp.csv")).toString("base64"),
+            filename: "data.csv",
+            type: "application/csv",
+            disposition: "attachment",
+          },
+        ],
+      };
+
+      await sgMail.send(msg);
+
+      console.log("E-mail enviado com sucesso!");
+
+    } catch (error) {
+      console.error("Erro ao criar e enviar o CSV por e-mail:", error);
+
+      if (error.response) {
+        console.error(error.response.body);
+      }
+    }
+  };
+
+
   async uploadAgency(req, res) {
     const dadosCSV = req.body.csvFile;
     this.dbTable = req.body.dbTable;
     this.validateInput(dadosCSV);
-
-    console.log("");
-    const csvWriter = createArrayCsvWriter({
-      path: "temp.csv", // Especifique o caminho e o nome do arquivo temporário
-      header: dadosCSV[0],
-    });
-
-    // console.log('CSV',dadosCSV)
-    const sliceHeader = dadosCSV.slice(1, -1);
-    await csvWriter.writeRecords(sliceHeader);
-
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-    const msg = {
-      to: ["yan.bortoleto@cevalogistics.com"],
-      from: {
-        name: "Yan",
-        email: "bortoletoyan@gmail.com",
-      },
-      templateId: "d-95083a36e91245949cffc5d3fccfbcf4",
-      dynamicTemplateData: {
-        name: "Yan",
-      },
-      attachments: [
-        {
-          content: (await fs.readFile("temp.csv")).toString("base64"),
-          filename: "data.csv",
-          type: "application/csv",
-          disposition: "attachment",
-        },
-      ],
-    };
-
-    (async () => {
-      try {
-        console.log("OPA ENTREI AQUI EM -->");
-        await sgMail.send(msg);
-      } catch (error) {
-        console.error(error);
-
-        if (error.response) {
-          console.error(error.response.body);
-        }
-      }
-    })();
+    this.createAndSendCSV(dadosCSV, "yan.bortoleto@cevalogistics.com", { name: "Yan", email: "bortoletoyan@gmail.com" }, "d-95083a36e91245949cffc5d3fccfbcf4", { name: "Yan" })
 
     try {
-      // Remover o cabeçalho do CSV
-      
       dadosCSV.shift();
       dadosCSV.pop();
-
-      // Mapear registros para modelos de agência
       const agencyModels = dadosCSV.map(
         (registro) =>
           new AgencyModel({
@@ -198,17 +196,11 @@ class UploadController {
             integration_date: new Date(registro[19]),
           })
       );
-      console.log(dadosCSV
-        .map((registro) => new AgencyModel({ cpf: registro[2] }))
-        .filter((model) => model.cpf === undefined)
-      );
-      
-      // Inserir registros em lote
-      
+
       await this.insertRecords(this.dbTable, agencyModels);
       res.send("Registros inseridos com sucesso");
     } catch (err) {
-      // console.error("Erro durante o processamento do CSV:", err);
+      console.error("Erro durante o processamento do CSV:", err);
       res.status(500).send(err.message);
     }
   }
@@ -227,14 +219,14 @@ class UploadController {
         gender, neighborhood, city, email, phone,integration_date
       ) VALUES ?`;
 
-    
+
     const values = agencyModels.map((agencyModel) =>
       Object.values(agencyModel)
     );
 
     try {
       await new Promise((resolve, reject) => {
-        
+
         con.query(insertQuery, [values], (err, result) => {
           if (err) {
             reject(err);
@@ -263,7 +255,7 @@ class UploadController {
         });
       });
     } catch (error) {
-      // console.error("Erro durante a inserção dos registros:", error);
+      console.error("Erro durante a inserção dos registros:", error);
       throw error;
     }
   }
@@ -274,8 +266,6 @@ class UploadController {
         "SELECT * FROM employees.employee_register"
       );
       const jsonData = JSON.parse(JSON.stringify(data));
-
-      const utf8Data = iconv.encode(JSON.stringify(jsonData), "utf-8");
 
       res.setHeader(
         "Content-Disposition",
@@ -290,6 +280,7 @@ class UploadController {
           console.log("Enviado com sucesso para o usuário!");
         })
         .pipe(res); // Pipe para o response diretamente
+        console.log(res)
     } catch (err) {
       console.error("Erro:", err);
       return res
@@ -346,6 +337,7 @@ class UploadController {
 
       // Execute a consulta
       await this.executeQuery(updateQuery);
+      
 
       return res.json({
         status: true,

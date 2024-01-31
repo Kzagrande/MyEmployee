@@ -3,15 +3,11 @@ import express from "express";
 import cors from 'cors';
 import cookieParser from "cookie-parser";
 import bodyParser from 'body-parser';
-
 import { adminRouter } from "./routes/AdminRoute.js";
 import { planningRouter } from "./routes/PlanningRoute.js";
 import { agencyRouter } from "./routes/AgencyRoute.js";
-
-
 import errorHandler from "./middleware/errorHandler.js";
 import verifyUser from "./middleware/verifyUser.js";
-
 
 const app = express();
 
