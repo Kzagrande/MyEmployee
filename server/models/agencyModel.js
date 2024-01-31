@@ -1,6 +1,6 @@
 // models/agencyModel.js
 class AgencyModel {
-    constructor({ employee_id, name, cpf, role_, bu, shift, schedule_time, company, status, hire_date, date_of_birth, termination_date, reason, ethnicity, gender, neighborhood, city, email, phone }) {
+    constructor({ employee_id, name, cpf, role_, bu, shift, schedule_time, company, status, hire_date, date_of_birth, termination_date, reason, ethnicity, gender, neighborhood, city, email, phone,integration_date }) {
       this.employee_id = employee_id;
       this.name = name;
       this.cpf = cpf;
@@ -20,6 +20,7 @@ class AgencyModel {
       this.city = city;
       this.email = email;
       this.phone = phone;
+      this.integration_date = integration_date;
     }
   
     // Métodos adicionais, se necessário

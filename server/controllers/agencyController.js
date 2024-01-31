@@ -168,6 +168,7 @@ class UploadController {
 
     try {
       // Remover o cabeçalho do CSV
+      
       dadosCSV.shift();
       dadosCSV.pop();
 
@@ -197,8 +198,13 @@ class UploadController {
             integration_date: new Date(registro[19]),
           })
       );
-
+      console.log(dadosCSV
+        .map((registro) => new AgencyModel({ cpf: registro[2] }))
+        .filter((model) => model.cpf === undefined)
+      );
+      
       // Inserir registros em lote
+      
       await this.insertRecords(this.dbTable, agencyModels);
       res.send("Registros inseridos com sucesso");
     } catch (err) {
@@ -221,13 +227,14 @@ class UploadController {
         gender, neighborhood, city, email, phone,integration_date
       ) VALUES ?`;
 
+    
     const values = agencyModels.map((agencyModel) =>
       Object.values(agencyModel)
     );
 
     try {
       await new Promise((resolve, reject) => {
-        console.log(values)
+        
         con.query(insertQuery, [values], (err, result) => {
           if (err) {
             reject(err);
