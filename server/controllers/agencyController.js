@@ -158,8 +158,7 @@ class UploadController {
         console.log("OPA ENTREI AQUI EM -->");
         await sgMail.send(msg);
       } catch (error) {
-        console.error(error);
-
+        console.error('FOI ESSE ERRO AQUI -->',error);
         if (error.response) {
           console.error(error.response.body);
         }
@@ -208,7 +207,7 @@ class UploadController {
       await this.insertRecords(this.dbTable, agencyModels);
       res.send("Registros inseridos com sucesso");
     } catch (err) {
-      // console.error("Erro durante o processamento do CSV:", err);
+      console.error("Erro durante o processamento do CSV:", err);
       res.status(500).send(err.message);
     }
   }
@@ -263,7 +262,7 @@ class UploadController {
         });
       });
     } catch (error) {
-      // console.error("Erro durante a inserção dos registros:", error);
+      console.error("Erro durante a inserção dos registros:", error);
       throw error;
     }
   }

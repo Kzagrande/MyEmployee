@@ -92,7 +92,7 @@ const AgencyListEmployee = () => {
     { id: "bu", numeric: false, disablePadding: false, label: "Business Unit" },
     { id: "shift", numeric: false, disablePadding: false, label: "Shift" },
     { id: "company", numeric: false, disablePadding: false, label: "Company" },
-    { id: "integration_date", numeric: false, disablePadding: false, label: "Integration Date"},
+    { id: "integration_date", numeric: false, disablePadding: false, label: "Integration Date" },
   ];
 
   const descendingComparator = (a, b, orderBy) =>
@@ -234,7 +234,7 @@ const AgencyListEmployee = () => {
             size="small"
             value={searchTerm}
             onChange={handleSearchChange}
-            sx={{ marginLeft: "1em",}}
+            sx={{ marginLeft: "1em", }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -280,7 +280,7 @@ const AgencyListEmployee = () => {
           onClick={handleSavePresence}
           sx={{}}
         >
-          <span>Salvar no banco de dados</span>
+          <span>Dar Presença</span>
         </LoadingButton>
       </Grid>
       <Grid item xs={12}>
