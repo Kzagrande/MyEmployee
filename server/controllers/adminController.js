@@ -108,7 +108,7 @@ class AdminController {
 
 
   listEmployee = (req, res) => {
-    const query = 'SELECT * FROM employees.employee_register';
+    const query = 'SELECT * FROM employees.employee_register WHERE presence_integration IS NULL';
 
     con.query(query, (error, results) => {
       if (error) {

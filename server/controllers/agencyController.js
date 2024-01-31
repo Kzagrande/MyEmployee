@@ -194,6 +194,7 @@ class UploadController {
             city: registro[16],
             email: registro[17],
             phone: registro[18],
+            integration_date: new Date(registro[19]),
           })
       );
 
@@ -201,7 +202,7 @@ class UploadController {
       await this.insertRecords(this.dbTable, agencyModels);
       res.send("Registros inseridos com sucesso");
     } catch (err) {
-      console.error("Erro durante o processamento do CSV:", err);
+      // console.error("Erro durante o processamento do CSV:", err);
       res.status(500).send(err.message);
     }
   }
@@ -217,7 +218,7 @@ class UploadController {
       INSERT INTO employees.${table}(
         employee_id, name, cpf, role_, bu, shift, schedule_time, company,
         status, hire_date, date_of_birth, termination_date, reason, ethnicity,
-        gender, neighborhood, city, email, phone
+        gender, neighborhood, city, email, phone,integration_date
       ) VALUES ?`;
 
     const values = agencyModels.map((agencyModel) =>
@@ -226,6 +227,7 @@ class UploadController {
 
     try {
       await new Promise((resolve, reject) => {
+        console.log(values)
         con.query(insertQuery, [values], (err, result) => {
           if (err) {
             reject(err);
@@ -254,7 +256,7 @@ class UploadController {
         });
       });
     } catch (error) {
-      console.error("Erro durante a inserção dos registros:", error);
+      // console.error("Erro durante a inserção dos registros:", error);
       throw error;
     }
   }
@@ -304,7 +306,7 @@ class UploadController {
   async listEmployee(req, res) {
     try {
       const data = await this.executeQuery(
-        "SELECT * FROM employees.employee_register"
+        "SELECT * FROM employees.employee_register WHERE presence_integration IS NULL"
       );
       res.status(200).json(data);
     } catch (err) {
@@ -325,7 +327,7 @@ class UploadController {
       return res.status(500).json({ status: false, error: error.message })
     }
 
-    const presenceStatus = "PRESENTE";
+    const presenceStatus = "PRESENT";
 
     try {
       // Crie a consulta SQL diretamente com os valores da lista

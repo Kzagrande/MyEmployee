@@ -16,7 +16,7 @@ import {
   Select,
   TextField,
   MenuItem,
-  Box
+  Box,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -38,8 +38,7 @@ const visuallyHidden = {
 const AgencyListEmployee = () => {
   //Return componente jsx
 
-
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [data, setData] = useState([]); // States
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("employee_id");
@@ -50,9 +49,9 @@ const AgencyListEmployee = () => {
   const [msgEP, msgEPData] = useState("");
   const [loading, setLoading] = useState(false);
   const [uniqueCompanies, setUniqueCompanies] = useState([]);
-  const [companyFilter, setCompanyFilter] = useState('');
-  const [dateFilter, setDateFilter] = useState('');
-
+  const [companyFilter, setCompanyFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState("");
+  const [nameFilter, setNameFilter] = useState("");
 
   useEffect(() => {
     fetchData(); //When components start apply this function
@@ -65,9 +64,10 @@ const AgencyListEmployee = () => {
       ); // Get ep and return data from employee_register
       setData(response.data);
 
-      const uniqueCompanies = [...new Set(response.data.map(row => row.company))];
+      const uniqueCompanies = [
+        ...new Set(response.data.map((row) => row.company)),
+      ];
       setUniqueCompanies(uniqueCompanies);
-
     } catch (error) {
       console.error("Error in the request:", error);
     }
@@ -92,7 +92,7 @@ const AgencyListEmployee = () => {
     { id: "bu", numeric: false, disablePadding: false, label: "Business Unit" },
     { id: "shift", numeric: false, disablePadding: false, label: "Shift" },
     { id: "company", numeric: false, disablePadding: false, label: "Company" },
-
+    { id: "integration_date", numeric: false, disablePadding: false, label: "Integration Date"},
   ];
 
   const descendingComparator = (a, b, orderBy) =>
@@ -157,14 +157,14 @@ const AgencyListEmployee = () => {
     // console.log('selected-->', selected);
     axios
       .post("http://localhost:3001/agency/set_presence", {
-        ids: selected
+        ids: selected,
       })
       .then((response) => {
         // console.log('response.data-->', response.data);
         msgEPData(response.data.message);
         setSnackbarOpen(true); // Open the Snackbar on success
         setLoading(false);
-        // fetchData()
+        fetchData()
       })
       .catch((error) => {
         // console.error('error.response.data -->', error.response.data);
@@ -188,25 +188,53 @@ const AgencyListEmployee = () => {
 
   const formattedDateFilter = dateFilter; // Ajuste conforme necessário
 
-  const filteredData = visibleRows.filter((row) =>
-    row.employee_id.toString().includes(searchTerm) &&
-    (companyFilter === '' || row.company.toLowerCase().includes(companyFilter.toLowerCase())) &&
-    (formattedDateFilter === '' ||
-      (row.integration_day && row.integration_day.substring(0, 10) === formattedDateFilter))
+  const filteredData = visibleRows.filter(
+    (row) =>
+      row.name.toLowerCase().includes(nameFilter.toLowerCase()) &&
+      row.employee_id.toString().includes(searchTerm) &&
+      (companyFilter === "" ||
+        row.company.toLowerCase().includes(companyFilter.toLowerCase())) &&
+      (formattedDateFilter === "" ||
+        (row.integration_date &&
+          row.integration_date.substring(0, 10) === formattedDateFilter))
   );
-
 
   return (
     <Grid container>
-      <Grid item xs={12} sx={{ display: 'flex', alignContent: 'center', marginX: "1em", marginTop: "1em", justifyContent: 'space-between' }}>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          display: "flex",
+          alignContent: "center",
+          marginX: "1em",
+          marginTop: "1em",
+          justifyContent: "space-between",
+        }}
+      >
         <Box>
+          <TextField
+            label="Search by Name"
+            variant="outlined"
+            size="small"
+            value={nameFilter}
+            onChange={(e) => setNameFilter(e.target.value)}
+            sx={{}}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
           <TextField
             label="Search by Employee ID"
             variant="outlined"
             size="small"
             value={searchTerm}
             onChange={handleSearchChange}
-            sx={{}}
+            sx={{ marginLeft: "1em",}}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -242,8 +270,6 @@ const AgencyListEmployee = () => {
               shrink: true,
             }}
           />
-
-
         </Box>
         <LoadingButton
           loading={loading}
