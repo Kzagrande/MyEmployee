@@ -92,7 +92,12 @@ const AgencyListEmployee = () => {
     { id: "bu", numeric: false, disablePadding: false, label: "Business Unit" },
     { id: "shift", numeric: false, disablePadding: false, label: "Shift" },
     { id: "company", numeric: false, disablePadding: false, label: "Company" },
-    { id: "integration_date", numeric: false, disablePadding: false, label: "Integration Date"},
+    {
+      id: "integration_date",
+      numeric: false,
+      disablePadding: false,
+      label: "Integration Date",
+    },
   ];
 
   const descendingComparator = (a, b, orderBy) =>
@@ -164,7 +169,7 @@ const AgencyListEmployee = () => {
         msgEPData(response.data.message);
         setSnackbarOpen(true); // Open the Snackbar on success
         setLoading(false);
-        fetchData()
+        fetchData();
       })
       .catch((error) => {
         // console.error('error.response.data -->', error.response.data);
@@ -212,7 +217,19 @@ const AgencyListEmployee = () => {
           justifyContent: "space-between",
         }}
       >
-        <Box>
+                <LoadingButton
+            loading={loading}
+            loadingPosition="start"
+            startIcon={<SaveIcon />}
+            variant="contained"
+            color="success"
+            onClick={handleSavePresence}
+            sx={{}}
+          >
+            <span>Presentes</span>
+          </LoadingButton>
+        <Box sx={{display:'flex',justifyContent:'space-between',alignContent:'baseline',gap:'1em'}}>
+
           <TextField
             label="Search by Name"
             variant="outlined"
@@ -234,7 +251,7 @@ const AgencyListEmployee = () => {
             size="small"
             value={searchTerm}
             onChange={handleSearchChange}
-            sx={{ marginLeft: "1em",}}
+            sx={{ marginLeft: "1em" }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -271,17 +288,6 @@ const AgencyListEmployee = () => {
             }}
           />
         </Box>
-        <LoadingButton
-          loading={loading}
-          loadingPosition="start"
-          startIcon={<SaveIcon />}
-          variant="contained"
-          color="primary"
-          onClick={handleSavePresence}
-          sx={{}}
-        >
-          <span>Presentes</span>
-        </LoadingButton>
       </Grid>
       <Grid item xs={12}>
         <TableContainer sx={{ paddingX: "1em", marginTop: "1em" }}>
@@ -367,6 +373,7 @@ const AgencyListEmployee = () => {
               )}
             </TableBody>
           </Table>
+
           <TablePagination
             rowsPerPageOptions={[5, 10, 25, 50, 100]}
             component="div"
@@ -376,6 +383,7 @@ const AgencyListEmployee = () => {
             onPageChange={(event, newPage) => handleChangePage(event, newPage)}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
+
         </TableContainer>
         <Snackbar
           open={snackbarOpen}

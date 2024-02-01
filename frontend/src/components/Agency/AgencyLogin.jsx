@@ -23,7 +23,7 @@ const AgencyLogin = () => {
       .post("http://localhost:3001/agency/agency_login", values)
       .then((result) => {
         if (result.data.loginStatus) {
-          navigate("/agency_dashboard");
+          navigate("/agency_dashboard/add_agency_employee");
         } else {
           setError(result.data.Error);
         }

@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import {
-  Container,
   Grid,
-  Card,
-  CardContent,
+  Typography,
   TextField,
   Snackbar,
   Alert,
-  CardHeader,
+
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import LoadingButton from "@mui/lab/LoadingButton";
 import CSVReader from "react-csv-reader";
 import axios from "axios";
+import EnhancedTable from "./AgencyListEmployee";
+import { Box } from "@mui/system";
 
 const AgencyInputEmployee = () => {
   const [msgEP, msgEPData] = useState("");
@@ -72,23 +72,19 @@ const AgencyInputEmployee = () => {
   };
 
   return (
-    <Container>
-      <Grid
-        container
-        justifyContent="center"
-        alignItems="center"
-        style={{ minHeight: "100vh" }}
-      >
+    <Box>
+      <Grid  alignItems="center" >
         <Grid
           item
           xs={12}
           md={10}
-          sx={{ display: "flex", flexDirection: "row", gap: "3em" }}
+          sx={{ display: "flex", flexDirection: "row", gap: "3em",placeContent:'space-between',marginBottom:'3em' }}
         >
-          <Card variant="outlined" sx={{ backgroundColor: "#f5f5f5" }}>
-            <CardHeader title="Importar base novos ativos" />
-            <CardContent sx={{ display: "flex", flexDirection: "column" }}>
-              <form style={{ display: "flex", flexDirection: "column" }}>
+                <Typography variant="h4" >
+        Integrações
+      </Typography>
+          <Box sx={{display:'flex',justifyContent:'space-between',alignContent:'baseline',gap:'1em'}}>
+              <form style={{  }}>
                 <TextField
                   label="CSV File"
                   fullWidth
@@ -101,48 +97,42 @@ const AgencyInputEmployee = () => {
                     ),
                   }}
                 />
-                <LoadingButton
+
+              </form>
+              <LoadingButton
                   loading={loading}
                   loadingPosition="start"
                   startIcon={<SaveIcon />}
                   variant="contained"
                   color="primary"
                   onClick={handleSaveToDatabase}
-                  style={{ marginTop: "16px" }}
+                 sx={{marginY:'1em'}}
                 >
                   <span>Salvar no banco de dados</span>
                 </LoadingButton>
-              </form>
-            </CardContent>
-          </Card>
-
-          <Card
-            variant="outlined"
-            sx={{
-              backgroundColor: "#f5f5f5",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}
-          >
-            <CardHeader title="Exportar dados de integração" />
-            <CardContent sx={{ display: "flex", flexDirection: "column" }}>
-              <form style={{ display: "flex", flexDirection: "column" }}>
-                <LoadingButton
+                <LoadingButton                
                   loadingPosition="start"
                   startIcon={<SaveIcon />}
                   variant="contained"
                   color="primary"
                   onClick={handleExportAgency}
+                  sx={{marginY:'1em'}}
                 >
                   <span>Export</span>
                 </LoadingButton>
-              </form>
-            </CardContent>
-          </Card>
+              </Box>
+
+
         </Grid>
       </Grid>
-
+      <Grid
+        item
+        xs={12}
+        md={10}
+        sx={{ display: "flex", flexDirection: "row", gap: "3em" }}
+      >
+        <EnhancedTable />
+      </Grid>
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={3000}
@@ -157,7 +147,7 @@ const AgencyInputEmployee = () => {
           {msgEP}
         </Alert>
       </Snackbar>
-    </Container>
+    </Box>
   );
 };
 
