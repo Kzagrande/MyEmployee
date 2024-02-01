@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 import Slack from "@slack/bolt";
 import dotenv from "dotenv";
 import fastcsv from "fast-csv";
-import iconv from "iconv-lite";
 import sgMail from "@sendgrid/mail";
 import { createArrayCsvWriter } from "csv-writer";
 import fs from "fs/promises";
@@ -117,7 +116,72 @@ class UploadController {
     }
   }
 
+
+  async uploadAgency(req, res) {
+    const dadosCSV = req.body.csvFile;
+    this.dbTable = req.body.dbTable;
+    this.validateInput(dadosCSV);
+
+    try {
+      dadosCSV.shift();
+      dadosCSV.pop();
+      const agencyModels = dadosCSV.map(
+        (registro) =>
+          new AgencyModel({
+            employee_id: registro[0],
+            name: registro[1],
+            cpf: registro[2],
+            role_: registro[3],
+            bu: registro[4],
+            shift: registro[5],
+            schedule_time: registro[6],
+            company: registro[7],
+            status: registro[8],
+            hire_date: new Date(registro[9]),
+            date_of_birth: new Date(registro[10]),
+            termination_date: new Date(registro[11]),
+            reason: registro[12],
+            ethnicity: registro[13],
+            gender: registro[14],
+            neighborhood: registro[15],
+            city: registro[16],
+            email: registro[17],
+            phone: registro[18],
+            integration_date: new Date(registro[19]),
+          })
+      );
+
+      await this.insertRecords(this.dbTable, agencyModels);
+      res.send("Registros inseridos com sucesso");
+
+      const mainHc = await this.fetchDataFromHcMain();
+      this.createAndSendCSV(
+        mainHc,
+        "yan.bortoleto@cevalogistics.com",
+        { name: "Yan", email: "bortoletoyan@gmail.com" },
+        "d-95083a36e91245949cffc5d3fccfbcf4",
+        { name: "Yan" }
+      );
+    } catch (err) {
+      console.error("Erro durante o processamento do CSV:", err);
+      res.status(500).send(err.message);
+    }
+  }
+
+  executeQuery(query) {
+    return new Promise((resolve, reject) => {
+      con.query(query, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  }
+
   async createAndSendCSV(dadosCSV, to, from, templateId, dynamicTemplateData) {
+    console.log(dadosCSV[0]);
     const csvWriter = createArrayCsvWriter({
       path: "temp.csv",
       header: dadosCSV[0],
@@ -151,7 +215,6 @@ class UploadController {
       await sgMail.send(msg);
 
       console.log("E-mail enviado com sucesso!");
-
     } catch (error) {
       console.error("Erro ao criar e enviar o CSV por e-mail:", error);
 
@@ -159,51 +222,38 @@ class UploadController {
         console.error(error.response.body);
       }
     }
-  };
-
-
-  async uploadAgency(req, res) {
-    const dadosCSV = req.body.csvFile;
-    this.dbTable = req.body.dbTable;
-    this.validateInput(dadosCSV);
-    this.createAndSendCSV(dadosCSV, "yan.bortoleto@cevalogistics.com", { name: "Yan", email: "bortoletoyan@gmail.com" }, "d-95083a36e91245949cffc5d3fccfbcf4", { name: "Yan" })
-
-    try {
-      dadosCSV.shift();
-      dadosCSV.pop();
-      const agencyModels = dadosCSV.map(
-        (registro) =>
-          new AgencyModel({
-            employee_id: registro[0],
-            name: registro[1],
-            cpf: registro[2],
-            role_: registro[3],
-            bu: registro[4],
-            shift: registro[5],
-            schedule_time: registro[6],
-            company: registro[7],
-            status: registro[8],
-            hire_date: new Date(registro[9]),
-            date_of_birth: new Date(registro[10]),
-            termination_date: new Date(registro[11]),
-            reason: registro[12],
-            ethnicity: registro[13],
-            gender: registro[14],
-            neighborhood: registro[15],
-            city: registro[16],
-            email: registro[17],
-            phone: registro[18],
-            integration_date: new Date(registro[19]),
-          })
-      );
-
-      await this.insertRecords(this.dbTable, agencyModels);
-      res.send("Registros inseridos com sucesso");
-    } catch (err) {
-      console.error("Erro durante o processamento do CSV:", err);
-      res.status(500).send(err.message);
-    }
   }
+  
+  async fetchDataFromHcMain() {
+    const selectQuery = `SELECT  name, cpf, rg, employee_id, company, role_, shift, bu, schedule_time, sector, manager, status, integration_date, email, frequency, absence_justification, signature
+    FROM employees.hc_main;
+    `;
+
+    return new Promise((resolve, reject) => {
+      con.query(selectQuery, (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          // Format the result as CSV-like array
+          const csvArray = [];
+
+          // Extract headers from the first row
+          const headers = Object.keys(result[0]);
+          csvArray.push(headers);
+
+          // Extract data rows
+          result.forEach((row) => {
+            const rowData = headers.map((header) => row[header]);
+            csvArray.push(rowData);
+          });
+
+          resolve(csvArray);
+        }
+      });
+    });
+
+}
+
 
   validateInput(data) {
     if (!data || data.length === 0) {
@@ -219,14 +269,12 @@ class UploadController {
         gender, neighborhood, city, email, phone,integration_date
       ) VALUES ?`;
 
-
     const values = agencyModels.map((agencyModel) =>
       Object.values(agencyModel)
     );
 
     try {
       await new Promise((resolve, reject) => {
-
         con.query(insertQuery, [values], (err, result) => {
           if (err) {
             reject(err);
@@ -280,7 +328,7 @@ class UploadController {
           console.log("Enviado com sucesso para o usuário!");
         })
         .pipe(res); // Pipe para o response diretamente
-        console.log(res)
+      console.log(res);
     } catch (err) {
       console.error("Erro:", err);
       return res
@@ -289,27 +337,17 @@ class UploadController {
     }
   }
 
-  executeQuery(query) {
-    return new Promise((resolve, reject) => {
-      con.query(query, (err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data);
-        }
-      });
-    });
-  }
+
 
   async listEmployee(req, res) {
     try {
       const data = await this.executeQuery(
-        "SELECT * FROM employees.employee_register WHERE presence_integration IS NULL"
+        "SELECT * FROM employees.hc_main WHERE signature IS NULL"
       );
       res.status(200).json(data);
     } catch (err) {
       console.error("Erro:", err);
-      return res.status(500).json({ status: false, error: err.message })
+      return res.status(500).json({ status: false, error: err.message });
     }
   }
 
@@ -322,7 +360,7 @@ class UploadController {
       !Array.isArray(presenceList) ||
       presenceList.length === 0
     ) {
-      return res.status(500).json({ status: false, error: error.message })
+      return res.status(500).json({ status: false, error: error.message });
     }
 
     const presenceStatus = "PRESENT";
@@ -330,24 +368,31 @@ class UploadController {
     try {
       // Crie a consulta SQL diretamente com os valores da lista
       const updateQuery = `
-        UPDATE employees.employee_register
-        SET presence_integration = '${presenceStatus}'
+        UPDATE employees.hc_main
+        SET signature = '${presenceStatus}'
         WHERE employee_id IN (${presenceList.join(",")})
       `;
 
       // Execute a consulta
       await this.executeQuery(updateQuery);
-      
-
+      const mainHc = await this.fetchDataFromHcMain();
+      this.createAndSendCSV(
+        mainHc,
+        "yan.bortoleto@cevalogistics.com",
+        { name: "Yan", email: "bortoletoyan@gmail.com" },
+        "d-eaf3e8a86d354c3090a764f706444b8d",
+        { name: "Yan" }
+      );
       return res.json({
         status: true,
         message: "Registros inseridos com sucesso",
       });
     } catch (err) {
       console.error("Erro ao marcar presença:", err);
-      return res.status(500).json({ status: false, err: error.message })
+      return res.status(500).json({ status: false, err: error.message });
     }
   }
-}
+
+  }
 
 export default new UploadController();
