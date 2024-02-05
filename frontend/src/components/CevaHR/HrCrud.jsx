@@ -2,28 +2,40 @@ import React, { useState } from "react";
 import {
   Grid,
   Typography,
-  TextField,
   Snackbar,
   Alert,
+  Modal,
+  Box,
+  Button,
 
 } from "@mui/material";
-import SaveIcon from "@mui/icons-material/Save";
+import PersonAddIcon  from "@mui/icons-material/PersonAdd";
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import LoadingButton from "@mui/lab/LoadingButton";
 import CSVReader from "react-csv-reader";
 import axios from "axios";
-import EmployeesTable from "./EmployeesTable";
-import { Box } from "@mui/system";
+import HrEmployeeTable from "./HrEmployeeTable";
+import HrAddForm from "./HrAddFomr";
 
 
-const AgencyInputEmployee = () => {
+const HrCrud = () => {
   const [msgEP, msgEPData] = useState("");
   const [csvData, setCsvData] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
 
-  const handleCsvData = (data) => {
-    setCsvData(data);
+  // const handleCsvData = (data) => {
+  //   setCsvData(data);
+  // };
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+  
+  const handleCloseModal = () => {
+    setOpenModal(false);
   };
 
   const handleSaveToDatabase = () => {
@@ -83,35 +95,20 @@ const AgencyInputEmployee = () => {
           sx={{ display: "flex", flexDirection: "row", gap: "3em", placeContent: 'space-between', marginTop: '.5em', marginBottom: '4em' }}
         >
           <Typography variant="h4" >
-            Integrações
+            Quadro de funcionários
           </Typography>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignContent: 'baseline', gap: '1em' }}>
-            <form style={{}}>
-              <TextField
-                label="CSV File"
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <CSVReader
-                      onFileLoaded={handleCsvData}
-                      cssClass="custom-csv-input"
-                    />
-                  ),
-                }}
-              />
-
-            </form>
-            <LoadingButton
+          <LoadingButton
               size="small"
               loading={loading}
               loadingPosition="start"
-              startIcon={<SaveIcon />}
+              startIcon={<PersonAddIcon />}
               variant="contained"
               color="primary"
-              onClick={handleSaveToDatabase}
+              onClick={handleOpenModal}
               sx={{}}
             >
-              <span>Salvar no banco de dados</span>
+              <span>Adicionar colaborador</span>
             </LoadingButton>
             <LoadingButton
               size="small"
@@ -135,7 +132,7 @@ const AgencyInputEmployee = () => {
         md={10}
         sx={{ display: "flex", flexDirection: "row", gap: "3em" }}
       >
-        <EmployeesTable />
+        <HrEmployeeTable />
       </Grid>
       <Snackbar
         open={snackbarOpen}
@@ -151,8 +148,19 @@ const AgencyInputEmployee = () => {
           {msgEP}
         </Alert>
       </Snackbar>
+      <Modal
+  open={openModal}
+  onClose={handleCloseModal}
+  aria-labelledby="add-employee-modal"
+  aria-describedby="form-for-adding-employee"
+>
+  <HrAddForm
+    employeeData={selectedEmployee}
+    onClose={handleCloseModal}
+  />
+</Modal>
     </Box>
   );
 };
 
-export default AgencyInputEmployee;
+export default HrCrud;

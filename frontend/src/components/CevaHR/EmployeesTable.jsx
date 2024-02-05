@@ -27,7 +27,7 @@ const visuallyHidden = {
   border: '0',
 };
 
-const EnhancedTable = () => { //Return componente jsx
+const EmployeesTable = () => { //Return componente jsx
 
   const [data, setData] = useState([]); // States 
   const [order, setOrder] = useState('asc');
@@ -223,4 +223,4 @@ const EnhancedTable = () => { //Return componente jsx
   );
 };
 
-export default EnhancedTable;
+export default EmployeesTable;

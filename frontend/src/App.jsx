@@ -2,11 +2,7 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import HrLogin from "./components/CevaHR/HrLogin";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
-import Dashboard from "./components/CevaHR/Dashboard";
-import ListEmployee from "./components/CevaHR/ListEmployee";
-import RestrictEmployee from "./components/RestrictEmployee";
 import Settings from "./components/Settings";
-import EmployeeForm from "./components/CevaHR/EmployeeForm";
 import Start from "./components/Start";
 import PlanningLogin from "./components/Planning/PlanningLogin";
 import PlanningDash from "./components/Planning/PlanningDash";
@@ -16,6 +12,9 @@ import AgencyInputEmployee from "./components/Agency/AgencyInputEmployee";
 import TerminatedAgencyEmployee from "./components/Agency/TerminatedAgencyEmployee";
 import AgencyNewEmployee from "./components/Agency/AgencyNewEmployee";
 import AgencyListEmployee from "./components/Agency/AgencyListEmployee";
+import HrCrud from "./components/CevaHR/HrCrud";
+import HrDash from "./components/CevaHR/HrDashboard";
+import HrEmployeeTable from "./components/CevaHR/HrEmployeeTable";
 
 function App() {
   return (
@@ -25,10 +24,9 @@ function App() {
         <Route path="/" element={<HrLogin />}></Route>
 
         <Route path="/adminlogin" element={<HrLogin />}></Route>
-        <Route path="/dashboard" element={<Dashboard />}>
-          <Route path="addemployee" element={<EmployeeForm />}></Route>
-          <Route path="listemployee" element={<ListEmployee />}></Route>
-          <Route path="restrictlist" element={<RestrictEmployee />}></Route>
+        <Route path="/hr_dashboard" element={<HrDash />}>
+          <Route path="hr_crud" element={<HrCrud />}></Route>
+          <Route path="hr_employee_table" element={<HrEmployeeTable />}></Route>
           <Route path="settings" element={<Settings />}></Route>
         </Route>
 

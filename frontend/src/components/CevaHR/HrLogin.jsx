@@ -26,7 +26,7 @@ const HrLogin = () => {
       .post("http://localhost:3001/auth/adminlogin", values)
       .then((result) => {
         if (result.data.loginStatus) {
-          navigate("/dashboard");
+          navigate("/hr_dashboard/hr_crud");
         } else {
           setError(result.data.Error);
         }

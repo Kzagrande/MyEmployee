@@ -90,7 +90,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-const AgencyDash = () => {
+const HrDash = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -146,7 +146,7 @@ const AgencyDash = () => {
        
         <List >
           <ListItem disablePadding sx={{ display: 'block' }}>
-            <Link to="/agency_dashboard/add_agency_employee" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Link to="/hr_dashboard/hr_crud" style={{ textDecoration: 'none', color: 'inherit' }}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -163,7 +163,7 @@ const AgencyDash = () => {
                 >
                   <ListAltIcon />
                 </ListItemIcon>
-                <ListItemText primary="Integrações" sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary="Ativos" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </Link>
           </ListItem>
@@ -223,4 +223,4 @@ const AgencyDash = () => {
   );
 };
 
-export default AgencyDash;
+export default HrDash;

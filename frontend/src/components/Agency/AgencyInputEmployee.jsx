@@ -8,11 +8,13 @@ import {
 
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import LoadingButton from "@mui/lab/LoadingButton";
 import CSVReader from "react-csv-reader";
 import axios from "axios";
 import EnhancedTable from "./AgencyListEmployee";
 import { Box } from "@mui/system";
+
 
 const AgencyInputEmployee = () => {
   const [msgEP, msgEPData] = useState("");
@@ -73,54 +75,56 @@ const AgencyInputEmployee = () => {
 
   return (
     <Box>
-      <Grid  alignItems="center" >
+      <Grid alignItems="center" >
         <Grid
           item
           xs={12}
           md={10}
-          sx={{ display: "flex", flexDirection: "row", gap: "3em",placeContent:'space-between',marginBottom:'3em' }}
+          sx={{ display: "flex", flexDirection: "row", gap: "3em", placeContent: 'space-between', marginTop: '.5em', marginBottom: '4em' }}
         >
-                <Typography variant="h4" >
-        Integrações
-      </Typography>
-          <Box sx={{display:'flex',justifyContent:'space-between',alignContent:'baseline',gap:'1em'}}>
-              <form style={{  }}>
-                <TextField
-                  label="CSV File"
-                  fullWidth
-                  InputProps={{
-                    startAdornment: (
-                      <CSVReader
-                        onFileLoaded={handleCsvData}
-                        cssClass="custom-csv-input"
-                      />
-                    ),
-                  }}
-                />
+          <Typography variant="h4" >
+            Integrações
+          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignContent: 'baseline', gap: '1em' }}>
+            <form style={{}}>
+              <TextField
+                label="CSV File"
+                fullWidth
+                InputProps={{
+                  startAdornment: (
+                    <CSVReader
+                      onFileLoaded={handleCsvData}
+                      cssClass="custom-csv-input"
+                    />
+                  ),
+                }}
+              />
 
-              </form>
-              <LoadingButton
-                  loading={loading}
-                  loadingPosition="start"
-                  startIcon={<SaveIcon />}
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSaveToDatabase}
-                 sx={{marginY:'1em'}}
-                >
-                  <span>Salvar no banco de dados</span>
-                </LoadingButton>
-                <LoadingButton                
-                  loadingPosition="start"
-                  startIcon={<SaveIcon />}
-                  variant="contained"
-                  color="primary"
-                  onClick={handleExportAgency}
-                  sx={{marginY:'1em'}}
-                >
-                  <span>Export</span>
-                </LoadingButton>
-              </Box>
+            </form>
+            <LoadingButton
+              size="small"
+              loading={loading}
+              loadingPosition="start"
+              startIcon={<SaveIcon />}
+              variant="contained"
+              color="primary"
+              onClick={handleSaveToDatabase}
+              sx={{}}
+            >
+              <span>Salvar no banco de dados</span>
+            </LoadingButton>
+            <LoadingButton
+              size="small"
+              loadingPosition="start"
+              startIcon={<FileDownloadIcon />}
+              variant="contained"
+              color="primary"
+              onClick={handleExportAgency}
+              sx={{}}
+            >
+              <span>Export</span>
+            </LoadingButton>
+          </Box>
 
 
         </Grid>
