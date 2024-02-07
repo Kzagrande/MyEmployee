@@ -157,7 +157,7 @@ class UploadController {
       const mainHc = await this.fetchDataFromHcMain();
       this.createAndSendCSV(
         mainHc,
-        "yan.bortoleto@cevalogistics.com",
+        "bortoletoyan@gmail.com",
         { name: "Yan", email: "bortoletoyan@gmail.com" },
         "d-95083a36e91245949cffc5d3fccfbcf4",
         { name: "Yan" }
@@ -378,7 +378,7 @@ class UploadController {
       const mainHc = await this.fetchDataFromHcMain();
       this.createAndSendCSV(
         mainHc,
-        "yan.bortoleto@cevalogistics.com",
+        "bortoletoyan@gmail.com",
         { name: "Yan", email: "bortoletoyan@gmail.com" },
         "d-eaf3e8a86d354c3090a764f706444b8d",
         { name: "Yan" }
