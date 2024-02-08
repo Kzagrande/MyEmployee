@@ -129,25 +129,26 @@ class UploadController {
         (registro) =>
           new AgencyModel({
             employee_id: registro[0],
-            name: registro[1],
-            cpf: registro[2],
-            role_: registro[3],
-            bu: registro[4],
-            shift: registro[5],
-            schedule_time: registro[6],
-            company: registro[7],
-            status: registro[8],
-            hire_date: new Date(registro[9]),
-            date_of_birth: new Date(registro[10]),
-            termination_date: new Date(registro[11]),
-            reason: registro[12],
-            ethnicity: registro[13],
-            gender: registro[14],
-            neighborhood: registro[15],
-            city: registro[16],
-            email: registro[17],
-            phone: registro[18],
-            integration_date: new Date(registro[19]),
+            cpf: registro[1],
+            name: registro[2],
+            rg: registro[3],
+            role_: registro[4],
+            bu: registro[5],
+            shift: registro[6],
+            schedule_time: registro[7],
+            company: registro[8],
+            status: registro[9],
+            hire_date: new Date(registro[10]),
+            date_of_birth: new Date(registro[11]),
+            termination_date: new Date(registro[12]),
+            reason: registro[13],
+            ethnicity: registro[14],
+            gender: registro[15],
+            neighborhood: registro[16],
+            city: registro[17],
+            email: registro[18],
+            phone: registro[19],
+            integration_date: new Date(registro[20]),
           })
       );
 
@@ -225,8 +226,8 @@ class UploadController {
   }
   
   async fetchDataFromHcMain() {
-    const selectQuery = `SELECT  name, cpf, rg, employee_id, company, role_, shift, bu, schedule_time, sector, manager, status, integration_date, email, frequency, absence_justification, signature
-    FROM employees.hc_main;
+    const selectQuery = `SELECT  name, cpf, rg, employee_id, company, role_, shift, bu, schedule_time, status, integration_date, email
+    FROM employees.employee_register;
     `;
 
     return new Promise((resolve, reject) => {
@@ -264,7 +265,7 @@ class UploadController {
   async insertRecords(table, agencyModels) {
     const insertQuery = `
       INSERT INTO employees.${table}(
-        employee_id, name, cpf, role_, bu, shift, schedule_time, company,
+        employee_id, cpf, name, rg, role_, bu, shift, schedule_time, company,
         status, hire_date, date_of_birth, termination_date, reason, ethnicity,
         gender, neighborhood, city, email, phone,integration_date
       ) VALUES ?`;
@@ -272,6 +273,8 @@ class UploadController {
     const values = agencyModels.map((agencyModel) =>
       Object.values(agencyModel)
     );
+    // console.log(values.slice(0, 5));
+
 
     try {
       await new Promise((resolve, reject) => {
@@ -342,7 +345,7 @@ class UploadController {
   async listEmployee(req, res) {
     try {
       const data = await this.executeQuery(
-        "SELECT * FROM employees.hc_main WHERE signature IS NULL"
+        "SELECT * FROM employees.employee_register WHERE signature IS NULL"
       );
       res.status(200).json(data);
     } catch (err) {
@@ -368,7 +371,7 @@ class UploadController {
     try {
       // Crie a consulta SQL diretamente com os valores da lista
       const updateQuery = `
-        UPDATE employees.hc_main
+        UPDATE employees.employee_register
         SET signature = '${presenceStatus}'
         WHERE employee_id IN (${presenceList.join(",")})
       `;
