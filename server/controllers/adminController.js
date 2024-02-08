@@ -30,8 +30,8 @@ class AdminController {
     try {
       const {
         employee_id,
-        name,
         cpf,
+        name,
         role_,
         bu,
         shift,
@@ -40,66 +40,67 @@ class AdminController {
         status,
         hire_date,
         date_of_birth,
-        termination,
+        termination_date,
         reason,
         ethnicity,
         gender,
         neighborhood,
         city,
         email,
-        phone
+        phone,
+        presence_integration,
+        integration_date,
       } = req.body;
 
-      const sql = `
-            INSERT INTO employees.employee_register
-            (   employee_id,
-              name,
-              cpf,
-              role_,
-              bu,
-              shift,
-              schedule_time,
-              company,
-              status,
-              hire_date,
-              date_of_birth,
-              termination,
-              reason,
-              ethnicity,
-              gender,
-              neighborhood,
-              city,
-              email,
-              phone)
-            VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-          `;
+      const insertQuery = `
+      INSERT INTO employees.employee_register (
+        employee_id, cpf, name, role_, bu, shift, schedule_time, company, status, 
+        hire_date, date_of_birth, termination_date, reason, ethnicity, gender, 
+        neighborhood, city, email, phone, presence_integration, integration_date
+      )
+      VALUES ?`;
 
       const values = [
-        employee_id,
-        name,
-        cpf,
-        role_,
-        bu,
-        shift,
-        schedule_time,
-        company,
-        status,
-        hire_date,
-        date_of_birth,
-        termination,
-        reason,
-        ethnicity,
-        gender,
-        neighborhood,
-        city,
-        email,
-        phone
+        [
+          employee_id,
+          cpf,
+          name,
+          role_,
+          bu,
+          shift,
+          schedule_time,
+          company,
+          status,
+          hire_date,
+          date_of_birth,
+          termination_date,
+          reason,
+          ethnicity,
+          gender,
+          neighborhood,
+          city,
+          email,
+          phone,
+          presence_integration,
+          integration_date
+        ]
       ];
+      
 
-      await con.execute(sql, values);
-
-      console.log("Employee data inserted successfully!");
-      return res.json({ Status: true, values });
+    try {
+      await new Promise((resolve, reject) => {
+        con.query(insertQuery, [values], (err, result) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      });
+    } catch (error) {
+      console.error("Erro durante a inserção dos registros:", error);
+      throw error;
+    }
     } catch (err) {
       console.error("Error during addEmployee:", err.message);
       return res.status(500).json({ Status: false, Error: err.message });

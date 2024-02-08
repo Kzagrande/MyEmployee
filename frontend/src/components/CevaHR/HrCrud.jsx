@@ -6,13 +6,10 @@ import {
   Alert,
   Modal,
   Box,
-  Button,
-
 } from "@mui/material";
-import PersonAddIcon  from "@mui/icons-material/PersonAdd";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import LoadingButton from "@mui/lab/LoadingButton";
-import CSVReader from "react-csv-reader";
 import axios from "axios";
 import HrEmployeeTable from "./HrEmployeeTable";
 import HrAddForm from "./HrAddFomr";
@@ -33,7 +30,7 @@ const HrCrud = () => {
   const handleOpenModal = () => {
     setOpenModal(true);
   };
-  
+
   const handleCloseModal = () => {
     setOpenModal(false);
   };
@@ -98,7 +95,7 @@ const HrCrud = () => {
             Quadro de funcionários
           </Typography>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignContent: 'baseline', gap: '1em' }}>
-          <LoadingButton
+            <LoadingButton
               size="small"
               loading={loading}
               loadingPosition="start"
@@ -122,8 +119,6 @@ const HrCrud = () => {
               <span>Export</span>
             </LoadingButton>
           </Box>
-
-
         </Grid>
       </Grid>
       <Grid
@@ -149,16 +144,23 @@ const HrCrud = () => {
         </Alert>
       </Snackbar>
       <Modal
-  open={openModal}
-  onClose={handleCloseModal}
-  aria-labelledby="add-employee-modal"
-  aria-describedby="form-for-adding-employee"
->
-  <HrAddForm
-    employeeData={selectedEmployee}
-    onClose={handleCloseModal}
-  />
-</Modal>
+        sx={{
+          backgroundColor: 'white',
+          margin: '1em',
+          padding: '1em',
+          overflow: 'auto', // Add this line to handle overflow
+        }}
+        open={openModal}
+        onClose={handleCloseModal}
+        aria-labelledby="add-employee-modal"
+        aria-describedby="form-for-adding-employee"
+      >
+        <HrAddForm
+
+          employeeData={selectedEmployee}
+          onClose={handleCloseModal}
+        />
+      </Modal>
     </Box>
   );
 };

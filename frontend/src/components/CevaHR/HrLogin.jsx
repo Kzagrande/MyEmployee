@@ -23,7 +23,7 @@ const HrLogin = () => {
     event.preventDefault();
 
     axios
-      .post("http://localhost:3001/auth/adminlogin", values)
+      .post("http://localhost:3001/hr/adminlogin", values)
       .then((result) => {
         if (result.data.loginStatus) {
           navigate("/hr_dashboard/hr_crud");

@@ -10,7 +10,7 @@ router.post("/adminlogin", (req, res) => {
   adminController.login(req, res);
 });
 
-router.post("/add_employee", (req, res) => {
+router.post("/add_hr_employees", (req, res) => {
   adminController.addEmployee(req, res);
 });
 

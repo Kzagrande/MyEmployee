@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Button, Grid, TextField, Typography,Box } from "@mui/material";
+import React, { useState } from "react";
+import { Button, Grid, TextField, Typography, Container, InputLabel,Box } from "@mui/material";
+import axios from 'axios'
 
 const HrAddForm = ({ employeeData, onClose }) => {
   const [formData, setFormData] = useState({
@@ -16,131 +17,77 @@ const HrAddForm = ({ employeeData, onClose }) => {
     }));
   };
 
-  const handleSubmit = () => {
-    // Implement logic to submit the form data
-    // For example, send a request to update the employee data
-    // You can use axios or your preferred method for making API calls
+  const handleSubmit = async () => {
+    try {
+      // Implement logic to submit the form data
+      // For example, send a POST request to the server
 
-    // After submitting, close the modal
-    onClose();
+      const response = await axios.post("http://localhost:3001/hr/add_hr_employees", formData);
+
+      // Handle the response as needed
+      console.log("Server response:", response.data);
+
+      // After submitting, close the modal
+      // onClose();
+    } catch (error) {
+      // Handle errors, log or show error messages to the user
+      console.error("Error submitting form:", error);
+    }
   };
 
+  const formFields = [
+    { name: "employee_id", label: "Matrícula", size: "small" },
+    { name: "cpf", label: "CPF", size: "small" },
+    { name: "name", label: "Name", size: "small" },
+    { name: "role_", label: "Role", size: "small" },
+    { name: "bu", label: "BU", size: "small" },
+    { name: "shift", label: "Shift", size: "small" },
+    { name: "schedule_time", label: "Schedule Time", size: "small" },
+    { name: "company", label: "Company", size: "small" },
+    { name: "status", label: "Status", size: "small" },
+    { name: "hire_date", label: "Hire Date", size: "small" },
+    { name: "date_of_birth", label: "Date of Birth", size: "small" },
+    { name: "termination_date", label: "Terminion Date", size: "small" },
+    { name: "reason", label: "Reason", size: "small" },
+    { name: "ethnicity", label: "Etinicity", size: "small" },
+    { name: "gender", label: "Gender", size: "small" },
+    { name: "neighborhood", label: "Neighborhood", size: "small" },
+    { name: "city", label: "City", size: "small" },
+    { name: "email", label: "Email", size: "small" },
+    { name: "phone", label: "Phone", size: "small" },
+    { name: "presence_integration", label: "Presention Integration", size: "small" },
+    { name: "integration_date", label: "Integration Date", size: "small" },
+  ];
+
+  const renderTextField = (field) => (
+    <Grid item xs={6} key={field.name}>
+      <InputLabel htmlFor={field.name}>{field.label}</InputLabel>
+      <TextField
+        size={field.size}
+        name={field.name}
+        value={formData[field.name]}
+        onChange={handleInputChange}
+        fullWidth
+      />
+    </Grid>
+  );
   return (
-    <Box sx={{backgroundColor:'white',margin:'1em',padding:'1em'}}>
+    <Container sx={{ backgroundColor: 'white', margin: '1em', padding: '1em' }}>
       <Typography variant="h6">Edit Employee</Typography>
       <form>
-        <Grid container spacing={1}>
-          <Grid item xs={6}>
-            <TextField
-              label="Name"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="CPF"
-              name="cpf"
-              value={formData.cpf}
-              onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-            />
-          </Grid>
-          {/* Add other form fields as needed */}
-          {/* Example fields */}
-          <Grid item xs={6}>
-            <TextField
-              label="Field 3"
-              name="field3"
-              value={formData.field3}
-              onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Field 4"
-              name="field4"
-              value={formData.field4}
-              onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Field 5"
-              name="field5"
-              value={formData.field5}
-              onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Field 6"
-              name="field6"
-              value={formData.field6}
-              onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Field 7"
-              name="field7"
-              value={formData.field7}
-              onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Field 8"
-              name="field8"
-              value={formData.field8}
-              onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Field 9"
-              name="field9"
-              value={formData.field9}
-              onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Field 10"
-              name="field10"
-              value={formData.field10}
-              onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-            />
-          </Grid>
+        <Grid container spacing={0.5} sx={{marginBottom:'1em'}}>
+          {formFields.map(renderTextField) }
         </Grid>
-        <Button variant="contained" color="primary" onClick={handleSubmit}>
+        <Box sx={{}}>       
+           <Button variant="contained" color="primary" onClick={handleSubmit} sx={{marginRight:'1em'}} >
           Save
         </Button>
-        <Button variant="contained" onClick={onClose} style={{ marginLeft: 8 }}>
+        <Button variant="contained" onClick={onClose} >
           Cancel
         </Button>
+        </Box>
       </form>
-    </Box>
+    </Container>
   );
 };
 
