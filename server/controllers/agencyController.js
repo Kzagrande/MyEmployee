@@ -155,9 +155,36 @@ class UploadController {
       await this.insertRecords(this.dbTable, agencyModels);
       res.send("Registros inseridos com sucesso");
 
-      const mainHc = await this.fetchDataFromHcMain();
+      const select = `   SELECT 
+      ci.employee_id,
+      pi.cpf,
+      pi.rg,
+      ci.role_,
+      ci.bu,
+      ci.shift,
+      ci.schedule_time,    
+      ci.company,
+      ci.status,
+      ci.hire_date,
+      pi.date_of_birth,
+      ci.termination_date,
+      ci.reason,
+      pi.ethnicity,
+      pi.gender,
+      pi.neighborhood,
+      pi.city,
+      pi.email,
+      pi.phone,
+      ci.integration_date
+  FROM 
+      personal_infos pi
+  JOIN 
+      company_infos ci ON pi.employee_id = ci.employee_id
+      ;
+      `
+      const preIntegrationCsv = await this.databaseToCsv(select);
       this.createAndSendCSV(
-        mainHc,
+        preIntegrationCsv,
         "bortoletoyan@gmail.com",
         { name: "Yan", email: "bortoletoyan@gmail.com" },
         "d-95083a36e91245949cffc5d3fccfbcf4",
@@ -225,10 +252,8 @@ class UploadController {
     }
   }
   
-  async fetchDataFromHcMain() {
-    const selectQuery = `SELECT  name, cpf, rg, employee_id, company, role_, shift, bu, schedule_time, status, integration_date, email
-    FROM employees.employee_register;
-    `;
+  async databaseToCsv(select) {
+    const selectQuery = select
 
     return new Promise((resolve, reject) => {
       con.query(selectQuery, (err, result) => {
@@ -345,7 +370,26 @@ class UploadController {
   async listEmployee(req, res) {
     try {
       const data = await this.executeQuery(
-        "SELECT * FROM employees.employee_register WHERE signature IS NULL"
+        `SELECT 
+        pi.name,
+        pi.cpf,
+        pi.rg,
+        ci.employee_id,
+        ci.company,
+        ci.role_,
+        ci.shift,
+        ci.bu,
+        ci.schedule_time,
+        ci.sector,
+        ci.manager_1,
+        ci.integration_date,
+        pi.email,
+        ci.presence_integration
+    FROM 
+        personal_infos pi
+    JOIN 
+        company_infos ci ON pi.employee_id = ci.employee_id
+        WHERE ci.presence_integration IS NULL;`
       );
       res.status(200).json(data);
     } catch (err) {
@@ -371,16 +415,38 @@ class UploadController {
     try {
       // Crie a consulta SQL diretamente com os valores da lista
       const updateQuery = `
-        UPDATE employees.employee_register
-        SET signature = '${presenceStatus}'
+        UPDATE employees.company_infos
+        SET presence_integration = '${presenceStatus}'
         WHERE employee_id IN (${presenceList.join(",")})
       `;
 
       // Execute a consulta
       await this.executeQuery(updateQuery);
-      const mainHc = await this.fetchDataFromHcMain();
+      const select = `SELECT 
+      pi.name,
+      pi.cpf,
+      pi.rg,
+      ci.employee_id,
+      ci.company,
+      ci.role_,
+      ci.shift,
+      ci.bu,
+      ci.schedule_time,
+      ci.sector,
+      ci.manager_1,
+      ci.integration_date,
+      pi.email,
+      ci.absence_justification,
+      ci.presence_integration
+  FROM 
+      personal_infos pi
+  JOIN 
+      company_infos ci ON pi.employee_id = ci.employee_id
+      WHERE presence_integration is NOT NULL;
+      `
+      const integrationCsv = await this.databaseToCsv(select);
       this.createAndSendCSV(
-        mainHc,
+        integrationCsv,
         "bortoletoyan@gmail.com",
         { name: "Yan", email: "bortoletoyan@gmail.com" },
         "d-eaf3e8a86d354c3090a764f706444b8d",
