@@ -1,63 +1,225 @@
-import React, { useEffect } from 'react'
-import 'bootstrap-icons/font/bootstrap-icons.css'
-import { Link, Outlet, useNavigate } from 'react-router-dom'
+import * as React from 'react';
+import { styled, useTheme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import MuiDrawer from '@mui/material/Drawer';
+import MuiAppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import List from '@mui/material/List';
+import CssBaseline from '@mui/material/CssBaseline';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import GroupRemoveIcon from '@mui/icons-material/GroupRemove';
+import LogoutIcon from '@mui/icons-material/Logout';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+import { Link, Outlet, useNavigate, Route } from 'react-router-dom';
 import axios from 'axios'
 
-const PlanningDash = () => {
-	const navigate = useNavigate()
-	axios.defaults.withCredentials = true
-	const handleLogout = () => {
-	  axios.get('http://localhost:3001/planning/logout')
-	  .then(result => {
-		if(result.data.Status) { 
-		  localStorage.removeItem("valid")
-		  navigate('/')
-		}
-	  }).catch(err => console.log(err))
-	}
+const drawerWidth = 240;
 
+const openedMixin = (theme) => ({
+  width: drawerWidth,
+  transition: theme.transitions.create('width', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.enteringScreen,
+  }),
+  overflowX: 'hidden',
+});
 
-	return (
-		<div className="container-fluid">
-			<div className="row flex-nowrap">
-				<div className="col-auto col-md-3 col-xl-2 px-sm-2 px-0 " style={{ backgroundColor: '#1d4289' }}>
-					<div className="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
-						<a href="/" className="d-flex align-items-center pb-3 mb-md-1 mt-md-3 me-md-auto text-white text-decoration-none">
-							<span className="fs-5 fw-bolder d-none d-sm-inline">Admin Dashboard</span>
-						</a>
-						<ul className="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start " id="menu">
-							<li>
-								<Link to="/dashboard/addemployee" data-bs-toggle="collapse" className="nav-link text-white px-0 align-middle">
-                                <i className="bi bi-person-fill "></i> <span className="ms-1 d-none d-sm-inline">Adicionar Colaborador</span> </Link>
-							</li>
-							<li>
-								<Link to="/dashboard/listemployee" data-bs-toggle="collapse" className="nav-link text-white px-0 align-middle">
-                                <i class="bi bi-table"></i> <span className="ms-1 d-none d-sm-inline">Listar Colaboradores</span> </Link>
-							</li>
-							<li>
-								<Link to="/dashboard/restrictlist" data-bs-toggle="collapse" className="nav-link text-white px-0 align-middle">
-                                <i class="bi bi-journal-x"></i> <span className="ms-1 d-none d-sm-inline">Listar Restritos </span> </Link>
-							</li>
-							<li>
-								<Link to="/dashboard/settings" className="nav-link px-0 align-middle text-white"> 
-                                <i class="bi bi-gear"></i> <span className="ms-1 d-none d-sm-inline">Configurações</span></Link>
-							</li>
-							<li onClick={handleLogout}>
-								<a href="#" className="nav-link px-0 align-middle text-white">
-                                <i class="bi bi-box-arrow-left"></i> <span className="ms-1 d-none d-sm-inline">Sair</span></a>
-							</li>
-						</ul>
-					</div>
-				</div>
-				<div class="col p-0 m-0">
-					<div className='p-2 d-flex justify-content-center shadow text-white' style={{ backgroundColor: '#1d4289' }}>
-						<h4>Planning Management System</h4>						
-					</div>
-					<Outlet />
-				</div>
-			</div>
-		</div>
-	)
-}
+const closedMixin = (theme) => ({
+  transition: theme.transitions.create('width', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  overflowX: 'hidden',
+  width: `calc(${theme.spacing(7)} + 1px)`,
+  [theme.breakpoints.up('sm')]: {
+    width: `calc(${theme.spacing(8)} + 1px)`,
+  },
+});
 
-export default PlanningDash
+const DrawerHeader = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+}));
+
+const AppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== 'open',
+})(({ theme, open }) => ({
+  zIndex: theme.zIndex.drawer + 1,
+  transition: theme.transitions.create(['width', 'margin'], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  ...(open && {
+    marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  }),
+}));
+
+const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+  ({ theme, open }) => ({
+    width: drawerWidth,
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
+    boxSizing: 'border-box',
+    ...(open && {
+      ...openedMixin(theme),
+      '& .MuiDrawer-paper': openedMixin(theme),
+    }),
+    ...(!open && {
+      ...closedMixin(theme),
+      '& .MuiDrawer-paper': closedMixin(theme),
+    }),
+  }),
+);
+
+const HrDash = () => {
+  const navigate = useNavigate();
+  const theme = useTheme();
+  const [open, setOpen] = React.useState(false);
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+
+  axios.defaults.withCredentials = true;
+  const handleLogout = () => {
+    axios
+      .get("http://localhost:3001/planning/logout")
+      .then((result) => {
+        if (result.data.Status) {
+          localStorage.removeItem("valid");
+          navigate("/");
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+  return (
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar position="fixed" open={open}  >
+        <Toolbar sx={{ backgroundColor: '#d3d3d3' }}>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            sx={{
+              marginRight: 5,
+              ...(open && { display: 'none' }),
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap component="div" sx={{ color: '#656565' }}>
+            CEVA ERP SYSTEM
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Drawer  variant="permanent" open={open} >
+        <DrawerHeader >
+          <IconButton onClick={handleDrawerClose} >
+            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+          </IconButton>
+        </DrawerHeader>
+       
+        <List >
+          <ListItem disablePadding sx={{ display: 'block' }}>
+            <Link to="/planning_dashboard/planning_crud" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <ListAltIcon />
+                </ListItemIcon>
+                <ListItemText primary="Ativos" sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </Link>
+          </ListItem>
+
+          <ListItem disablePadding sx={{ display: 'block' }}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+              >
+                <GroupRemoveIcon />
+              </ListItemIcon>
+              <ListItemText primary="Desligados" sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+          </ListItem>
+        </List>
+     
+        <List>
+          <ListItem disablePadding sx={{ display: 'block' }}>
+            <ListItemButton
+              onClick={handleLogout}
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+              >
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText primary="Sair" sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+          </ListItem>
+        </List>
+      </Drawer >
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }} >
+        <DrawerHeader />
+        {/* Defina suas rotas dentro do componente Outlet */}
+        <Outlet />
+      </Box>
+    </Box>
+  );
+};
+
+export default HrDash;

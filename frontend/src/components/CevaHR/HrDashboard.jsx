@@ -22,7 +22,6 @@ import ListAltIcon from '@mui/icons-material/ListAlt';
 import { Link, Outlet, useNavigate, Route } from 'react-router-dom';
 import axios from 'axios'
 
-
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({

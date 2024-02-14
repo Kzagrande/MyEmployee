@@ -15,6 +15,9 @@ import AgencyListEmployee from "./components/Agency/AgencyListEmployee";
 import HrCrud from "./components/CevaHR/HrCrud";
 import HrDash from "./components/CevaHR/HrDashboard";
 import HrEmployeeTable from "./components/CevaHR/HrEmployeeTable";
+import PlanningCrud from "./components/Planning/PlanningCrud";
+import PlanningTable from "./components/Planning/PlanningTable";
+import PlanningForm from "./components/Planning/PlanningForm";
 
 function App() {
   return (
@@ -31,7 +34,11 @@ function App() {
         </Route>
 
         <Route path="/planning_login" element={<PlanningLogin />}></Route>
-        <Route path="/planning_dashboard" element={<PlanningDash />}></Route>
+        <Route path="/planning_dashboard" element={<PlanningDash />}>
+          <Route path="planning_crud" element={<PlanningCrud />}></Route>
+          <Route path="planning_table" element={<PlanningTable />}></Route>
+          <Route path="planning_form" element={<PlanningForm />}></Route>
+        </Route>
 
         <Route path="/agency_login" element={<AgencyLogin />}></Route>
         <Route path="/agency_dashboard" element={<AgencyDash />}>
