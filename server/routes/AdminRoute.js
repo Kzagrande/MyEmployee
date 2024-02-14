@@ -13,6 +13,9 @@ router.post("/adminlogin", (req, res) => {
 router.post("/add_hr_employees", (req, res) => {
   adminController.addEmployee(req, res);
 });
+router.post("/update_hr_employee", (req, res) => {
+  adminController.updateEmployee(req, res);
+});
 
 router.get("/list_employee", (req, res) => {
   adminController.listEmployee(req, res);

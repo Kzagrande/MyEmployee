@@ -2,10 +2,27 @@ import React, { useState } from "react";
 import { Button, Grid, TextField, Typography, Container, InputLabel,Box } from "@mui/material";
 import axios from 'axios'
 
-const HrAddForm = ({ employeeData, onClose }) => {
+const HrAddForm = ({ employeeData, onClose,updateMode }) => {
+
   const [formData, setFormData] = useState({
     name: employeeData ? employeeData.name : "",
     cpf: employeeData ? employeeData.cpf : "",
+    employee_id: employeeData ? employeeData.employee_id : "",
+    role_: employeeData ? employeeData.role_ : "",
+    bu: employeeData ? employeeData.bu : "",
+    shift: employeeData ? employeeData.shift : "",
+    schedule_time: employeeData ? employeeData.schedule_time : "",
+    company: employeeData ? employeeData.company : "",
+    status: employeeData ? employeeData.status : "",
+    hire_date: employeeData ? employeeData.hire_date : "",
+    date_of_birth: employeeData ? employeeData.date_of_birth : "",
+    ethnicity: employeeData ? employeeData.ethnicity : "",
+    gender: employeeData ? employeeData.gender : "",
+    neighborhood: employeeData ? employeeData.neighborhood : "",
+    city: employeeData ? employeeData.city : "",
+    email: employeeData ? employeeData.email : "",
+    integration_date: employeeData ? employeeData.integration_date : "",
+    phone: employeeData ? employeeData.phone : "",
     // Add other form fields as needed
   });
 
@@ -34,7 +51,24 @@ const HrAddForm = ({ employeeData, onClose }) => {
       console.error("Error submitting form:", error);
     }
   };
+  const handleUpdate = async () => {
+    try {
+      // Implement logic to submit the form data
+      // For example, send a POST request to the server
 
+      const response = await axios.post("http://localhost:3001/hr/update_hr_employee", formData);
+
+      // Handle the response as needed
+      console.log("Server response:", response.data);
+
+      // After submitting, close the modal
+      // onClose();
+    } catch (error) {
+      // Handle errors, log or show error messages to the user
+      console.error("Error submitting form:", error);
+    }
+  };
+  
   const formFields = [
     { name: "employee_id", label: "Matrícula", size: "small" },
     { name: "cpf", label: "CPF", size: "small" },
@@ -47,15 +81,12 @@ const HrAddForm = ({ employeeData, onClose }) => {
     { name: "status", label: "Status", size: "small" },
     { name: "hire_date", label: "Hire Date", size: "small" },
     { name: "date_of_birth", label: "Date of Birth", size: "small" },
-    { name: "termination_date", label: "Terminion Date", size: "small" },
-    { name: "reason", label: "Reason", size: "small" },
     { name: "ethnicity", label: "Etinicity", size: "small" },
     { name: "gender", label: "Gender", size: "small" },
     { name: "neighborhood", label: "Neighborhood", size: "small" },
     { name: "city", label: "City", size: "small" },
     { name: "email", label: "Email", size: "small" },
     { name: "phone", label: "Phone", size: "small" },
-    { name: "presence_integration", label: "Presention Integration", size: "small" },
     { name: "integration_date", label: "Integration Date", size: "small" },
   ];
 
@@ -78,13 +109,19 @@ const HrAddForm = ({ employeeData, onClose }) => {
         <Grid container spacing={0.5} sx={{marginBottom:'1em'}}>
           {formFields.map(renderTextField) }
         </Grid>
-        <Box sx={{}}>       
-           <Button variant="contained" color="primary" onClick={handleSubmit} sx={{marginRight:'1em'}} >
-          Save
-        </Button>
-        <Button variant="contained" onClick={onClose} >
-          Cancel
-        </Button>
+        <Box sx={{}}>
+          {updateMode ? (
+            <Button variant="contained" color="primary" onClick={handleUpdate} sx={{ marginRight: '1em' }} >
+              Update
+            </Button>
+          ) : (
+            <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ marginRight: '1em' }} >
+              Save
+            </Button>
+          )}
+          <Button variant="contained" onClick={onClose} >
+            Cancel
+          </Button>
         </Box>
       </form>
     </Container>

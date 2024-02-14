@@ -33,6 +33,7 @@ class AdminController {
         cpf,
         name,
         role_,
+        rg,
         bu,
         shift,
         schedule_time,
@@ -40,23 +41,20 @@ class AdminController {
         status,
         hire_date,
         date_of_birth,
-        termination_date,
-        reason,
         ethnicity,
         gender,
         neighborhood,
         city,
         email,
         phone,
-        presence_integration,
         integration_date,
       } = req.body;
 
       const insertQuery = `
       INSERT INTO employees.employee_register (
-        employee_id, cpf, name, role_, bu, shift, schedule_time, company, status, 
-        hire_date, date_of_birth, termination_date, reason, ethnicity, gender, 
-        neighborhood, city, email, phone, presence_integration, integration_date
+        employee_id, cpf, name,rg, role_, bu, shift, schedule_time, company, status, 
+        hire_date, date_of_birth, ethnicity, gender, 
+        neighborhood, city, email, phone, integration_date
       )
       VALUES ?`;
 
@@ -65,6 +63,7 @@ class AdminController {
           employee_id,
           cpf,
           name,
+          rg,
           role_,
           bu,
           shift,
@@ -73,15 +72,12 @@ class AdminController {
           status,
           hire_date,
           date_of_birth,
-          termination_date,
-          reason,
           ethnicity,
           gender,
           neighborhood,
           city,
           email,
           phone,
-          presence_integration,
           integration_date
         ]
       ];
@@ -105,11 +101,108 @@ class AdminController {
       console.error("Error during addEmployee:", err.message);
       return res.status(500).json({ Status: false, Error: err.message });
     }
+  };
+
+
+  async updateEmployee(req, res) {
+    try {
+      const {
+        employee_id,
+        cpf,
+        name,
+        role_,
+        rg,
+        bu,
+        shift,
+        schedule_time,
+        company,
+        status,
+        hire_date,
+        date_of_birth,
+        ethnicity,
+        gender,
+        neighborhood,
+        city,
+        email,
+        phone,
+        integration_date,
+      } = req.body;
+  
+      const updateQuery = `
+        UPDATE employees.employee_register 
+        SET
+          cpf = ?,
+          name = ?,
+          rg = ?,
+          role_ = ?,
+          bu = ?,
+          shift = ?,
+          schedule_time = ?,
+          company = ?,
+          status = ?,
+          hire_date = ?,
+          date_of_birth = ?,
+          ethnicity = ?,
+          gender = ?,
+          neighborhood = ?,
+          city = ?,
+          email = ?,
+          phone = ?,
+          integration_date = ?
+        WHERE
+          employee_id = ?`;
+  
+      const values = [
+        cpf,
+        name,
+        rg,
+        role_,
+        bu,
+        shift,
+        schedule_time,
+        company,
+        status,
+        hire_date,
+        date_of_birth,
+        ethnicity,
+        gender,
+        neighborhood,
+        city,
+        email,
+        phone,
+        integration_date,
+        employee_id
+      ];
+  
+      try {
+        await new Promise((resolve, reject) => {
+          con.query(updateQuery, values, (err, result) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          });
+        });
+      } catch (error) {
+        console.error("Erro durante a atualização dos registros:", error);
+        throw error;
+      }
+  
+      // A atualização foi bem-sucedida
+      return res.status(200).json({ Status: true, Message: "Employee updated successfully." });
+  
+    } catch (err) {
+      console.error("Error during updateEmployee:", err.message);
+      return res.status(500).json({ Status: false, Error: err.message });
+    }
   }
+
+  
 
 
   listEmployee = (req, res) => {
-    const query = 'SELECT * FROM employees.employee_register WHERE presence_integration IS NULL';
+    const query = 'SELECT * FROM employees.employee_register';
 
     con.query(query, (error, results) => {
       if (error) {
