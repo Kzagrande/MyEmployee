@@ -70,9 +70,10 @@ const HrEmployeeTable = () => {
     setUniqueCompanies(uniqueCompanies);
   }, []);
 
-
   const handleEditClick = (employeeId) => {
-    const selectedEmployeeData = data.find((employee) => employee.employee_id === employeeId);
+    const selectedEmployeeData = data.find(
+      (employee) => employee.employee_id === employeeId
+    );
     setSelectedEmployee(selectedEmployeeData);
     setOpenModal(true);
   };
@@ -93,7 +94,6 @@ const HrEmployeeTable = () => {
     }
   };
 
-
   const headCells = [
     // Define columns
     {
@@ -108,7 +108,12 @@ const HrEmployeeTable = () => {
     { id: "bu", numeric: false, disablePadding: false, label: "Business Unit" },
     { id: "shift", numeric: false, disablePadding: false, label: "Shift" },
     { id: "company", numeric: false, disablePadding: false, label: "Company" },
-    { id: "integration_date", numeric: false, disablePadding: false, label: "Integration Date" },
+    {
+      id: "integration_date",
+      numeric: false,
+      disablePadding: false,
+      label: "Integration Date",
+    },
   ];
 
   const descendingComparator = (a, b, orderBy) =>
@@ -168,7 +173,6 @@ const HrEmployeeTable = () => {
     page * rowsPerPage + rowsPerPage
   );
 
-
   const handleSnackbarClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -207,9 +211,14 @@ const HrEmployeeTable = () => {
           justifyContent: "space-between",
         }}
       >
-
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignContent: 'baseline', gap: '1em' }}>
-
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignContent: "baseline",
+            gap: "1em",
+          }}
+        >
           <TextField
             label="Search by Name"
             variant="outlined"
@@ -361,7 +370,6 @@ const HrEmployeeTable = () => {
             onPageChange={(event, newPage) => handleChangePage(event, newPage)}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
-
         </TableContainer>
         <Snackbar
           open={snackbarOpen}
@@ -378,14 +386,13 @@ const HrEmployeeTable = () => {
           </Alert>
         </Snackbar>
         <Modal
-       
           open={openModal}
           onClose={() => setOpenModal(false)}
           aria-labelledby="edit-modal"
           aria-describedby="form-for-editing"
         >
           <HrAddForm
-          updateMode={true}
+            updateMode={true}
             employeeData={selectedEmployee}
             onClose={() => setOpenModal(false)}
           />

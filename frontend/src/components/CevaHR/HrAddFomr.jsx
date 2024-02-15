@@ -70,7 +70,7 @@ const HrAddForm = ({ employeeData, onClose,updateMode }) => {
   };
   
   const formFields = [
-    { name: "employee_id", label: "Matrícula", size: "small" },
+    { name: "employee_id", label: "Matrícula", size: "small",disabled:true },
     { name: "cpf", label: "CPF", size: "small" },
     { name: "name", label: "Name", size: "small" },
     { name: "role_", label: "Role", size: "small" },
@@ -99,6 +99,7 @@ const HrAddForm = ({ employeeData, onClose,updateMode }) => {
         value={formData[field.name]}
         onChange={handleInputChange}
         fullWidth
+        disabled={field.disabled}
       />
     </Grid>
   );

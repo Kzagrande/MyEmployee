@@ -142,6 +142,81 @@ class PlanningController {
     }
   }
 
+  async updateEmployee(req, res) {
+    try {
+      const {
+        employee_id,
+        role_,
+        bu,
+        shift,
+        sector,
+        collar,
+        work_schedule,
+        type_,
+        status_op,
+        schedule_time,
+        activity_p,
+        manager_1,
+        
+      } = req.body;
+
+      const updateQuery = `
+      UPDATE employees.company_infos 
+      SET
+      role_ =?,
+      bu =?,
+      shift =?,
+      sector =?,
+      collar =?,
+      work_schedule =?,
+      type_ =?,
+      status_op =?,
+      schedule_time =?,
+      activity_p =?,
+      manager_1 =?
+      WHERE
+        employee_id = ?`;
+
+      const values = [
+          role_,
+          bu,
+          shift,
+          sector,
+          collar,
+          work_schedule,
+          type_,
+          status_op,
+          schedule_time,
+          activity_p,
+          manager_1,
+          employee_id,
+      ];
+
+      try {
+        await new Promise((resolve, reject) => {
+          con.query(updateQuery, values, (err, result) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          });
+        });
+      } catch (error) {
+        console.error("Erro durante a atualização dos registros:", error);
+        throw error;
+      }
+
+      // A atualização foi bem-sucedida
+      return res
+        .status(200)
+        .json({ Status: true, Message: "Employee updated successfully." });
+    } catch (err) {
+      console.error("Error during updateEmployee:", err.message);
+      return res.status(500).json({ Status: false, Error: err.message });
+    }
+  }
+
   
   listEmployee = (req, res) => {
     const query = "SELECT * FROM employees.activities_hc";

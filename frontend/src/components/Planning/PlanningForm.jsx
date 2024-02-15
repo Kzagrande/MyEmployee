@@ -5,24 +5,25 @@ import axios from 'axios'
 const PlanningForm = ({ employeeData, onClose,updateMode }) => {
 
   const [formData, setFormData] = useState({
-    name: employeeData ? employeeData.name : "",
-    cpf: employeeData ? employeeData.cpf : "",
-    employee_id: employeeData ? employeeData.employee_id : "",
-    role_: employeeData ? employeeData.role_ : "",
-    bu: employeeData ? employeeData.bu : "",
-    shift: employeeData ? employeeData.shift : "",
-    schedule_time: employeeData ? employeeData.schedule_time : "",
-    company: employeeData ? employeeData.company : "",
-    status: employeeData ? employeeData.status : "",
-    hire_date: employeeData ? employeeData.hire_date : "",
-    date_of_birth: employeeData ? employeeData.date_of_birth : "",
-    ethnicity: employeeData ? employeeData.ethnicity : "",
-    gender: employeeData ? employeeData.gender : "",
-    neighborhood: employeeData ? employeeData.neighborhood : "",
-    city: employeeData ? employeeData.city : "",
-    email: employeeData ? employeeData.email : "",
-    integration_date: employeeData ? employeeData.integration_date : "",
-    phone: employeeData ? employeeData.phone : "",
+    employee_id:employeeData? employeeData.employee_id: "",
+    name:employeeData? employeeData.name: "",
+    role_:employeeData? employeeData.role_: "",
+    bu:employeeData? employeeData.bu:"",
+    shift:employeeData? employeeData.shift :"",
+    sector:employeeData? employeeData.sector :"",
+    collar:employeeData? employeeData.collar :"",
+    work_schedule:employeeData? employeeData.work_schedule :"",
+    type_:employeeData? employeeData.type_ :"",
+    status_op:employeeData? employeeData.status_op :"",
+    schedule_time:employeeData? employeeData.schedule_time :"",
+    activity_p:employeeData? employeeData.activity_p :"",
+    company:employeeData? employeeData.company :"",
+    manager_1:employeeData? employeeData.manager_1 :"",
+    status:employeeData? employeeData.status :"",
+    presence_integration:employeeData? employeeData.presence_integration :"",
+    hire_date:employeeData? employeeData.hire_date :"",
+    date_of_birth:employeeData? employeeData.date_of_birth :"",
+    integration_date:employeeData? employeeData.integration_date :""
     // Add other form fields as needed
   });
 
@@ -56,7 +57,7 @@ const PlanningForm = ({ employeeData, onClose,updateMode }) => {
       // Implement logic to submit the form data
       // For example, send a POST request to the server
 
-      const response = await axios.post("http://localhost:3001/hr/update_hr_employee", formData);
+      const response = await axios.post("http://localhost:3001/planning/update_planning_employee", formData);
 
       // Handle the response as needed
       console.log("Server response:", response.data);
@@ -70,8 +71,8 @@ const PlanningForm = ({ employeeData, onClose,updateMode }) => {
   };
   
   const formFields = [
-    { name: "employee_id", label: "Matrícula", size: "small" },
-    { name: "name", label: "Name", size: "small" },
+    { name: "employee_id", label: "Matrícula", size: "small",disabled:true },
+    { name: "name", label: "Name", size: "small",disabled:true },
     { name: "role_", label: "Role", size: "small" },
     { name: "bu", label: "BU", size: "small" },
     { name: "shift", label: "Shift", size: "small" },
@@ -82,10 +83,10 @@ const PlanningForm = ({ employeeData, onClose,updateMode }) => {
     { name: "status_op", label: "Status Op", size: "small" },
     { name: "schedule_time", label: "Schedule Time", size: "small" },
     { name: "activity_p", label: "Activity P", size: "small" },
-    { name: "company", label: "Company", size: "small" },
+    { name: "company", label: "Company", size: "small",disabled:true },
     { name: "manager_1", label: "Responsável", size: "small" },
-    { name: "status", label: "Status", size: "small" },
-    { name: "presence_integration", label: "presence integration Date", size: "small" },
+    { name: "status", label: "Status", size: "small",disabled:true },
+    { name: "presence_integration", label: "presence integration Date", size: "small",disabled:true },
   ];
 
   const renderTextField = (field) => (
@@ -97,6 +98,7 @@ const PlanningForm = ({ employeeData, onClose,updateMode }) => {
         value={formData[field.name]}
         onChange={handleInputChange}
         fullWidth
+        disabled={field.disabled}
       />
     </Grid>
   );
@@ -108,15 +110,9 @@ const PlanningForm = ({ employeeData, onClose,updateMode }) => {
           {formFields.map(renderTextField) }
         </Grid>
         <Box sx={{}}>
-          {updateMode ? (
             <Button variant="contained" color="primary" onClick={handleUpdate} sx={{ marginRight: '1em' }} >
               Update
             </Button>
-          ) : (
-            <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ marginRight: '1em' }} >
-              Save
-            </Button>
-          )}
           <Button variant="contained" onClick={onClose} >
             Cancel
           </Button>

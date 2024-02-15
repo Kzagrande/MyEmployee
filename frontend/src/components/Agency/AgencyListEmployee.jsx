@@ -375,7 +375,7 @@ const AgencyListEmployee = () => {
           </Table>
 
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25, 50, 100]}
+            rowsPerPageOptions={[5, 10, 25, 50, 100,5000]}
             component="div"
             count={data.length}
             rowsPerPage={rowsPerPage}

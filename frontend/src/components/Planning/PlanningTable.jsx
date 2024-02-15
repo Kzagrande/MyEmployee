@@ -55,19 +55,7 @@ const PlanningTable = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   useEffect(() => {
-    fetchData(); //When components start apply this function
-    // const mockData = [
-    //   { employee_id: '123456', name: 'Yan', cpf: '480-078-408-50', role_: 'bpe' },
-    //   { employee_id: '789012', name: 'João', cpf: '123-456-789-10', role_: 'developer' },
-    //   // Adicione mais dados conforme necessário
-    // ];
-
-    // Atualizando o estado com os dados mockados
-    // setData(mockData);
-
-    // Atualizando a lista única de empresas com os dados mockados
-    const uniqueCompanies = [...new Set(data.map((row) => row.company))];
-    setUniqueCompanies(uniqueCompanies);
+    fetchData();    
   }, []);
 
 
@@ -88,11 +76,11 @@ const PlanningTable = () => {
         ...new Set(response.data.map((row) => row.company)),
       ];
       setUniqueCompanies(uniqueCompanies);
+      
     } catch (error) {
       console.error("Error in the request:", error);
     }
   };
-
 
   const headCells = [
     // Define columns
@@ -103,11 +91,12 @@ const PlanningTable = () => {
       label: "Employee ID",
     },
     { id: "name", numeric: false, disablePadding: false, label: "Name" },
-    { id: "cpf", numeric: false, disablePadding: false, label: "CPF" },
     { id: "role_", numeric: false, disablePadding: false, label: "Role" },
+    { id: "sector", numeric: false, disablePadding: false, label: "Setor" },
+    { id: "manager_1", numeric: false, disablePadding: false, label: "Responsável" },,
     { id: "bu", numeric: false, disablePadding: false, label: "Business Unit" },
     { id: "shift", numeric: false, disablePadding: false, label: "Shift" },
-    { id: "company", numeric: false, disablePadding: false, label: "Company" },
+    
   ];
 
   const descendingComparator = (a, b, orderBy) =>
@@ -126,27 +115,7 @@ const PlanningTable = () => {
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelected = data.map((n) => n.employee_id);
-      setSelected(newSelected);
-    } else {
-      setSelected([]);
-    }
-  };
 
-  const handleClick = (event, id) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = [...selected, id];
-    } else {
-      newSelected = selected.filter((item) => item !== id);
-    }
-
-    setSelected(newSelected);
-  };
 
   const handleChangePage = (event, newPage) => setPage(newPage);
 
@@ -154,11 +123,6 @@ const PlanningTable = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
-  const isSelected = (id) => {
-    // console.log('id', id)
-    return selected.includes(id);
-  }; // verifica true or false se os id existem no selected;
 
   const emptyRows = Math.max(0, (1 + page) * rowsPerPage - data.length);
 
@@ -274,17 +238,11 @@ const PlanningTable = () => {
             <TableHead sx={{ backgroundColor: "#f0eef1" }}>
               <TableRow>
                 <TableCell padding="checkbox">
-                  {/* <Checkbox
-                    color="primary"
-                    checked={selected.length === data.length}
-                    onChange={handleSelectAllClick}
-                    inputProps={{ "aria-label": "select all employee_id" }}
-                  /> */}
                 </TableCell>
                 {headCells.map((headCell) => (
                   <TableCell
                     key={headCell.id}
-                    align={headCell.id === "employee_id" ? "left" : "right"}
+                    align={'center'}
                     sx={{
                       fontSize: "14x", // Adjust font size as needed
                       padding: "10px", // Adjust padding between columns
@@ -310,20 +268,9 @@ const PlanningTable = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredData.map((row, index) => {
-                const isItemSelected = isSelected(row.employee_id);
-                const labelId = `enhanced-table-checkbox-${index}`;
-
+              {filteredData.map((row) => {
                 return (
                   <TableRow
-                    hover
-                    onClick={(event) => handleClick(event, row.employee_id)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row.id}
-                    selected={isItemSelected}
-                    sx={{ cursor: "pointer" }}
                   >
                     <TableCell padding="checkbox">
                       <EditIcon
@@ -352,7 +299,7 @@ const PlanningTable = () => {
           </Table>
 
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25, 50, 100]}
+            rowsPerPageOptions={[5, 10, 25, 50, 100,5000]}
             component="div"
             count={data.length}
             rowsPerPage={rowsPerPage}
