@@ -55,18 +55,18 @@ const HrEmployeeTable = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   useEffect(() => {
-    // fetchData(); //When components start apply this function
-    const mockData = [
-      { employee_id: '123456', name: 'Yan', cpf: '480-078-408-50', role_: 'bpe' },
-      { employee_id: '789012', name: 'João', cpf: '123-456-789-10', role_: 'developer' },
-      // Adicione mais dados conforme necessário
-    ];
+    fetchData(); //When components start apply this function
+    // const mockData = [
+    //   { employee_id: '123456', name: 'Yan', cpf: '480-078-408-50', role_: 'bpe' },
+    //   { employee_id: '789012', name: 'João', cpf: '123-456-789-10', role_: 'developer' },
+    //   // Adicione mais dados conforme necessário
+    // ];
 
     // Atualizando o estado com os dados mockados
-    setData(mockData);
+    // setData(mockData);
 
     // Atualizando a lista única de empresas com os dados mockados
-    const uniqueCompanies = [...new Set(mockData.map((row) => row.company))];
+    const uniqueCompanies = [...new Set(data.map((row) => row.company))];
     setUniqueCompanies(uniqueCompanies);
   }, []);
 
@@ -80,7 +80,7 @@ const HrEmployeeTable = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3001/agency/list_employee"
+        "http://localhost:3001/hr/list_employee"
       ); // Get ep and return data from employee_register
       setData(response.data);
 
@@ -108,6 +108,7 @@ const HrEmployeeTable = () => {
     { id: "bu", numeric: false, disablePadding: false, label: "Business Unit" },
     { id: "shift", numeric: false, disablePadding: false, label: "Shift" },
     { id: "company", numeric: false, disablePadding: false, label: "Company" },
+    { id: "integration_date", numeric: false, disablePadding: false, label: "Integration Date" },
   ];
 
   const descendingComparator = (a, b, orderBy) =>
@@ -384,6 +385,7 @@ const HrEmployeeTable = () => {
           aria-describedby="form-for-editing"
         >
           <HrAddForm
+          updateMode={true}
             employeeData={selectedEmployee}
             onClose={() => setOpenModal(false)}
           />
