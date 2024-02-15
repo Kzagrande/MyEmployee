@@ -9,6 +9,10 @@ router.post("/planning_login", (req, res) => {
   planningController.login(req, res);
 });
 
+router.get("/list_employee", (req, res) => {
+  planningController.listEmployee(req, res);
+});
+
 router.get('/logout', verifyUser, (req, res) => {
   planningController.logout(req, res);
 });
@@ -25,6 +29,7 @@ router.post("/upload_pd_infos", async (req, res) => {
     res.status(500).send(err.message);
   }
 });
+
 
 
 export { router as planningRouter }; // Mude para planningRouter

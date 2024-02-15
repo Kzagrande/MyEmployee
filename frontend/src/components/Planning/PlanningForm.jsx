@@ -1,157 +1,128 @@
 import React, { useState } from "react";
-import {
-  Grid,
-  Typography,
-  TextField,
-  Snackbar,
-  Alert,
+import { Button, Grid, TextField, Typography, Container, InputLabel,Box } from "@mui/material";
+import axios from 'axios'
 
-} from "@mui/material";
-import SaveIcon from "@mui/icons-material/Save";
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import LoadingButton from "@mui/lab/LoadingButton";
-import CSVReader from "react-csv-reader";
-import axios from "axios";
-import PlanningTable from "./PlanningTable";
-import { Box } from "@mui/system";
+const PlanningForm = ({ employeeData, onClose,updateMode }) => {
 
+  const [formData, setFormData] = useState({
+    name: employeeData ? employeeData.name : "",
+    cpf: employeeData ? employeeData.cpf : "",
+    employee_id: employeeData ? employeeData.employee_id : "",
+    role_: employeeData ? employeeData.role_ : "",
+    bu: employeeData ? employeeData.bu : "",
+    shift: employeeData ? employeeData.shift : "",
+    schedule_time: employeeData ? employeeData.schedule_time : "",
+    company: employeeData ? employeeData.company : "",
+    status: employeeData ? employeeData.status : "",
+    hire_date: employeeData ? employeeData.hire_date : "",
+    date_of_birth: employeeData ? employeeData.date_of_birth : "",
+    ethnicity: employeeData ? employeeData.ethnicity : "",
+    gender: employeeData ? employeeData.gender : "",
+    neighborhood: employeeData ? employeeData.neighborhood : "",
+    city: employeeData ? employeeData.city : "",
+    email: employeeData ? employeeData.email : "",
+    integration_date: employeeData ? employeeData.integration_date : "",
+    phone: employeeData ? employeeData.phone : "",
+    // Add other form fields as needed
+  });
 
-const PlanningForm = () => {
-  const [msgEP, msgEPData] = useState("");
-  const [csvData, setCsvData] = useState([]);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const handleCsvData = (data) => {
-    setCsvData(data);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
-  const handleSaveToDatabase = () => {
-    setLoading(true);
-    axios
-      .post("http://localhost:3001/agency/upload_agency", {
-        csvFile: csvData,
-        dbTable: "employee_register",
-      })
-      .then((response) => {
-        msgEPData(response.data);
-        console.log(response.data);
-        setSnackbarOpen(true); // Open the Snackbar on success
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error(error.response.data);
-        msgEPData(error.response.data);
-        setSnackbarOpen(true); // Open the Snackbar on success
-        setLoading(false);
-      });
-  };
+  const handleSubmit = async () => {
+    try {
+      // Implement logic to submit the form data
+      // For example, send a POST request to the server
 
-  const handleExportAgency = (event) => {
-    event.preventDefault();
+      const response = await axios.post("http://localhost:3001/hr/add_hr_employees", formData);
 
-    // Criar um link temporário
-    const link = document.createElement("a");
-    link.href = "http://localhost:3001/agency/export_agency";
-    link.download = "agency_data.csv";
+      // Handle the response as needed
+      console.log("Server response:", response.data);
 
-    // Adicionar o link à página
-    document.body.appendChild(link);
-
-    // Disparar o clique no link
-    link.click();
-
-    // Remover o link após o download iniciar
-    document.body.removeChild(link);
-  };
-
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
+      // After submitting, close the modal
+      // onClose();
+    } catch (error) {
+      // Handle errors, log or show error messages to the user
+      console.error("Error submitting form:", error);
     }
-
-    setSnackbarOpen(false);
   };
+  const handleUpdate = async () => {
+    try {
+      // Implement logic to submit the form data
+      // For example, send a POST request to the server
 
+      const response = await axios.post("http://localhost:3001/hr/update_hr_employee", formData);
+
+      // Handle the response as needed
+      console.log("Server response:", response.data);
+
+      // After submitting, close the modal
+      // onClose();
+    } catch (error) {
+      // Handle errors, log or show error messages to the user
+      console.error("Error submitting form:", error);
+    }
+  };
+  
+  const formFields = [
+    { name: "employee_id", label: "Matrícula", size: "small" },
+    { name: "name", label: "Name", size: "small" },
+    { name: "role_", label: "Role", size: "small" },
+    { name: "bu", label: "BU", size: "small" },
+    { name: "shift", label: "Shift", size: "small" },
+    { name: "sector", label: "Sector", size: "small" },
+    { name: "collar", label: "Collar", size: "small" },
+    { name: "work_schedule", label: "Work Schedule", size: "small" },
+    { name: "type_", label: "Type", size: "small" },
+    { name: "status_op", label: "Status Op", size: "small" },
+    { name: "schedule_time", label: "Schedule Time", size: "small" },
+    { name: "activity_p", label: "Activity P", size: "small" },
+    { name: "company", label: "Company", size: "small" },
+    { name: "manager_1", label: "Responsável", size: "small" },
+    { name: "status", label: "Status", size: "small" },
+    { name: "presence_integration", label: "presence integration Date", size: "small" },
+  ];
+
+  const renderTextField = (field) => (
+    <Grid item xs={6} key={field.name}>
+      <InputLabel htmlFor={field.name}>{field.label}</InputLabel>
+      <TextField
+        size={field.size}
+        name={field.name}
+        value={formData[field.name]}
+        onChange={handleInputChange}
+        fullWidth
+      />
+    </Grid>
+  );
   return (
-    <Box>
-      <Grid alignItems="center" >
-        <Grid
-          item
-          xs={12}
-          md={10}
-          sx={{ display: "flex", flexDirection: "row", gap: "3em", placeContent: 'space-between', marginTop: '.5em', marginBottom: '4em' }}
-        >
-          <Typography variant="h4" >
-            Integrações
-          </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignContent: 'baseline', gap: '1em' }}>
-            <form style={{}}>
-              <TextField
-                label="CSV File"
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <CSVReader
-                      onFileLoaded={handleCsvData}
-                      cssClass="custom-csv-input"
-                    />
-                  ),
-                }}
-              />
-
-            </form>
-            <LoadingButton
-              size="small"
-              loading={loading}
-              loadingPosition="start"
-              startIcon={<SaveIcon />}
-              variant="contained"
-              color="primary"
-              onClick={handleSaveToDatabase}
-              sx={{}}
-            >
-              <span>Salvar no banco de dados</span>
-            </LoadingButton>
-            <LoadingButton
-              size="small"
-              loadingPosition="start"
-              startIcon={<FileDownloadIcon />}
-              variant="contained"
-              color="primary"
-              onClick={handleExportAgency}
-              sx={{}}
-            >
-              <span>Export</span>
-            </LoadingButton>
-          </Box>
-
-
+    <Container sx={{ backgroundColor: 'white', margin: '1em', padding: '1em' }}>
+      <Typography variant="h6">Edit Employee</Typography>
+      <form>
+        <Grid container spacing={0.5} sx={{marginBottom:'1em'}}>
+          {formFields.map(renderTextField) }
         </Grid>
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        md={10}
-        sx={{ display: "flex", flexDirection: "row", gap: "3em" }}
-      >
-        <PlanningTable />
-      </Grid>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={
-            msgEP === "Registros inseridos com sucesso" ? "success" : "error"
-          }
-        >
-          {msgEP}
-        </Alert>
-      </Snackbar>
-    </Box>
+        <Box sx={{}}>
+          {updateMode ? (
+            <Button variant="contained" color="primary" onClick={handleUpdate} sx={{ marginRight: '1em' }} >
+              Update
+            </Button>
+          ) : (
+            <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ marginRight: '1em' }} >
+              Save
+            </Button>
+          )}
+          <Button variant="contained" onClick={onClose} >
+            Cancel
+          </Button>
+        </Box>
+      </form>
+    </Container>
   );
 };
 

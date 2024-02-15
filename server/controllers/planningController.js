@@ -29,10 +29,6 @@ class PlanningController {
     });
   }
 
-  logout(req, res) {
-    res.clearCookie("token");
-    return res.json({ Status: true });
-  }
 
   async uplaodPdInfos(req, res) {
     const dadosCSV = req.body.csvFile;
@@ -145,6 +141,27 @@ class PlanningController {
       throw error;
     }
   }
+
+  
+  listEmployee = (req, res) => {
+    const query = "SELECT * FROM employees.activities_hc";
+
+    con.query(query, (error, results) => {
+      if (error) {
+        console.error("Erro ao executar a consulta SQL:", error);
+        res.status(500).json({ error: "Erro interno do servidor" });
+      } else {
+        res.status(200).json(results);
+      }
+    });
+  };
+
+
+  logout(req, res) {
+    res.clearCookie("token");
+    return res.json({ Status: true });
+  }
+
 }
 
 export default new PlanningController();

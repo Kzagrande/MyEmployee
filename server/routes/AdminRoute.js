@@ -21,6 +21,10 @@ router.get("/list_employee", (req, res) => {
   adminController.listEmployee(req, res);
 });
 
+router.get("/emport_activities_hc", (req, res) => {
+  adminController.exportActivitiesHc(req, res);
+});
+
 router.get("/logout",verifyUser, (req, res) => {
   adminController.logout(req, res);
 });

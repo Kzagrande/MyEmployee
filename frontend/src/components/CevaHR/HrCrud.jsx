@@ -35,33 +35,12 @@ const HrCrud = () => {
     setOpenModal(false);
   };
 
-  const handleSaveToDatabase = () => {
-    setLoading(true);
-    axios
-      .post("http://localhost:3001/agency/upload_agency", {
-        csvFile: csvData,
-        dbTable: "employee_register",
-      })
-      .then((response) => {
-        msgEPData(response.data);
-        console.log(response.data);
-        setSnackbarOpen(true); // Open the Snackbar on success
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error(error.response.data);
-        msgEPData(error.response.data);
-        setSnackbarOpen(true); // Open the Snackbar on success
-        setLoading(false);
-      });
-  };
-
   const handleExportAgency = (event) => {
     event.preventDefault();
 
     // Criar um link temporário
     const link = document.createElement("a");
-    link.href = "http://localhost:3001/agency/export_agency";
+    link.href = "http://localhost:3001/hr/emport_activities_hc";
     link.download = "agency_data.csv";
 
     // Adicionar o link à página
