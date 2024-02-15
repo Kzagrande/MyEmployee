@@ -78,7 +78,7 @@ const PlanningForm = ({ employeeData, onClose,updateMode }) => {
     { name: "sector", label: "Sector", size: "small" },
     { name: "collar", label: "Collar", size: "small" },
     { name: "work_schedule", label: "Work Schedule", size: "small" },
-    { name: "type_", label: "Type", size: "small" },
+    { name: "type_", label: "Type", size: "small" },  
     { name: "status_op", label: "Status Op", size: "small" },
     { name: "schedule_time", label: "Schedule Time", size: "small" },
     { name: "activity_p", label: "Activity P", size: "small" },
