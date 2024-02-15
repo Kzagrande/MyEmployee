@@ -108,6 +108,7 @@ const HrEmployeeTable = () => {
     { id: "bu", numeric: false, disablePadding: false, label: "Business Unit" },
     { id: "shift", numeric: false, disablePadding: false, label: "Shift" },
     { id: "company", numeric: false, disablePadding: false, label: "Company" },
+    { id: "integration_date", numeric: false, disablePadding: false, label: "Integration Date" },
   ];
 
   const descendingComparator = (a, b, orderBy) =>

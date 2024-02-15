@@ -2,6 +2,7 @@
 import con from "../utils/db.js";
 import jwt from "jsonwebtoken";
 import fastcsv from "fast-csv";
+import moment from 'moment'
 
 
 class AdminController {
@@ -201,13 +202,23 @@ class AdminController {
 
   listEmployee = (req, res) => {
     const query = "SELECT * FROM employees.activities_hc";
-
+  
     con.query(query, (error, results) => {
       if (error) {
         console.error("Erro ao executar a consulta SQL:", error);
         res.status(500).json({ error: "Erro interno do servidor" });
       } else {
-        res.status(200).json(results);
+        const modifiedResults = results.map(employee => {
+          return {
+            ...employee,
+            hire_date: moment(employee.hire_date).format('YYYY-MM-DD'),
+            integration_date: moment(employee.integration_date).format('YYYY-MM-DD'),
+            date_of_birth: moment(employee.date_of_birth).format('YYYY-MM-DD'),
+          };
+        });
+  
+        // console.log('modifiedResults', modifiedResults);
+        res.status(200).json(modifiedResults);
       }
     });
   };
