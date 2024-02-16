@@ -2,8 +2,7 @@
 import con from "../utils/db.js";
 import jwt from "jsonwebtoken";
 import fastcsv from "fast-csv";
-import moment from 'moment'
-
+import moment from "moment";
 
 class AdminController {
   login(req, res) {
@@ -29,14 +28,18 @@ class AdminController {
     });
   }
 
+  formatDate(dateString) {
+    return moment(dateString, "DD/MM/YYYY").format("YYYY-MM-DD");
+  }
+
   async addEmployee(req, res) {
     try {
       const {
         employee_id,
         cpf,
         name,
-        role_,
         rg,
+        role_,
         bu,
         shift,
         schedule_time,
@@ -53,13 +56,21 @@ class AdminController {
         integration_date,
       } = req.body;
 
+      // const formatDate = (dateString) => {
+      //   return moment(dateString, 'DD/MM/YYYY').format('YYYY-MM-DD');
+      // };
+
+      const formattedHireDate = this.formatDate(hire_date);
+      const formattedDateOfBirth = this.formatDate(date_of_birth);
+      const formattedIntegrationDate = this.formatDate(integration_date);
+
       const insertQuery = `
-      INSERT INTO employees.employee_register (
-        employee_id, cpf, name,rg, role_, bu, shift, schedule_time, company, status, 
-        hire_date, date_of_birth, ethnicity, gender, 
-        neighborhood, city, email, phone, integration_date
-      )
-      VALUES ?`;
+        INSERT INTO employees.employee_register (
+          employee_id, cpf, name,rg, role_, bu, shift, schedule_time, company, status, 
+          hire_date, date_of_birth, ethnicity, gender, 
+          neighborhood, city, email, phone, integration_date
+        )
+        VALUES ?`;
 
       const values = [
         [
@@ -73,15 +84,15 @@ class AdminController {
           schedule_time,
           company,
           status,
-          hire_date,
-          date_of_birth,
+          formattedHireDate,
+          formattedDateOfBirth,
           ethnicity,
           gender,
           neighborhood,
           city,
           email,
           phone,
-          integration_date,
+          formattedIntegrationDate,
         ],
       ];
 
@@ -89,8 +100,10 @@ class AdminController {
         await new Promise((resolve, reject) => {
           con.query(insertQuery, [values], (err, result) => {
             if (err) {
+              console.error("Erro durante a execução da query:", err);
               reject(err);
             } else {
+              console.log("Inserção bem-sucedida:", result);
               resolve();
             }
           });
@@ -99,8 +112,12 @@ class AdminController {
         console.error("Erro durante a inserção dos registros:", error);
         throw error;
       }
+
+      return res
+        .status(200)
+        .json({ Status: true, Message: "Registros inseridos com sucesso" });
     } catch (err) {
-      console.error("Error during addEmployee:", err.message);
+      console.error("Erro durante addEmployee:", err.message);
       return res.status(500).json({ Status: false, Error: err.message });
     }
   }
@@ -128,6 +145,10 @@ class AdminController {
         phone,
         integration_date,
       } = req.body;
+
+      const formattedHireDate = this.formatDate(hire_date);
+      const formattedDateOfBirth = this.formatDate(date_of_birth);
+      const formattedIntegrationDate = this.formatDate(integration_date);
 
       const updateQuery = `
         UPDATE employees.employee_register 
@@ -163,15 +184,15 @@ class AdminController {
         schedule_time,
         company,
         status,
-        hire_date,
-        date_of_birth,
+        formattedHireDate,
+        formattedDateOfBirth,
         ethnicity,
         gender,
         neighborhood,
         city,
         email,
         phone,
-        integration_date,
+        formattedIntegrationDate,
         employee_id,
       ];
 
@@ -193,7 +214,7 @@ class AdminController {
       // A atualização foi bem-sucedida
       return res
         .status(200)
-        .json({ Status: true, Message: "Employee updated successfully." });
+        .json({ Status: true, Message: "Informações alteradas com sucesso!" });
     } catch (err) {
       console.error("Error during updateEmployee:", err.message);
       return res.status(500).json({ Status: false, Error: err.message });
@@ -202,21 +223,23 @@ class AdminController {
 
   listEmployee = (req, res) => {
     const query = "SELECT * FROM employees.activities_hc";
-  
+
     con.query(query, (error, results) => {
       if (error) {
         console.error("Erro ao executar a consulta SQL:", error);
         res.status(500).json({ error: "Erro interno do servidor" });
       } else {
-        const modifiedResults = results.map(employee => {
+        const modifiedResults = results.map((employee) => {
           return {
             ...employee,
-            hire_date: moment(employee.hire_date).format('YYYY-MM-DD'),
-            integration_date: moment(employee.integration_date).format('YYYY-MM-DD'),
-            date_of_birth: moment(employee.date_of_birth).format('YYYY-MM-DD'),
+            hire_date: moment(employee.hire_date).format("DD/MM/YYYY"),
+            integration_date: moment(employee.integration_date).format(
+              "DD/MM/YYYY"
+            ),
+            date_of_birth: moment(employee.date_of_birth).format("DD/MM/YYYY"),
           };
         });
-  
+
         // console.log('modifiedResults', modifiedResults);
         res.status(200).json(modifiedResults);
       }

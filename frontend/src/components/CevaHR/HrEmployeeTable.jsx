@@ -392,9 +392,11 @@ const HrEmployeeTable = () => {
           aria-describedby="form-for-editing"
         >
           <HrAddForm
+          
             updateMode={true}
             employeeData={selectedEmployee}
             onClose={() => setOpenModal(false)}
+            openFormModal={openModal}
           />
         </Modal>
       </Grid>

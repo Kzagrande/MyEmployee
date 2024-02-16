@@ -13,6 +13,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import axios from "axios";
 import HrEmployeeTable from "./HrEmployeeTable";
 import HrAddForm from "./HrAddFomr";
+import { Container, height } from "@mui/system";
 
 
 const HrCrud = () => {
@@ -122,24 +123,13 @@ const HrCrud = () => {
           {msgEP}
         </Alert>
       </Snackbar>
-      <Modal
-        sx={{
-          backgroundColor: 'white',
-          margin: '1em',
-          padding: '1em',
-          overflow: 'auto', // Add this line to handle overflow
-        }}
-        open={openModal}
-        onClose={handleCloseModal}
-        aria-labelledby="add-employee-modal"
-        aria-describedby="form-for-adding-employee"
-      >
         <HrAddForm
-
           employeeData={selectedEmployee}
           onClose={handleCloseModal}
+          openFormModal={openModal}
+          
         />
-      </Modal>
+
     </Box>
   );
 };

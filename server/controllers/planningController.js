@@ -210,7 +210,7 @@ class PlanningController {
       // A atualização foi bem-sucedida
       return res
         .status(200)
-        .json({ Status: true, Message: "Employee updated successfully." });
+        .json({ Status: true, Message: "Informações alteradas com sucesso!" });
     } catch (err) {
       console.error("Error during updateEmployee:", err.message);
       return res.status(500).json({ Status: false, Error: err.message });

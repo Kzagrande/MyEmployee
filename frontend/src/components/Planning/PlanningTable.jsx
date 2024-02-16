@@ -41,12 +41,10 @@ const PlanningTable = () => {
   const [data, setData] = useState([]); // States
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("employee_id");
-  const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [msgEP, msgEPData] = useState("");
-  const [loading, setLoading] = useState(false);
   const [uniqueCompanies, setUniqueCompanies] = useState([]);
   const [companyFilter, setCompanyFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
@@ -55,12 +53,13 @@ const PlanningTable = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   useEffect(() => {
-    fetchData();    
+    fetchData();
   }, []);
 
-
   const handleEditClick = (employeeId) => {
-    const selectedEmployeeData = data.find((employee) => employee.employee_id === employeeId);
+    const selectedEmployeeData = data.find(
+      (employee) => employee.employee_id === employeeId
+    );
     setSelectedEmployee(selectedEmployeeData);
     setOpenModal(true);
   };
@@ -76,7 +75,6 @@ const PlanningTable = () => {
         ...new Set(response.data.map((row) => row.company)),
       ];
       setUniqueCompanies(uniqueCompanies);
-      
     } catch (error) {
       console.error("Error in the request:", error);
     }
@@ -93,10 +91,15 @@ const PlanningTable = () => {
     { id: "name", numeric: false, disablePadding: false, label: "Name" },
     { id: "role_", numeric: false, disablePadding: false, label: "Role" },
     { id: "sector", numeric: false, disablePadding: false, label: "Setor" },
-    { id: "manager_1", numeric: false, disablePadding: false, label: "Responsável" },,
+    {
+      id: "manager_1",
+      numeric: false,
+      disablePadding: false,
+      label: "Responsável",
+    },
+    ,
     { id: "bu", numeric: false, disablePadding: false, label: "Business Unit" },
     { id: "shift", numeric: false, disablePadding: false, label: "Shift" },
-    
   ];
 
   const descendingComparator = (a, b, orderBy) =>
@@ -116,7 +119,6 @@ const PlanningTable = () => {
     setOrderBy(property);
   };
 
-
   const handleChangePage = (event, newPage) => setPage(newPage);
 
   const handleChangeRowsPerPage = (event) => {
@@ -130,7 +132,6 @@ const PlanningTable = () => {
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
-
 
   const handleSnackbarClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -170,9 +171,14 @@ const PlanningTable = () => {
           justifyContent: "space-between",
         }}
       >
-
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignContent: 'baseline', gap: '1em' }}>
-
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignContent: "baseline",
+            gap: "1em",
+          }}
+        >
           <TextField
             label="Search by Name"
             variant="outlined"
@@ -237,12 +243,11 @@ const PlanningTable = () => {
           <Table>
             <TableHead sx={{ backgroundColor: "#f0eef1" }}>
               <TableRow>
-                <TableCell padding="checkbox">
-                </TableCell>
+                <TableCell padding="checkbox"></TableCell>
                 {headCells.map((headCell) => (
                   <TableCell
                     key={headCell.id}
-                    align={'center'}
+                    align={"center"}
                     sx={{
                       fontSize: "14x", // Adjust font size as needed
                       padding: "10px", // Adjust padding between columns
@@ -270,8 +275,7 @@ const PlanningTable = () => {
             <TableBody>
               {filteredData.map((row) => {
                 return (
-                  <TableRow
-                  >
+                  <TableRow>
                     <TableCell padding="checkbox">
                       <EditIcon
                         color="primary"
@@ -299,7 +303,7 @@ const PlanningTable = () => {
           </Table>
 
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25, 50, 100,5000]}
+            rowsPerPageOptions={[5, 10, 25, 50, 100, 5000]}
             component="div"
             count={data.length}
             rowsPerPage={rowsPerPage}
@@ -307,7 +311,6 @@ const PlanningTable = () => {
             onPageChange={(event, newPage) => handleChangePage(event, newPage)}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
-
         </TableContainer>
         <Snackbar
           open={snackbarOpen}
@@ -324,7 +327,6 @@ const PlanningTable = () => {
           </Alert>
         </Snackbar>
         <Modal
-       
           open={openModal}
           onClose={() => setOpenModal(false)}
           aria-labelledby="edit-modal"
@@ -333,6 +335,7 @@ const PlanningTable = () => {
           <PlanningForm
             employeeData={selectedEmployee}
             onClose={() => setOpenModal(false)}
+            openFormModal={openModal}
           />
         </Modal>
       </Grid>
