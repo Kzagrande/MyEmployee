@@ -7,6 +7,7 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import ReplyIcon from '@mui/icons-material/Reply';
+import http from "../../config/http";
 
 const HrLogin = () => {
   const [values, setValues] = useState({
@@ -22,8 +23,8 @@ const HrLogin = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    axios
-      .post("http://localhost:3001/hr/adminlogin", values)
+    http
+      .post("/hr/adminlogin", values)
       .then((result) => {
         if (result.data.loginStatus) {
           navigate("/hr_dashboard/hr_crud");
