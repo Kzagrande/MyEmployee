@@ -7,7 +7,7 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import ReplyIcon from '@mui/icons-material/Reply';
-import http from "../../config/http";
+import http from '@config/http'
 
 
 const HrLogin = () => {

@@ -22,6 +22,7 @@ import axios from "axios";
 import EditIcon from "@mui/icons-material/Edit";
 import Modal from "@mui/material/Modal";
 import HrAddForm from "./HrAddFomr";
+import http from '@config/http'
 
 const visuallyHidden = {
   position: "absolute",
@@ -80,8 +81,8 @@ const HrEmployeeTable = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3001/hr/list_employee"
+      const response = await http.get(
+        "/hr/list_employee"
       ); // Get ep and return data from employee_register
       setData(response.data);
 
