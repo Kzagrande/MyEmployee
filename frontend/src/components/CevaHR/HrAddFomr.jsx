@@ -13,6 +13,7 @@ import {
 import LoadingButton from "@mui/lab/LoadingButton";
 import axios from "axios";
 import { useEffect } from "react";
+import http from '@config/http'
 
 const HrAddForm = ({ employeeData, updateMode, onClose, openFormModal }) => {
   const [formData, setFormData] = useState({
@@ -61,8 +62,8 @@ const HrAddForm = ({ employeeData, updateMode, onClose, openFormModal }) => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(
-        "http://localhost:3001/hr/add_hr_employees",
+      const response = await http.post(
+        "/hr/add_hr_employees",
         formData
       );
       console.log("ok passei pelo ep", response);
@@ -86,8 +87,8 @@ const HrAddForm = ({ employeeData, updateMode, onClose, openFormModal }) => {
 
   const handleUpdate = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:3001/hr/update_hr_employee",
+      const response = await http.post(
+        "/hr/update_hr_employee",
         formData
       );
       console.log("ok passei pelo ep", response);
