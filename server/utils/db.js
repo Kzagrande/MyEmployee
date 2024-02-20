@@ -1,9 +1,12 @@
 import mysql from 'mysql2'
+import dotenv from "dotenv";
 
+
+dotenv.config();
 const con = mysql.createConnection({
     host:'localhost',
     user: 'root',
-    password:'onepiece1998Yan',
+    password: process.env.DB_PSW,
     database:'employees'
 })
 

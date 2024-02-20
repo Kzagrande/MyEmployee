@@ -25,7 +25,7 @@ router.get("/export_activities_hc", (req, res) => {
   adminController.exportActivitiesHc(req, res);
 });
 
-router.get("/logout",verifyUser, (req, res) => {
+router.get("/logout", (req, res) => {
   adminController.logout(req, res);
 });
 

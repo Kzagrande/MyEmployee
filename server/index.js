@@ -14,7 +14,7 @@ import verifyUser from "./middleware/verifyUser.js";
 const app = express();
 
 app.use(cors({
-    origin: [ "*"],
+    origin: true,
     methods: ['GET', 'POST', 'PUT','OPTIONS'],
     credentials: true
 }));
@@ -43,3 +43,4 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+

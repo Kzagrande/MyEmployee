@@ -1,6 +1,5 @@
 import axios from 'axios'
 
-
-const http = axios.create({baseURL:'http://api.myemployee.com.br/v1'})
+const http = axios.create({baseURL:'http://myemployee.com.br/api'})
 
 export default http
