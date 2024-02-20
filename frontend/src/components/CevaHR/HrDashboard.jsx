@@ -21,6 +21,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import { Link, Outlet, useNavigate, Route } from 'react-router-dom';
 import axios from 'axios'
+import http from '../../config/http';
 
 const drawerWidth = 240;
 
@@ -104,8 +105,8 @@ const HrDash = () => {
 
   axios.defaults.withCredentials = true;
   const handleLogout = () => {
-    axios
-      .get("http://localhost:3001/agency/logout")
+    http
+      .get("/hr/logout")
       .then((result) => {
         if (result.data.Status) {
           localStorage.removeItem("valid");
