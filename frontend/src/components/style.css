@@ -1,6 +1,6 @@
 .loginPage {
-    background: url('wh_background.jpeg');
-    background: linear-gradient(rgba(11, 11, 11, 0.5), rgba(10, 10, 10, 0.5)), url("wh_background.jpeg");
+    background: url('@assets/wh_background.jpeg');
+    background: linear-gradient(rgba(11, 11, 11, 0.5), rgba(10, 10, 10, 0.5)), url("@assets/wh_background.jpeg");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover; /* ou background-size: contain; */

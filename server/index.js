@@ -10,11 +10,15 @@ import { planningRouter } from "./routes/PlanningRoute.js";
 import { agencyRouter } from "./routes/AgencyRoute.js";
 import errorHandler from "./middleware/errorHandler.js";
 import verifyUser from "./middleware/verifyUser.js";
+import dotenv from "dotenv";
+
+
+dotenv.config();
 
 const app = express();
 
 app.use(cors({
-    origin: true,
+    origin: [process.env.CORS_ORIGIN],
     methods: ['GET', 'POST', 'PUT','OPTIONS'],
     credentials: true
 }));

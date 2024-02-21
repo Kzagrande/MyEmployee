@@ -11,6 +11,7 @@ export default defineConfig({
       '@components': path.resolve(__dirname, 'src/components'),
       '@styles': path.resolve(__dirname, 'src/styles'),
       '@config': path.resolve(__dirname, 'src/config'),
+      '@assets': path.resolve(__dirname, 'src/assets'),
       // Adicione outros aliases conforme necessário
     },
   },
