@@ -13,7 +13,7 @@ class AdminController {
       if (result.length > 0) {
         const id_employee = result[0].id_employee;
         const token = jwt.sign(
-          { role: "planning", id_employee: id_employee, id: result[0].id },
+          { role: "admin", id_employee: id_employee, id: result[0].id },
           "jwt_secret_key",
           { expiresIn: "1d" }
         );

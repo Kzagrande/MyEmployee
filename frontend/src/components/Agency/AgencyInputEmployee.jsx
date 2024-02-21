@@ -14,6 +14,7 @@ import CSVReader from "react-csv-reader";
 import axios from "axios";
 import EnhancedTable from "./AgencyListEmployee";
 import { Box } from "@mui/system";
+import http from '@config/http'
 
 
 const AgencyInputEmployee = () => {
@@ -28,8 +29,8 @@ const AgencyInputEmployee = () => {
 
   const handleSaveToDatabase = () => {
     setLoading(true);
-    axios
-      .post("http://localhost:3001/agency/upload_agency", {
+    http
+      .post("/agency/upload_agency", {
         csvFile: csvData,
         dbTable: "employee_register",
       })
@@ -52,7 +53,7 @@ const AgencyInputEmployee = () => {
 
     // Criar um link temporário
     const link = document.createElement("a");
-    link.href = "http://localhost:3001/agency/export_agency";
+    link.href = "https://myemployee.com.br/api/agency/export_agency";
     link.download = "agency_data.csv";
 
     // Adicionar o link à página

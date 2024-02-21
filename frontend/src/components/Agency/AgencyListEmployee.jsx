@@ -22,7 +22,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SearchIcon from "@mui/icons-material/Search";
 import axios from "axios";
-import { display } from "@mui/system";
+import http from '@config/http'
 
 const visuallyHidden = {
   position: "absolute",
@@ -59,8 +59,8 @@ const AgencyListEmployee = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3001/agency/list_employee"
+      const response = await http.get(
+        "/agency/list_employee"
       ); // Get ep and return data from employee_register
       setData(response.data);
 
@@ -160,8 +160,8 @@ const AgencyListEmployee = () => {
   const handleSavePresence = () => {
     setLoading(true);
     // console.log('selected-->', selected);
-    axios
-      .post("http://localhost:3001/agency/set_presence", {
+    http
+      .post("/agency/set_presence", {
         ids: selected,
       })
       .then((response) => {

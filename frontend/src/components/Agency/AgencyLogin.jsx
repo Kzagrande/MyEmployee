@@ -7,6 +7,7 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import ReplyIcon from '@mui/icons-material/Reply';
+import http from '@config/http'
 
 const AgencyLogin = () => {
   const [values, setValues] = useState({
@@ -19,8 +20,8 @@ const AgencyLogin = () => {
   axios.defaults.withCredentials = true;
   const handleSubmit = (event) => {
     event.preventDefault();
-    axios
-      .post("http://localhost:3001/agency/agency_login", values)
+    http
+      .post("agency/agency_login", values)
       .then((result) => {
         if (result.data.loginStatus) {
           navigate("/agency_dashboard/add_agency_employee");
