@@ -25,7 +25,7 @@ const HrLogin = () => {
     event.preventDefault();
 
     http
-      .post("/hr/adminlogin", values)
+      .post("/hr/hr_login", values)
       .then((result) => {
         if (result.data.loginStatus) {
           navigate("/hr_dashboard/hr_crud");

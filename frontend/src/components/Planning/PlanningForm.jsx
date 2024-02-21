@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useEffect } from "react";
+import http from '@config/http.js'
 
 const PlanningForm = ({ employeeData, onClose,openFormModal }) => {
   const [formData, setFormData] = useState({
@@ -67,8 +68,8 @@ const PlanningForm = ({ employeeData, onClose,openFormModal }) => {
 
   const handleUpdate = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:3001/planning/update_planning_employee",
+      const response = await http.post(
+        "/planning/update_planning_employee",
         formData
       );
       console.log("ok passei pelo ep", response);

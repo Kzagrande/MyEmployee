@@ -10,11 +10,11 @@ router.post("/agency_login", (req, res) => {
   UploadController.login(req, res);
 });
 
-router.get('/logout', verifyUser, (req, res) => {
+router.get('/logout',verifyUser, (req, res) => {
   UploadController.logout(req, res);
 });
 
-router.post('/add_new_employee', verifyUser, (req, res) => {
+router.post('/add_new_employee', (req, res) => {
   UploadController.addEmployee(req, res);
 });
 
