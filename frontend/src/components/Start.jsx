@@ -6,6 +6,8 @@ import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import "./style.css"
+import http from '@config/http'
+
 
 
 const Start = () => {
@@ -14,7 +16,7 @@ const Start = () => {
   axios.defaults.withCredentials = true;
 
   useEffect(() => {
-    axios.get('http://localhost:3001/verify')
+    http.get('/verify')
       .then(result => {
         if (result.data.Status) {
           console.log('result', result.data);

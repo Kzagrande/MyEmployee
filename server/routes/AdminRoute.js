@@ -6,7 +6,7 @@ import verifyUser from "../middleware/verifyUser.js";
 const router = express.Router();
 
 
-router.post("/hr_login", (req, res) => {
+router.post("/adminlogin", (req, res) => {
   adminController.login(req, res);
 });
 
