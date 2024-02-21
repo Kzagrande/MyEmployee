@@ -22,6 +22,7 @@ import axios from "axios";
 import EditIcon from "@mui/icons-material/Edit";
 import Modal from "@mui/material/Modal";
 import PlanningForm from "./PlanningForm";
+import http from '@config/http.js'
 
 const visuallyHidden = {
   position: "absolute",
@@ -66,8 +67,8 @@ const PlanningTable = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3001/planning/list_employee"
+      const response = await http.get(
+        "/planning/list_employee"
       ); // Get ep and return data from employee_register
       setData(response.data);
 

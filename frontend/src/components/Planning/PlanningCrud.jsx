@@ -14,6 +14,7 @@ import CSVReader from "react-csv-reader";
 import axios from "axios";
 import PlanningTable from "./PlanningTable";
 import { Box } from "@mui/system";
+import http from '@config/http.js'
 
 
 const PlanningCrud = () => {
@@ -28,8 +29,8 @@ const PlanningCrud = () => {
 
   const handleSaveToDatabase = () => {
     setLoading(true);
-    axios
-      .post("http://localhost:3001/planning/upload_pd_infos", {
+    http
+      .post("/planning/upload_pd_infos", {
         csvFile: csvData,
         dbTable: "company_infos",
       })
@@ -52,7 +53,7 @@ const PlanningCrud = () => {
 
     // Criar um link temporário
     const link = document.createElement("a");
-    link.href = "http://localhost:3001/agency/export_agency";
+    link.href = "/agency/export_agency";
     link.download = "agency_data.csv";
 
     // Adicionar o link à página
