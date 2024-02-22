@@ -7,6 +7,7 @@ import fastcsv from "fast-csv";
 import sgMail from "@sendgrid/mail";
 import { createArrayCsvWriter } from "csv-writer";
 import fs from "fs/promises";
+import moment from "moment";
 
 dotenv.config();
 const slack = new Slack.App({
@@ -116,11 +117,17 @@ class UploadController {
     }
   }
 
+  formatDate(dateString) {
+    return moment(dateString, "DD/MM/YYYY").format("YYYY-MM-DD");
+  }
+
+
 
   async uploadAgency(req, res) {
     const dadosCSV = req.body.csvFile;
     this.dbTable = req.body.dbTable;
     this.validateInput(dadosCSV);
+
 
     try {
       dadosCSV.shift();
@@ -138,9 +145,9 @@ class UploadController {
             schedule_time: registro[7],
             company: registro[8],
             status: registro[9],
-            hire_date: new Date(registro[10]),
-            date_of_birth: new Date(registro[11]),
-            termination_date: new Date(registro[12]),
+            hire_date: this.formatDate(registro[10]) ,
+            date_of_birth: this.formatDate(registro[11]),
+            termination_date: registro[12] ? this.formatDate(registro[12]) : null,
             reason: registro[13],
             ethnicity: registro[14],
             gender: registro[15],
@@ -148,7 +155,7 @@ class UploadController {
             city: registro[17],
             email: registro[18],
             phone: registro[19],
-            integration_date: new Date(registro[20]),
+            integration_date: this.formatDate(registro[20]),
           })
       );
 
@@ -366,37 +373,49 @@ class UploadController {
   }
 
 
+  listEmployee = (req, res) => {
+    const query = `SELECT 
+    pi.name,
+    pi.cpf,
+    pi.rg,
+    ci.employee_id,
+    ci.company,
+    ci.role_,
+    ci.shift,
+    ci.bu,
+    ci.schedule_time,
+    ci.sector,
+    ci.manager_1,
+    ci.integration_date,
+    pi.email,
+    ci.presence_integration
+FROM 
+    personal_infos pi
+JOIN 
+    company_infos ci ON pi.employee_id = ci.employee_id
+    WHERE ci.presence_integration IS NULL`;
 
-  async listEmployee(req, res) {
-    try {
-      const data = await this.executeQuery(
-        `SELECT 
-        pi.name,
-        pi.cpf,
-        pi.rg,
-        ci.employee_id,
-        ci.company,
-        ci.role_,
-        ci.shift,
-        ci.bu,
-        ci.schedule_time,
-        ci.sector,
-        ci.manager_1,
-        ci.integration_date,
-        pi.email,
-        ci.presence_integration
-    FROM 
-        personal_infos pi
-    JOIN 
-        company_infos ci ON pi.employee_id = ci.employee_id
-        WHERE ci.presence_integration IS NULL;`
-      );
-      res.status(200).json(data);
-    } catch (err) {
-      console.error("Erro:", err);
-      return res.status(500).json({ status: false, error: err.message });
-    }
-  }
+    con.query(query, (error, results) => {
+      if (error) {
+        console.error("Erro ao executar a consulta SQL:", error);
+        res.status(500).json({ error: "Erro interno do servidor" });
+      } else {
+        const modifiedResults = results.map((employee) => {
+          return {
+            ...employee,
+            hire_date: moment(employee.hire_date).format("DD/MM/YYYY"),
+            integration_date: moment(employee.integration_date).format(
+              "DD/MM/YYYY"
+            ),
+            date_of_birth: moment(employee.date_of_birth).format("DD/MM/YYYY"),
+          };
+        });
+
+        // console.log('modifiedResults', modifiedResults);
+        res.status(200).json(modifiedResults);
+      }
+    });
+  };
 
   async setPresence(req, res) {
     const presenceList = req.body.ids;

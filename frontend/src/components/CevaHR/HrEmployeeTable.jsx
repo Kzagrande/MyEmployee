@@ -57,16 +57,7 @@ const HrEmployeeTable = () => {
 
   useEffect(() => {
     fetchData(); //When components start apply this function
-    // const mockData = [
-    //   { employee_id: '123456', name: 'Yan', cpf: '480-078-408-50', role_: 'bpe' },
-    //   { employee_id: '789012', name: 'João', cpf: '123-456-789-10', role_: 'developer' },
-    //   // Adicione mais dados conforme necessário
-    // ];
 
-    // Atualizando o estado com os dados mockados
-    // setData(mockData);
-
-    // Atualizando a lista única de empresas com os dados mockados
     const uniqueCompanies = [...new Set(data.map((row) => row.company))];
     setUniqueCompanies(uniqueCompanies);
   }, []);

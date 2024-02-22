@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import "./style.css"
 import http from '@config/http'
+import { fontWeight } from "@mui/system";
 
 
 
@@ -36,8 +37,8 @@ const Start = () => {
     <div className="vh-100  loginPage">
     <Container className="d-flex justify-content-center align-items-center vh-100 ">
       <Box p={6.} borderRadius="border" className="loginForm text-center">
-        <Typography variant="h4" gutterBottom>
-          Login As
+        <Typography variant="h6" gutterBottom sx={{fontWeight:'bold'}}>
+          LOGIN
         </Typography>
         <Box display="flex" justifyContent="between" my={6}  className="gap-5">
           <Button  variant="contained" color="primary" size="large" className="btnLogin"   onClick={() => { navigate('/planning_login') }}>

@@ -21,6 +21,7 @@ import ListAltIcon from '@mui/icons-material/ListAlt';
 import { Link, Outlet, useNavigate, Route } from 'react-router-dom';
 import axios from 'axios'
 import http from '@config/http'
+import Divider from '@mui/material/Divider'
 
 const drawerWidth = 240;
 
@@ -115,105 +116,161 @@ const HrDash = () => {
       .catch((err) => console.log(err));
   };
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}  >
-        <Toolbar sx={{ backgroundColor: '#d3d3d3' }}>
+      <AppBar position="fixed" open={open}>
+        <Toolbar sx={{ backgroundColor: "#d3d3d3" }}>
           <IconButton
-            color="inherit"
+            color="#3f3e3e"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
             sx={{
+              color:'#3f3e3e',
               marginRight: 5,
-              ...(open && { display: 'none' }),
+              ...(open && { display: "none" }),
             }}
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ color: '#656565' }}>
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ color: "#3f3e3e", fontWeight: "bold" }}
+          >
             CEVA ERP SYSTEM
           </Typography>
         </Toolbar>
       </AppBar>
-      <Drawer  variant="permanent" open={open} >
-        <DrawerHeader >
-          <IconButton onClick={handleDrawerClose} >
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+      <Drawer
+        sx={{
+          boxShadow:
+            "0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)",
+        }}
+        variant="permanent"
+        open={open}
+        PaperProps={{
+          style: {
+            backgroundColor: "#d3d3d3", // Defina a cor desejada aqui
+          },
+        }}
+      >
+        <DrawerHeader sx={{ backgroundColor: "#d3d3d3" }}>
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === "rtl" ? (
+              <ChevronRightIcon />
+            ) : (
+              <ChevronLeftIcon />
+            )}
           </IconButton>
         </DrawerHeader>
-       
-        <List >
-          <ListItem disablePadding sx={{ display: 'block' }}>
-            <Link to="/hr_dashboard/hr_crud" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <List>
+          <Divider></Divider>
+          <ListItem disablePadding sx={{ display: "block" }}>
+            <Link
+              to="/planning_dashboard/planning_crud"
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
               <ListItemButton
                 sx={{
                   minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
+                  justifyContent: open ? "initial" : "center",
                   px: 2.5,
                 }}
               >
                 <ListItemIcon
                   sx={{
                     minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                    color:'#3f3e3e'
                   }}
                 >
                   <ListAltIcon />
-                </ListItemIcon>
-                <ListItemText primary="Ativos" sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemIcon >
+                <ListItemText
+                  primary="Ativos"
+                  sx={{ opacity: open ? 1 : 0 }}
+                  primaryTypographyProps={{
+                    style: {
+                      fontWeight: "bold", // Defina a cor desejada aqui
+                      color:'#3f3e3e'
+                    },
+                  }}
+                />
               </ListItemButton>
             </Link>
           </ListItem>
-
-          <ListItem disablePadding sx={{ display: 'block' }}>
+          <Divider></Divider>
+          <ListItem disablePadding sx={{ display: "block" }}>
             <ListItemButton
               sx={{
                 minHeight: 48,
-                justifyContent: open ? 'initial' : 'center',
+                justifyContent: open ? "initial" : "center",
                 px: 2.5,
               }}
             >
               <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : 'auto',
-                  justifyContent: 'center',
-                }}
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                    color:'#3f3e3e'
+                  }}
               >
                 <GroupRemoveIcon />
               </ListItemIcon>
-              <ListItemText primary="Desligados" sx={{ opacity: open ? 1 : 0 }} />
+              <ListItemText
+                  primary="Desligados"
+                  sx={{ opacity: open ? 1 : 0 }}
+                  primaryTypographyProps={{
+                    style: {
+                      fontWeight: "bold", // Defina a cor desejada aqui
+                      color:'#3f3e3e'
+                    },
+                  }}
+                />
             </ListItemButton>
           </ListItem>
         </List>
-     
+        <Divider></Divider>
         <List>
-          <ListItem disablePadding sx={{ display: 'block' }}>
+          <ListItem disablePadding sx={{ display: "block" }}>
             <ListItemButton
               onClick={handleLogout}
               sx={{
                 minHeight: 48,
-                justifyContent: open ? 'initial' : 'center',
+                justifyContent: open ? "initial" : "center",
                 px: 2.5,
               }}
             >
               <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : 'auto',
-                  justifyContent: 'center',
-                }}
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                    color:'#e1261c'
+                  }}
               >
                 <LogoutIcon />
               </ListItemIcon>
-              <ListItemText primary="Sair" sx={{ opacity: open ? 1 : 0 }} />
+              <ListItemText
+                  primary="Sair"
+                  sx={{ opacity: open ? 1 : 0 }}
+                  primaryTypographyProps={{
+                    style: {
+                      fontWeight: "bold", // Defina a cor desejada aqui
+                      color:'#3f3e3e'
+                    },
+                  }}
+                />
             </ListItemButton>
           </ListItem>
+          <Divider></Divider>
         </List>
-      </Drawer >
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }} >
+      </Drawer>
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         {/* Defina suas rotas dentro do componente Outlet */}
         <Outlet />
