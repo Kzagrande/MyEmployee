@@ -192,7 +192,7 @@ class UploadController {
       const preIntegrationCsv = await this.databaseToCsv(select);
       this.createAndSendCSV(
         preIntegrationCsv,
-        "bortoletoyan@gmail.com",
+        ["bortoletoyan@gmail.com", "yan.bortoleto@cevalogistics.com"],
         { name: "Yan", email: "bortoletoyan@gmail.com" },
         "d-95083a36e91245949cffc5d3fccfbcf4",
         { name: "Yan" }
@@ -216,7 +216,7 @@ class UploadController {
   }
 
   async createAndSendCSV(dadosCSV, to, from, templateId, dynamicTemplateData) {
-    console.log(dadosCSV[0]);
+    // console.log(dadosCSV[0]);
     const csvWriter = createArrayCsvWriter({
       path: "temp.csv",
       header: dadosCSV[0],
@@ -246,6 +246,7 @@ class UploadController {
           },
         ],
       };
+      console.log('msg',msg.to)
 
       await sgMail.send(msg);
 
@@ -419,7 +420,7 @@ JOIN
 
   async setPresence(req, res) {
     const presenceList = req.body.ids;
-    console.log("presenceList", presenceList);
+    // console.log("presenceList", presenceList);
 
     if (
       !presenceList ||
