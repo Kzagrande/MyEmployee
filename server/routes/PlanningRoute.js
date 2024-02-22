@@ -17,6 +17,10 @@ router.post("/update_planning_employee", (req, res) => {
   planningController.updateEmployee(req, res);
 });
 
+router.get("/export_planning_infos", (req, res) => {
+  planningController.exportPlanning(req, res);
+});
+
 
 router.get('/logout', verifyUser, (req, res) => {
   planningController.logout(req, res);

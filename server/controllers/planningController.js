@@ -1,9 +1,10 @@
 // controllers/planningController.js
 import con from "../utils/db.js";
 import jwt from "jsonwebtoken";
-import { createArrayCsvWriter } from "csv-writer";
-import fs from "fs/promises";
 import PlanningModel from "../models/planningModel.js";
+import fastcsv from "fast-csv";
+
+
 
 class PlanningController {
   login(req, res) {
@@ -230,6 +231,48 @@ class PlanningController {
       }
     });
   };
+
+  async exportPlanning(req, res) {
+    try {
+      const data = await this.executeQuery(
+        `SELECT * FROM company_infos
+        `
+      );
+      const jsonData = JSON.parse(JSON.stringify(data));
+
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=agency_data.csv"
+      );
+      res.setHeader("Content-Type", "text/csv");
+
+      // Criar um stream de escrita no response
+      fastcsv
+        .write(jsonData, { headers: true })
+        .on("finish", () => {
+          console.log("Enviado com sucesso para o usuário!");
+        })
+        .pipe(res); // Pipe para o response diretamente
+      // console.log(res);
+    } catch (err) {
+      console.error("Erro:", err);
+      return res
+        .status(500)
+        .json({ error: "Erro ao exportar dados da agência" });
+    }
+  }
+
+  executeQuery(query) {
+    return new Promise((resolve, reject) => {
+      con.query(query, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  }
 
 
   logout(req, res) {

@@ -53,7 +53,7 @@ const PlanningCrud = () => {
 
     // Criar um link temporário
     const link = document.createElement("a");
-    link.href = "/agency/export_agency";
+    link.href = "https://myemployee.com.br/api/planning/export_planning_infos";
     link.download = "agency_data.csv";
 
     // Adicionar o link à página

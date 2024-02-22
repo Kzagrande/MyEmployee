@@ -24,7 +24,7 @@ const PlanningLogin = () => {
       .post("/planning/planning_login", values)
       .then((result) => {
         if (result.data.loginStatus) {
-          navigate("/planning_dashboard");
+          navigate("/planning_dashboard/planning_crud");
         } else {
           setError(result.data.Error);
         }

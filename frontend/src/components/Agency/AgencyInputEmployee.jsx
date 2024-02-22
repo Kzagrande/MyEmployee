@@ -38,7 +38,8 @@ const AgencyInputEmployee = () => {
         msgEPData(response.data);
         console.log(response.data);
         setSnackbarOpen(true); // Open the Snackbar on success
-        setLoading(false);   
+        setLoading(false); 
+        window.location.reload();
       })
       .catch((error) => {
         console.error(error.response.data);
