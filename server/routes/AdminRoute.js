@@ -1,7 +1,7 @@
 // routes/adminRoutes.js
 import express from "express";
 import adminController from "../controllers/adminController.js";
-import verifyUser from "../middleware/verifyUser.js";
+
 
 const router = express.Router();
 
@@ -25,7 +25,7 @@ router.get("/export_activities_hc", (req, res) => {
   adminController.exportActivitiesHc(req, res);
 });
 
-router.get('/logout', verifyUser, (req, res) => {
+router.get('/logout', (req, res) => {
   adminController.logout(req, res);
 });
 

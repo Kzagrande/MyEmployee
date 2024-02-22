@@ -22,6 +22,8 @@ import ListAltIcon from "@mui/icons-material/ListAlt";
 import { Link, Outlet, useNavigate, Route } from "react-router-dom";
 import axios from "axios";
 import http from "@config/http";
+import Cookies from 'js-cookie';
+import { useEffect } from "react";
 
 const drawerWidth = 240;
 
@@ -115,6 +117,25 @@ const AgencyDash = () => {
       })
       .catch((err) => console.log(err));
   };
+
+
+  useEffect(() => {
+    // Verificar se o cookie 'token' existe
+    const token = Cookies.get('token');
+
+    if (!token) {
+      // Se o cookie 'token' não existir, navegue de volta para '/'
+      navigate('/');
+    } else {
+      // Verificar se o token está expirado (você pode ajustar isso de acordo com sua lógica)
+      const isTokenExpired = false;  // Substitua isso com a lógica real para verificar a expiração do token
+
+      if (isTokenExpired) {
+        // Se o token estiver expirado, navegue de volta para '/'
+        navigate('/');
+      }
+    }
+  }, [navigate]);
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -167,7 +188,7 @@ const AgencyDash = () => {
           <Divider></Divider>
           <ListItem disablePadding sx={{ display: "block" }}>
             <Link
-              to="/planning_dashboard/planning_crud"
+              to="/agency_dashboard/add_agency_employee"
               style={{ textDecoration: "none", color: "inherit" }}
             >
               <ListItemButton
