@@ -23,6 +23,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import SearchIcon from "@mui/icons-material/Search";
 import axios from "axios";
 import http from '@config/http'
+import moment from 'moment'
 
 const visuallyHidden = {
   position: "absolute",
@@ -73,10 +74,6 @@ const AgencyListEmployee = () => {
     }
   };
 
-  const createData = (rowData) => ({
-    id: rowData.employee_id,
-    ...rowData,
-  });
 
   const headCells = [
     // Define columns
@@ -89,8 +86,8 @@ const AgencyListEmployee = () => {
     { id: "name", numeric: false, disablePadding: false, label: "Name" },
     { id: "cpf", numeric: false, disablePadding: false, label: "CPF" },
     { id: "role_", numeric: false, disablePadding: false, label: "Role" },
-    { id: "bu", numeric: false, disablePadding: false, label: "Business Unit" },
     { id: "shift", numeric: false, disablePadding: false, label: "Shift" },
+    { id: "status", numeric: false, disablePadding: false, label: "Status" },
     { id: "company", numeric: false, disablePadding: false, label: "Company" },
     {
       id: "integration_date",
@@ -191,7 +188,7 @@ const AgencyListEmployee = () => {
     setSearchTerm(event.target.value);
   };
 
-  const formattedDateFilter = dateFilter; // Ajuste conforme necessário
+    const formattedDateFilter = dateFilter; // Ajuste conforme necessário
 
   const filteredData = visibleRows.filter(
     (row) =>
@@ -201,7 +198,7 @@ const AgencyListEmployee = () => {
         row.company.toLowerCase().includes(companyFilter.toLowerCase())) &&
       (formattedDateFilter === "" ||
         (row.integration_date &&
-          row.integration_date.substring(0, 10) === formattedDateFilter))
+          row.integration_date.substring(0, 10) ===  moment(formattedDateFilter).format('DD/MM/YYYY')))
   );
 
   return (
@@ -222,11 +219,11 @@ const AgencyListEmployee = () => {
             loadingPosition="start"
             startIcon={<SaveIcon />}
             variant="contained"
-            color="success"
+            color="error"
             onClick={handleSavePresence}
             sx={{}}
           >
-            <span>Presentes</span>
+            <span>AUSENTES</span>
           </LoadingButton>
         <Box sx={{display:'flex',justifyContent:'space-between',alignContent:'baseline',gap:'1em'}}>
 

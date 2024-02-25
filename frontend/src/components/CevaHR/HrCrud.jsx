@@ -38,7 +38,7 @@ const HrCrud = () => {
 
     // Criar um link temporário
     const link = document.createElement("a");
-    link.href = "https://myemployee.com.br/api/hr/export_activities_hc";
+    link.href = "http://localhost:3001/hr/export_activities_hc";
     link.download = "agency_data.csv";
 
     // Adicionar o link à página
