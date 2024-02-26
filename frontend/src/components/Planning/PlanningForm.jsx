@@ -133,7 +133,13 @@ const PlanningForm = ({ employeeData, onClose,openFormModal }) => {
     </Grid>
   );
   return (
-    <Container sx={{ backgroundColor: "white", margin: "1em", padding: "1em" }}>
+    <Container       sx={{
+      backgroundColor: "white",
+      margin: "1em",
+      padding: "1em",
+      maxHeight: "95vh",  // Defina a altura máxima desejada
+      overflowY: "auto",  // Adiciona rolagem vertical
+    }}>
       <Typography variant="h6">Edit Employee</Typography>
       <form>
         <Grid container spacing={0.5} sx={{ marginBottom: "1em" }}>

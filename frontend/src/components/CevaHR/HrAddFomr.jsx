@@ -11,7 +11,6 @@ import {
   Modal,
 } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
-import axios from "axios";
 import { useEffect } from "react";
 import http from '@config/http'
 
@@ -101,6 +100,7 @@ const HrAddForm = ({ employeeData, updateMode, onClose, openFormModal }) => {
         setSnackbarOpen(false);
       }, 1000);
       setFormData(createEmptyFormData());
+      window.location.reload()
       
     } catch (error) {
       console.error(error.response.data.Error);

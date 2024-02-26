@@ -1,6 +1,6 @@
 // models/agencyModel.js
 class PlanningModel {
-    constructor({name,employee_id, activity_p,area, sector, shift,work_schedule, type_, collar, status_op, manager_1, manager_2, manager_3, added_on_call }) {
+    constructor({name,employee_id, activity_p,area, sector, shift,work_schedule, type_, collar, status, manager_1, manager_2, manager_3, added_on_call }) {
       this.name = name;
       this.employee_id = employee_id;
       this.activity_p = activity_p;
@@ -10,7 +10,7 @@ class PlanningModel {
       this.work_schedule = work_schedule;
       this.type_ = type_;
       this.collar = collar;
-      this.status_op = status_op;
+      this.status = status;
       this.manager_1 = manager_1;
       this.manager_2 = manager_2;
       this.manager_3 = manager_3;

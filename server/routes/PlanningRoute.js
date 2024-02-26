@@ -1,7 +1,7 @@
 // routes/planningRoutes.js
 import express from "express";
 import planningController from "../controllers/planningController.js";
-import verifyUser from "../middleware/verifyUser.js";
+
 
 const router = express.Router();
 
@@ -22,7 +22,7 @@ router.get("/export_planning_infos", (req, res) => {
 });
 
 
-router.get('/logout', verifyUser, (req, res) => {
+router.get('/logout', (req, res) => {
   planningController.logout(req, res);
 });
 
