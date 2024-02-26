@@ -9,29 +9,27 @@ import "./style.css"
 import http from '@config/http'
 import { fontWeight } from "@mui/system";
 
-
-
 const Start = () => {
   const navigate = useNavigate();
 
   axios.defaults.withCredentials = true;
 
-  useEffect(() => {
-    http.get('/verify')
-      .then(result => {
-        if (result.data.Status) {
-          console.log('result', result.data);
-          if (result.data.role === "users_sys") {
-            navigate('/dashboard');
-          } else if (result.data.role === "planning") {
-            navigate('/planning_dashboard');
-          } else {
-            navigate('/agency_dashboard');
-          }
-        }
-      })
-      .catch(err => console.log(err));
-  }, [navigate]);
+  // useEffect(() => {
+  //   http.get('/verify')
+  //     .then(result => {
+  //       if (result.data.Status) {
+  //         console.log('result', result.data);
+  //         if (result.data.role === "users_sys") {
+  //           navigate('/dashboard');
+  //         } else if (result.data.role === "planning") {
+  //           navigate('/planning_dashboard');
+  //         } else {
+  //           navigate('/agency_dashboard');
+  //         }
+  //       }
+  //     })
+  //     .catch(err => console.log(err));
+  // }, [navigate]);
 
   return (
     <div className="vh-100  loginPage">

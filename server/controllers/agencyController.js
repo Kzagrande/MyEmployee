@@ -121,13 +121,10 @@ class UploadController {
     return moment(dateString, "DD/MM/YYYY").format("YYYY-MM-DD");
   }
 
-
-
   async uploadAgency(req, res) {
     const dadosCSV = req.body.csvFile;
     this.dbTable = req.body.dbTable;
     this.validateInput(dadosCSV);
-
 
     try {
       dadosCSV.shift();
@@ -145,9 +142,11 @@ class UploadController {
             schedule_time: registro[7],
             company: registro[8],
             status: registro[9],
-            hire_date: this.formatDate(registro[10]) ,
+            hire_date: this.formatDate(registro[10]),
             date_of_birth: this.formatDate(registro[11]),
-            termination_date: registro[12] ? this.formatDate(registro[12]) : null,
+            termination_date: registro[12]
+              ? this.formatDate(registro[12])
+              : null,
             reason: registro[13],
             ethnicity: registro[14],
             gender: registro[15],
@@ -188,11 +187,11 @@ class UploadController {
   JOIN 
       company_infos ci ON pi.employee_id = ci.employee_id
       ;
-      `
+      `;
       const preIntegrationCsv = await this.databaseToCsv(select);
       this.createAndSendCSV(
         preIntegrationCsv,
-        "bortoletoyan@gmail.com",
+        ["bortoletoyan@gmail.com", "yan.bortoleto@cevalogistics.com"],
         { name: "Yan", email: "bortoletoyan@gmail.com" },
         "d-95083a36e91245949cffc5d3fccfbcf4",
         { name: "Yan" }
@@ -216,7 +215,7 @@ class UploadController {
   }
 
   async createAndSendCSV(dadosCSV, to, from, templateId, dynamicTemplateData) {
-    console.log(dadosCSV[0]);
+    // console.log(dadosCSV[0]);
     const csvWriter = createArrayCsvWriter({
       path: "temp.csv",
       header: dadosCSV[0],
@@ -246,6 +245,7 @@ class UploadController {
           },
         ],
       };
+      console.log("msg", msg.to);
 
       await sgMail.send(msg);
 
@@ -258,9 +258,9 @@ class UploadController {
       }
     }
   }
-  
+
   async databaseToCsv(select) {
-    const selectQuery = select
+    const selectQuery = select;
 
     return new Promise((resolve, reject) => {
       con.query(selectQuery, (err, result) => {
@@ -284,9 +284,7 @@ class UploadController {
         }
       });
     });
-
-}
-
+  }
 
   validateInput(data) {
     if (!data || data.length === 0) {
@@ -307,7 +305,6 @@ class UploadController {
     );
     // console.log(values.slice(0, 5));
 
-
     try {
       await new Promise((resolve, reject) => {
         con.query(insertQuery, [values], (err, result) => {
@@ -315,23 +312,23 @@ class UploadController {
             reject(err);
           } else {
             // console.log("Registros inseridos com sucesso:", result);
-            try {
-              // console.log("dbTable", this.dbTable);
-              slack.client.chat.postMessage({
-                token: process.env.SLACK_BOT_TOKEN,
-                channel: process.env.SLACK_CHANNEL,
-                text:
-                  this.dbTable == "employee_register"
-                    ? "A Agência X acabou de subir as informações dos novos colaboradores 😁"
-                    : "A Agência x acabou de subir as informações dos novos desligados 😪",
-              });
-              console.log("Mensagem enviada para o Slack com sucesso.");
-            } catch (slackError) {
-              console.error(
-                "Erro ao enviar mensagem para o Slack:",
-                slackError
-              );
-            }
+            // try {
+            //   // console.log("dbTable", this.dbTable);
+            //   slack.client.chat.postMessage({
+            //     token: process.env.SLACK_BOT_TOKEN,
+            //     channel: process.env.SLACK_CHANNEL,
+            //     text:
+            //       this.dbTable == "employee_register"
+            //         ? "A Agência X acabou de subir as informações dos novos colaboradores 😁"
+            //         : "A Agência x acabou de subir as informações dos novos desligados 😪",
+            //   });
+            //   console.log("Mensagem enviada para o Slack com sucesso.");
+            // } catch (slackError) {
+            //   console.error(
+            //     "Erro ao enviar mensagem para o Slack:",
+            //     slackError
+            //   );
+            // }
             // Integração com a API do Slack após o sucesso da inserção
             resolve();
           }
@@ -372,12 +369,12 @@ class UploadController {
     }
   }
 
-
   listEmployee = (req, res) => {
     const query = `SELECT 
     pi.name,
     pi.cpf,
     pi.rg,
+    ci.status,
     ci.employee_id,
     ci.company,
     ci.role_,
@@ -393,7 +390,7 @@ FROM
     personal_infos pi
 JOIN 
     company_infos ci ON pi.employee_id = ci.employee_id
-    WHERE ci.presence_integration IS NULL`;
+    WHERE  status = 'INTEGRATION'  AND integration_date BETWEEN CURRENT_DATE - INTERVAL '30' DAY AND CURRENT_DATE;`;
 
     con.query(query, (error, results) => {
       if (error) {
@@ -419,7 +416,7 @@ JOIN
 
   async setPresence(req, res) {
     const presenceList = req.body.ids;
-    console.log("presenceList", presenceList);
+    // console.log("presenceList", presenceList);
 
     if (
       !presenceList ||
@@ -429,18 +426,18 @@ JOIN
       return res.status(500).json({ status: false, error: error.message });
     }
 
-    const presenceStatus = "PRESENT";
-
+    const noShowStatus = "NOSHOW";
     try {
       // Crie a consulta SQL diretamente com os valores da lista
       const updateQuery = `
-        UPDATE employees.company_infos
-        SET presence_integration = '${presenceStatus}'
+        UPDATE employees.employee_register
+        SET status = '${noShowStatus}'
         WHERE employee_id IN (${presenceList.join(",")})
       `;
 
       // Execute a consulta
       await this.executeQuery(updateQuery);
+
       const select = `SELECT 
       pi.name,
       pi.cpf,
@@ -461,8 +458,8 @@ JOIN
       personal_infos pi
   JOIN 
       company_infos ci ON pi.employee_id = ci.employee_id
-      WHERE presence_integration is NOT NULL;
-      `
+      WHERE status = 'INTEGRATION';
+      `;
       const integrationCsv = await this.databaseToCsv(select);
       this.createAndSendCSV(
         integrationCsv,
@@ -477,10 +474,9 @@ JOIN
       });
     } catch (err) {
       console.error("Erro ao marcar presença:", err);
-      return res.status(500).json({ status: false, err: error.message });
+      return res.status(500).json({ status: false, err: err.message });
     }
   }
-
-  }
+}
 
 export default new UploadController();

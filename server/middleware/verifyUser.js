@@ -6,8 +6,10 @@ const verifyUser = (req, res, next) => {
   // console.log('token',token)
 
   if (token) {
+    console.log('tem token')
     jwt.verify(token, "jwt_secret_key", (err, decoded) => {
       if (err) {
+        console.log(err)
         return res.status(401).json({ Status: false, Error: "Invalid Token" });
       }
 
@@ -17,6 +19,7 @@ const verifyUser = (req, res, next) => {
       next();
     });
   } else {
+    console.log('n tem token')
     return res.status(401).json({ Status: false, Error: "Authentication required" });
   }
 };

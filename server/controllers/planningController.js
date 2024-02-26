@@ -51,11 +51,11 @@ class PlanningController {
             work_schedule: registro[6],
             type_: registro[7],
             collar: registro[8],
-            status_op: registro[9],
+            status: 'ACTIVE',
             manager_1: registro[10],
             manager_2: registro[11],
             manager_3: registro[12],
-            added_on_call: registro[113],
+            added_on_call: registro[13],
           })
       );
 
@@ -110,15 +110,15 @@ class PlanningController {
   async insertRecords(table, PlanningModels) {
     try {
       for (const PlanningModel of PlanningModels) {
-        const {name,employee_id, activity_p, area, sector,shift,work_schedule, type_, collar, status_op, manager_1, manager_2, manager_3, added_on_call } = PlanningModel;
+        const {name,employee_id, activity_p, area, sector,shift,work_schedule, type_, collar, status, manager_1, manager_2, manager_3, added_on_call } = PlanningModel;
   
         const updateQuery = `
           UPDATE employees.${table}
           SET activity_p = ?, area = ?, sector = ?, shift = ?,  work_schedule = ?, 
-              type_ = ?, collar = ?, status_op = ?, manager_1 = ?, manager_2 = ?, manager_3 = ?, added_on_call = ?
+              type_ = ?, collar = ?, status = ?, manager_1 = ?, manager_2 = ?, manager_3 = ?, added_on_call = ?
           WHERE employee_id = ?`;
   
-        const values = [activity_p, area, sector, shift, work_schedule, type_, collar, status_op, manager_1, manager_2, manager_3, added_on_call, employee_id];
+        const values = [activity_p, area, sector, shift, work_schedule, type_, collar, status, manager_1, manager_2, manager_3, added_on_call, employee_id];
   
         await new Promise((resolve, reject) => {
           con.query(updateQuery, values, (err, result) => {
@@ -154,7 +154,7 @@ class PlanningController {
         collar,
         work_schedule,
         type_,
-        status_op,
+        status,
         schedule_time,
         activity_p,
         manager_1,
@@ -171,7 +171,7 @@ class PlanningController {
       collar =?,
       work_schedule =?,
       type_ =?,
-      status_op =?,
+      status =?,
       schedule_time =?,
       activity_p =?,
       manager_1 =?
@@ -186,7 +186,7 @@ class PlanningController {
           collar,
           work_schedule,
           type_,
-          status_op,
+          status,
           schedule_time,
           activity_p,
           manager_1,

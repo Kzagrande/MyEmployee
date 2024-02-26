@@ -3,6 +3,7 @@ import con from "../utils/db.js";
 import jwt from "jsonwebtoken";
 import fastcsv from "fast-csv";
 import moment from "moment";
+import verifyUser from "../middleware/verifyUser.js";
 
 class AdminController {
   login(req, res) {
@@ -221,30 +222,33 @@ class AdminController {
     }
   }
 
-  listEmployee = (req, res) => {
-    const query = "SELECT * FROM employees.activities_hc";
-
-    con.query(query, (error, results) => {
-      if (error) {
-        console.error("Erro ao executar a consulta SQL:", error);
-        res.status(500).json({ error: "Erro interno do servidor" });
-      } else {
-        const modifiedResults = results.map((employee) => {
-          return {
-            ...employee,
-            hire_date: moment(employee.hire_date).format("DD/MM/YYYY"),
-            integration_date: moment(employee.integration_date).format(
-              "DD/MM/YYYY"
-            ),
-            date_of_birth: moment(employee.date_of_birth).format("DD/MM/YYYY"),
-          };
-        });
-
-        // console.log('modifiedResults', modifiedResults);
-        res.status(200).json(modifiedResults);
-      }
+   listEmployee = (req, res) => {
+    // Call the verifyUser middleware before processing the request
+    verifyUser(req, res, () => {
+      // If the verification is successful, proceed with the database query
+      const query = "SELECT * FROM employees.activities_hc";
+  
+      con.query(query, (error, results) => {
+        if (error) {
+          console.error("Erro ao executar a consulta SQL:", error);
+          res.status(500).json({ error: "Erro interno do servidor" });
+        } else {
+          const modifiedResults = results.map((employee) => {
+            return {
+              ...employee,
+              hire_date: moment(employee.hire_date).format("DD/MM/YYYY"),
+              integration_date: moment(employee.integration_date).format("DD/MM/YYYY"),
+              date_of_birth: moment(employee.date_of_birth).format("DD/MM/YYYY"),
+            };
+          });
+  
+          // console.log('modifiedResults', modifiedResults);
+          res.status(200).json(modifiedResults);
+        }
+      });
     });
   };
+  
 
   async exportActivitiesHc(req, res) {
     try {
