@@ -51,7 +51,7 @@ class PlanningController {
             work_schedule: registro[6],
             type_: registro[7],
             collar: registro[8],
-            status: registro[9],
+            status: 'ACTIVE',
             manager_1: registro[10],
             manager_2: registro[11],
             manager_3: registro[12],
