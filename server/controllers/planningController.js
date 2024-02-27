@@ -1,8 +1,9 @@
 // controllers/planningController.js
-import con from "../utils/db.js";
+import pool from "../utils/db.js";
 import jwt from "jsonwebtoken";
 import PlanningModel from "../models/planningModel.js";
 import fastcsv from "fast-csv";
+
 
 
 
@@ -10,7 +11,7 @@ class PlanningController {
   login(req, res) {
     const sql =
       "SELECT * FROM employees.users_sys WHERE id_employee = ? AND password_ = ? AND status = 1";
-    con.query(sql, [req.body.id_employee, req.body.password], (err, result) => {
+    pool.query(sql, [req.body.id_employee, req.body.password], (err, result) => {
       if (err) return res.json({ loginStatus: false, Error: "Query error" });
       if (result.length > 0) {
         const id_employee = result[0].id_employee;
@@ -42,7 +43,7 @@ class PlanningController {
       const PlanningModels = dadosCSV.map(
         (registro) =>
           new PlanningModel({
-            name:registro[0],
+            name: registro[0],
             employee_id: registro[1],
             activity_p: registro[2],
             area: registro[3],
@@ -110,18 +111,18 @@ class PlanningController {
   async insertRecords(table, PlanningModels) {
     try {
       for (const PlanningModel of PlanningModels) {
-        const {name,employee_id, activity_p, area, sector,shift,work_schedule, type_, collar, status, manager_1, manager_2, manager_3, added_on_call } = PlanningModel;
-  
+        const { name, employee_id, activity_p, area, sector, shift, work_schedule, type_, collar, status, manager_1, manager_2, manager_3, added_on_call } = PlanningModel;
+
         const updateQuery = `
           UPDATE employees.${table}
           SET activity_p = ?, area = ?, sector = ?, shift = ?,  work_schedule = ?, 
               type_ = ?, collar = ?, status = ?, manager_1 = ?, manager_2 = ?, manager_3 = ?, added_on_call = ?
           WHERE employee_id = ?`;
-  
+
         const values = [activity_p, area, sector, shift, work_schedule, type_, collar, status, manager_1, manager_2, manager_3, added_on_call, employee_id];
-  
+
         await new Promise((resolve, reject) => {
-          con.query(updateQuery, values, (err, result) => {
+          pool.query(updateQuery, values, (err, result) => {
             if (err) {
               reject(err);
             } else {
@@ -158,7 +159,7 @@ class PlanningController {
         schedule_time,
         activity_p,
         manager_1,
-        
+
       } = req.body;
 
       const updateQuery = `
@@ -179,23 +180,23 @@ class PlanningController {
         employee_id = ?`;
 
       const values = [
-          role_,
-          bu,
-          shift,
-          sector,
-          collar,
-          work_schedule,
-          type_,
-          status,
-          schedule_time,
-          activity_p,
-          manager_1,
-          employee_id,
+        role_,
+        bu,
+        shift,
+        sector,
+        collar,
+        work_schedule,
+        type_,
+        status,
+        schedule_time,
+        activity_p,
+        manager_1,
+        employee_id,
       ];
 
       try {
         await new Promise((resolve, reject) => {
-          con.query(updateQuery, values, (err, result) => {
+          pool.query(updateQuery, values, (err, result) => {
             if (err) {
               reject(err);
             } else {
@@ -218,11 +219,11 @@ class PlanningController {
     }
   }
 
-  
+
   listEmployee = (req, res) => {
     const query = "SELECT * FROM employees.activities_hc";
 
-    con.query(query, (error, results) => {
+    pool.query(query, (error, results) => {
       if (error) {
         console.error("Erro ao executar a consulta SQL:", error);
         res.status(500).json({ error: "Erro interno do servidor" });
@@ -264,7 +265,7 @@ class PlanningController {
 
   executeQuery(query) {
     return new Promise((resolve, reject) => {
-      con.query(query, (err, data) => {
+      pool.query(query, (err, data) => {
         if (err) {
           reject(err);
         } else {
@@ -272,6 +273,97 @@ class PlanningController {
         }
       });
     });
+  }
+
+  async addDismissal(req, res) {
+
+    console.log('entrei no ep')
+    try {
+      const {
+        employee_id,
+        requesting_manager,
+        employee_name,
+        bu,
+        reason,
+        observation_disconnection,
+        fit_for_hiring,
+        fit_for_hiring_reason,
+        created_at,
+      } = req.body;
+
+
+      const insertQuery = `
+        INSERT INTO employees.dismissal_employees (
+          employee_id, requesting_manager, employee_name,bu, bu, reason, observation_disconnection, fit_for_hiring, fit_for_hiring_reason, 
+          created_at
+        )
+        VALUES ?`;
+
+      const values = [
+        [
+          employee_id,
+          employee_id,
+          requesting_manager,
+          employee_name,
+          bu,
+          reason,
+          observation_disconnection,
+          fit_for_hiring,
+          fit_for_hiring_reason,
+          created_at
+        ],
+      ];
+
+      try {
+        await new Promise((resolve, reject) => {
+          pool.query(insertQuery, [values], (err, result) => {
+            if (err) {
+              console.error("Erro durante a execução da query:", err);
+              reject(err);
+            } else {
+              console.log("Inserção bem-sucedida:", result);
+              resolve();
+            }
+          });
+        });
+
+
+      } catch (error) {
+        console.error("Erro durante a inserção dos registros:", error);
+        throw error;
+      }
+
+
+      const select = `SELECT 
+      pi.employee_id,
+      de.requesting_manager,
+      de.employee_name,
+      de.bu,
+      de.reason,
+      de.observation_disconnection,
+      de.fit_for_hiring,
+      de.fit_for_hiring_reason
+  FROM 
+  employees.dismissal_employees de
+  JOIN 
+      peersonal_infos pi ON de.employee_id = pi.employee_id
+      `;
+      const integrationCsv = await this.databaseToCsv(select);
+      this.createAndSendCSV(
+        integrationCsv,
+        "bortoletoyan@gmail.com",
+        { name: "Yan", email: "bortoletoyan@gmail.com" },
+        "d-eaf3e8a86d354c3090a764f706444b8d",
+        { name: "Yan" }
+      );
+
+      return res
+        .status(200)
+        .json({ Status: true, Message: "Registros inseridos com sucesso" });
+    } catch (err) {
+      console.error("Erro durante addDismissal:", err.message);
+      return res.status(500).json({ Status: false, Error: err.message });
+    }
   }
 
 

@@ -1,5 +1,5 @@
 import AgencyModel from "../models/agencyModel.js";
-import con from "../utils/db.js";
+import pool from "../utils/db.js";
 import jwt from "jsonwebtoken";
 import Slack from "@slack/bolt";
 import dotenv from "dotenv";
@@ -23,7 +23,7 @@ class UploadController {
   login(req, res) {
     const sql =
       "SELECT * FROM employees.users_sys WHERE id_employee = ? AND password_ = ? AND status = 2";
-    con.query(sql, [req.body.id_employee, req.body.password], (err, result) => {
+    pool.query(sql, [req.body.id_employee, req.body.password], (err, result) => {
       if (err) return res.json({ loginStatus: false, Error: "Query error" });
       if (result.length > 0) {
         const id_employee = result[0].id_employee;
@@ -96,7 +96,7 @@ class UploadController {
         phone,
       ];
 
-      con.query(sql, values, (error, results, fields) => {
+      pool.query(sql, values, (error, results, fields) => {
         if (error) {
           console.error("Error during addEmployee:", error.message);
           return res.status(500).json({ status: false, error: error.message });
@@ -204,7 +204,7 @@ class UploadController {
 
   executeQuery(query) {
     return new Promise((resolve, reject) => {
-      con.query(query, (err, data) => {
+      pool.query(query, (err, data) => {
         if (err) {
           reject(err);
         } else {
@@ -263,7 +263,7 @@ class UploadController {
     const selectQuery = select;
 
     return new Promise((resolve, reject) => {
-      con.query(selectQuery, (err, result) => {
+      pool.query(selectQuery, (err, result) => {
         if (err) {
           reject(err);
         } else {
@@ -307,7 +307,7 @@ class UploadController {
 
     try {
       await new Promise((resolve, reject) => {
-        con.query(insertQuery, [values], (err, result) => {
+        pool.query(insertQuery, [values], (err, result) => {
           if (err) {
             reject(err);
           } else {
@@ -392,7 +392,7 @@ JOIN
     company_infos ci ON pi.employee_id = ci.employee_id
     WHERE  status = 'INTEGRATION'  AND integration_date BETWEEN CURRENT_DATE - INTERVAL '30' DAY AND CURRENT_DATE;`;
 
-    con.query(query, (error, results) => {
+    pool.query(query, (error, results) => {
       if (error) {
         console.error("Erro ao executar a consulta SQL:", error);
         res.status(500).json({ error: "Erro interno do servidor" });
