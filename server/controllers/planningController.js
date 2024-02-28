@@ -3,34 +3,35 @@ import pool from "../utils/db.js";
 import jwt from "jsonwebtoken";
 import PlanningModel from "../models/planningModel.js";
 import fastcsv from "fast-csv";
-
-
-
+import sgMail from "@sendgrid/mail";
 
 class PlanningController {
   login(req, res) {
     const sql =
       "SELECT * FROM employees.users_sys WHERE id_employee = ? AND password_ = ? AND status = 1";
-    pool.query(sql, [req.body.id_employee, req.body.password], (err, result) => {
-      if (err) return res.json({ loginStatus: false, Error: "Query error" });
-      if (result.length > 0) {
-        const id_employee = result[0].id_employee;
-        const token = jwt.sign(
-          { role: "planning", id_employee: id_employee, id: result[0].id },
-          "jwt_secret_key",
-          { expiresIn: "1d" }
-        );
-        res.cookie("token", token);
-        return res.json({ loginStatus: true });
-      } else {
-        return res.json({
-          loginStatus: false,
-          Error: "wrong id_employee or password",
-        });
+    pool.query(
+      sql,
+      [req.body.id_employee, req.body.password],
+      (err, result) => {
+        if (err) return res.json({ loginStatus: false, Error: "Query error" });
+        if (result.length > 0) {
+          const id_employee = result[0].id_employee;
+          const token = jwt.sign(
+            { role: "planning", id_employee: id_employee, id: result[0].id },
+            "jwt_secret_key",
+            { expiresIn: "1d" }
+          );
+          res.cookie("token", token);
+          return res.json({ loginStatus: true });
+        } else {
+          return res.json({
+            loginStatus: false,
+            Error: "wrong id_employee or password",
+          });
+        }
       }
-    });
+    );
   }
-
 
   async uplaodPdInfos(req, res) {
     const dadosCSV = req.body.csvFile;
@@ -52,7 +53,7 @@ class PlanningController {
             work_schedule: registro[6],
             type_: registro[7],
             collar: registro[8],
-            status: 'ACTIVE',
+            status: "ACTIVE",
             manager_1: registro[10],
             manager_2: registro[11],
             manager_3: registro[12],
@@ -111,7 +112,22 @@ class PlanningController {
   async insertRecords(table, PlanningModels) {
     try {
       for (const PlanningModel of PlanningModels) {
-        const { name, employee_id, activity_p, area, sector, shift, work_schedule, type_, collar, status, manager_1, manager_2, manager_3, added_on_call } = PlanningModel;
+        const {
+          name,
+          employee_id,
+          activity_p,
+          area,
+          sector,
+          shift,
+          work_schedule,
+          type_,
+          collar,
+          status,
+          manager_1,
+          manager_2,
+          manager_3,
+          added_on_call,
+        } = PlanningModel;
 
         const updateQuery = `
           UPDATE employees.${table}
@@ -119,7 +135,21 @@ class PlanningController {
               type_ = ?, collar = ?, status = ?, manager_1 = ?, manager_2 = ?, manager_3 = ?, added_on_call = ?
           WHERE employee_id = ?`;
 
-        const values = [activity_p, area, sector, shift, work_schedule, type_, collar, status, manager_1, manager_2, manager_3, added_on_call, employee_id];
+        const values = [
+          activity_p,
+          area,
+          sector,
+          shift,
+          work_schedule,
+          type_,
+          collar,
+          status,
+          manager_1,
+          manager_2,
+          manager_3,
+          added_on_call,
+          employee_id,
+        ];
 
         await new Promise((resolve, reject) => {
           pool.query(updateQuery, values, (err, result) => {
@@ -159,7 +189,6 @@ class PlanningController {
         schedule_time,
         activity_p,
         manager_1,
-
       } = req.body;
 
       const updateQuery = `
@@ -219,7 +248,6 @@ class PlanningController {
     }
   }
 
-
   listEmployee = (req, res) => {
     const query = "SELECT * FROM employees.activities_hc";
 
@@ -276,33 +304,30 @@ class PlanningController {
   }
 
   async addDismissal(req, res) {
-
-    console.log('entrei no ep')
     try {
       const {
-        employee_id,
         requesting_manager,
+        manager_id,
+        employee_id,
         employee_name,
         bu,
         reason,
         observation_disconnection,
         fit_for_hiring,
         fit_for_hiring_reason,
-        created_at,
       } = req.body;
 
+      // console.log('req',req.body)
 
       const insertQuery = `
         INSERT INTO employees.dismissal_employees (
-          employee_id, requesting_manager, employee_name,bu, bu, reason, observation_disconnection, fit_for_hiring, fit_for_hiring_reason, 
-          created_at
+          employee_id,manager_id, requesting_manager, employee_name,bu, reason, observation_disconnection, fit_for_hiring, fit_for_hiring_reason
         )
         VALUES ?`;
-
       const values = [
         [
           employee_id,
-          employee_id,
+          manager_id,
           requesting_manager,
           employee_name,
           bu,
@@ -310,7 +335,6 @@ class PlanningController {
           observation_disconnection,
           fit_for_hiring,
           fit_for_hiring_reason,
-          created_at
         ],
       ];
 
@@ -326,35 +350,17 @@ class PlanningController {
             }
           });
         });
-
-
       } catch (error) {
         console.error("Erro durante a inserção dos registros:", error);
         throw error;
       }
 
-
-      const select = `SELECT 
-      pi.employee_id,
-      de.requesting_manager,
-      de.employee_name,
-      de.bu,
-      de.reason,
-      de.observation_disconnection,
-      de.fit_for_hiring,
-      de.fit_for_hiring_reason
-  FROM 
-  employees.dismissal_employees de
-  JOIN 
-      peersonal_infos pi ON de.employee_id = pi.employee_id
-      `;
-      const integrationCsv = await this.databaseToCsv(select);
-      this.createAndSendCSV(
-        integrationCsv,
+      console.log("req", req.body);
+      this.createDismissalEmail(
         "bortoletoyan@gmail.com",
         { name: "Yan", email: "bortoletoyan@gmail.com" },
-        "d-eaf3e8a86d354c3090a764f706444b8d",
-        { name: "Yan" }
+        "d-d066fb34ceec47bca52cc89c608a802b",
+        req.body
       );
 
       return res
@@ -366,12 +372,43 @@ class PlanningController {
     }
   }
 
+  async createDismissalEmail(to, from, templateId, dynamicTemplateData) {
+    try {
+      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+      const msg = {
+        to: Array.isArray(to) ? to : [to],
+        from: {
+          name: from.name,
+          email: from.email,
+        },
+        templateId: templateId,
+        dynamicTemplateData: {
+          employee_id: dynamicTemplateData.employee_id,
+          manager_id: dynamicTemplateData.manager_id,
+          requesting_manager: dynamicTemplateData.requesting_manager,
+          employee_name: dynamicTemplateData.employee_name,
+          bu: dynamicTemplateData.bu,
+          reason: dynamicTemplateData.reason,
+          observation_disconnection:
+            dynamicTemplateData.observation_disconnection,
+          fit_for_hiring: dynamicTemplateData.fit_for_hiring,
+        },
+      };
+      console.log("msg", msg.to);
+      await sgMail.send(msg);
+      console.log("E-mail enviado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao criar e-mail:", error);
+      if (error.response) {
+        console.error(error.response.body);
+      }
+    }
+  }
 
   logout(req, res) {
     res.clearCookie("token");
     return res.json({ Status: true });
   }
-
 }
 
 export default new PlanningController();

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Container,
   Paper,
@@ -11,25 +11,23 @@ import {
   Checkbox,
   FormControlLabel,
   Snackbar,
-  Alert
-} from '@mui/material';
+  Alert,
+} from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
-import http from '@config/http'
-
-
+import http from "@config/http";
+import { Box } from "@mui/system";
 
 const PlanningDIsmissal = () => {
-
-
   const [formState, setFormState] = useState({
-    gerenteSolicitante: 'Yan',
-    matriculaColaborador: '123456',
-    nomeColaborador: 'teste',
-    naveColaborador: 'D',
-    motivoDesligamento: 'teste',
-    observacaoDesligamento: 'teste',
-    aptoContratacao: false,
-    observacaoAptoContratacao: 'teste',
+    requesting_manager: "Yan",
+    manager_id: "456789",
+    employee_id: "123456",
+    employee_name: "teste",
+    bu: "D",
+    reason: "teste",
+    observation_disconnection: "teste",
+    fit_for_hiring: false,
+    fit_for_hiring_reason: "teste",
   });
 
   const [loading, setLoading] = useState(false);
@@ -51,7 +49,7 @@ const PlanningDIsmissal = () => {
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
     setLoading(true);
     try {
       const response = await http.post(
@@ -64,7 +62,6 @@ const PlanningDIsmissal = () => {
       setSnackbarOpen(true); // Open the Snackbar on success
       setLoading(false);
       setFormData(createEmptyFormData());
-
     } catch (error) {
       console.error("erro", error);
       console.error(error.response.data.Error);
@@ -73,7 +70,6 @@ const PlanningDIsmissal = () => {
       setLoading(false);
     }
   };
-
 
   return (
     <Container maxWidth="md">
@@ -85,36 +81,48 @@ const PlanningDIsmissal = () => {
           Este formulário registrará seu nome. Preencha-o.
         </Typography>
         <form>
-          <TextField
-            label="Gerente solicitante"
-            fullWidth
-            required
-            value={formState.gerenteSolicitante}
-            onChange={(e) => handleChange('gerenteSolicitante', e.target.value)}
-            style={{ marginBottom: 15 }}
-          />
+          <Box style={{ display: "flex", gap: 15, marginBottom: 15 }}>
+            <TextField
+              label="Gerente solicitante"
+              fullWidth
+              required
+              value={formState.requesting_manager}
+              onChange={(e) =>
+                handleChange("requesting_manager", e.target.value)
+              }
+            />
+            <TextField
+              label="Matrícula do Solicitante"
+              fullWidth
+              required
+              value={formState.manager_id}
+              onChange={(e) =>
+                handleChange("manager_id", e.target.value)
+              }
+            />
+          </Box>
           <TextField
             label="Matrícula Colaborador a ser desligado"
             fullWidth
             required
             type="number"
-            value={formState.matriculaColaborador}
-            onChange={(e) => handleChange('matriculaColaborador', e.target.value)}
+            value={formState.employee_id}
+            onChange={(e) => handleChange("employee_id", e.target.value)}
             style={{ marginBottom: 15 }}
           />
           <TextField
             label="Nome Colaborador"
             fullWidth
             required
-            value={formState.nomeColaborador}
-            onChange={(e) => handleChange('nomeColaborador', e.target.value)}
+            value={formState.employee_name}
+            onChange={(e) => handleChange("employee_name", e.target.value)}
             style={{ marginBottom: 15 }}
           />
           <FormControl fullWidth style={{ marginBottom: 15 }}>
             <InputLabel>Nave Colaborador</InputLabel>
             <Select
-              value={formState.naveColaborador}
-              onChange={(e) => handleChange('naveColaborador', e.target.value)}
+              value={formState.bu}
+              onChange={(e) => handleChange("bu", e.target.value)}
             >
               <MenuItem value="B">Nave B</MenuItem>
               <MenuItem value="D">Nave D</MenuItem>
@@ -124,8 +132,8 @@ const PlanningDIsmissal = () => {
             label="Motivo do desligamento"
             fullWidth
             required
-            value={formState.motivoDesligamento}
-            onChange={(e) => handleChange('motivoDesligamento', e.target.value)}
+            value={formState.reason}
+            onChange={(e) => handleChange("reason", e.target.value)}
             style={{ marginBottom: 15 }}
           />
           <TextField
@@ -134,15 +142,19 @@ const PlanningDIsmissal = () => {
             required
             multiline
             rows={4}
-            value={formState.observacaoDesligamento}
-            onChange={(e) => handleChange('observacaoDesligamento', e.target.value)}
+            value={formState.observation_disconnection}
+            onChange={(e) =>
+              handleChange("observation_disconnection", e.target.value)
+            }
             style={{ marginBottom: 15 }}
           />
           <FormControlLabel
             control={
               <Checkbox
-                checked={formState.aptoContratacao}
-                onChange={(e) => handleChange('aptoContratacao', e.target.checked)}
+                checked={formState.fit_for_hiring}
+                onChange={(e) =>
+                  handleChange("fit_for_hiring", e.target.checked)
+                }
                 color="primary"
               />
             }
@@ -154,11 +166,19 @@ const PlanningDIsmissal = () => {
             fullWidth
             multiline
             rows={4}
-            value={formState.observacaoAptoContratacao}
-            onChange={(e) => handleChange('observacaoAptoContratacao', e.target.value)}
+            value={formState.fit_for_hiring_reason}
+            onChange={(e) =>
+              handleChange("fit_for_hiring_reason", e.target.value)
+            }
             style={{ marginBottom: 15 }}
           />
-          <LoadingButton loading={loading} type="submit" variant="contained" color="primary" onClick={handleSubmit}>
+          <LoadingButton
+            loading={loading}
+            type="submit"
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
+          >
             Enviar
           </LoadingButton>
         </form>
@@ -173,8 +193,8 @@ const PlanningDIsmissal = () => {
               msgEP === "Registros inseridos com sucesso"
                 ? "success"
                 : msgEP === "Informações alteradas com sucesso!"
-                  ? "info"
-                  : "error"
+                ? "info"
+                : "error"
             }
           >
             {msgEP}
