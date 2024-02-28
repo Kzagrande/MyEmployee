@@ -21,6 +21,10 @@ router.get("/export_planning_infos", (req, res) => {
   planningController.exportPlanning(req, res);
 });
 
+router.post("/dismissal_employees", (req, res) => {
+  planningController.requestDismissal(req, res);
+});
+
 
 router.get('/logout', (req, res) => {
   planningController.logout(req, res);
@@ -28,10 +32,6 @@ router.get('/logout', (req, res) => {
 
 router.post("/upload_pd_infos", async (req, res) => {
   try {
-    // Aqui, você pode adicionar lógica de autenticação, se necessário, antes de chamar o método de upload
-    // Exemplo: verificar se o usuário tem permissão para realizar o upload
-    // ...
-
     await planningController.uplaodPdInfos(req, res);
   } catch (err) {
     console.error("Erro durante o upload de agências:", err);
