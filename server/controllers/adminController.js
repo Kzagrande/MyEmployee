@@ -1,5 +1,5 @@
 // controllers/adminController.js
-import con from "../utils/db.js";
+import pool from "../utils/db.js";
 import jwt from "jsonwebtoken";
 import fastcsv from "fast-csv";
 import moment from "moment";
@@ -9,7 +9,7 @@ class AdminController {
   login(req, res) {
     const sql =
       "SELECT * from employees.users_sys Where id_employee = ? and password_ = ? and status = 0";
-    con.query(sql, [req.body.id_employee, req.body.password], (err, result) => {
+    pool.query(sql, [req.body.id_employee, req.body.password], (err, result) => {
       if (err) return res.json({ loginStatus: false, Error: "Query error" });
       if (result.length > 0) {
         const id_employee = result[0].id_employee;
@@ -99,7 +99,7 @@ class AdminController {
 
       try {
         await new Promise((resolve, reject) => {
-          con.query(insertQuery, [values], (err, result) => {
+          pool.query(insertQuery, [values], (err, result) => {
             if (err) {
               console.error("Erro durante a execução da query:", err);
               reject(err);
@@ -113,6 +113,7 @@ class AdminController {
         console.error("Erro durante a inserção dos registros:", error);
         throw error;
       }
+
 
       return res
         .status(200)
@@ -199,7 +200,7 @@ class AdminController {
 
       try {
         await new Promise((resolve, reject) => {
-          con.query(updateQuery, values, (err, result) => {
+          pool.query(updateQuery, values, (err, result) => {
             if (err) {
               reject(err);
             } else {
@@ -222,13 +223,13 @@ class AdminController {
     }
   }
 
-   listEmployee = (req, res) => {
+  listEmployee = (req, res) => {
     // Call the verifyUser middleware before processing the request
     verifyUser(req, res, () => {
       // If the verification is successful, proceed with the database query
       const query = "SELECT * FROM employees.activities_hc";
-  
-      con.query(query, (error, results) => {
+
+      pool.query(query, (error, results) => {
         if (error) {
           console.error("Erro ao executar a consulta SQL:", error);
           res.status(500).json({ error: "Erro interno do servidor" });
@@ -241,14 +242,14 @@ class AdminController {
               date_of_birth: moment(employee.date_of_birth).format("DD/MM/YYYY"),
             };
           });
-  
+
           // console.log('modifiedResults', modifiedResults);
           res.status(200).json(modifiedResults);
         }
       });
     });
   };
-  
+
 
   async exportActivitiesHc(req, res) {
     try {
@@ -282,7 +283,7 @@ class AdminController {
 
   executeQuery(query) {
     return new Promise((resolve, reject) => {
-      con.query(query, (err, data) => {
+      pool.query(query, (err, data) => {
         if (err) {
           reject(err);
         } else {
