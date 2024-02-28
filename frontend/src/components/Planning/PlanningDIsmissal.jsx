@@ -19,15 +19,15 @@ import { Box } from "@mui/system";
 
 const PlanningDIsmissal = () => {
   const [formState, setFormState] = useState({
-    requesting_manager: "Yan",
-    manager_id: "456789",
-    employee_id: "123456",
-    employee_name: "teste",
-    bu: "D",
-    reason: "teste",
-    observation_disconnection: "teste",
+    requesting_manager: "",
+    manager_id: "",
+    employee_id: "",
+    employee_name: "",
+    bu: "",
+    reason: "",
+    observation_disconnection: "",
     fit_for_hiring: false,
-    fit_for_hiring_reason: "teste",
+    fit_for_hiring_reason: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -61,7 +61,7 @@ const PlanningDIsmissal = () => {
       console.log(response.data.Message);
       setSnackbarOpen(true); // Open the Snackbar on success
       setLoading(false);
-      setFormData(createEmptyFormData());
+      setFormState(createEmptyFormState());
     } catch (error) {
       console.error("erro", error);
       console.error(error.response.data.Error);
@@ -69,6 +69,14 @@ const PlanningDIsmissal = () => {
       setSnackbarOpen(true); // Open the Snackbar on success
       setLoading(false);
     }
+  };
+
+  const createEmptyFormState = () => {
+    const emptyFormState = {};
+    Object.keys(formState).forEach((key) => {
+      emptyFormState[key] = "";
+    });
+    return emptyFormState;
   };
 
   return (
@@ -96,9 +104,7 @@ const PlanningDIsmissal = () => {
               fullWidth
               required
               value={formState.manager_id}
-              onChange={(e) =>
-                handleChange("manager_id", e.target.value)
-              }
+              onChange={(e) => handleChange("manager_id", e.target.value)}
             />
           </Box>
           <TextField
@@ -128,14 +134,30 @@ const PlanningDIsmissal = () => {
               <MenuItem value="D">Nave D</MenuItem>
             </Select>
           </FormControl>
-          <TextField
-            label="Motivo do desligamento"
-            fullWidth
-            required
-            value={formState.reason}
-            onChange={(e) => handleChange("reason", e.target.value)}
-            style={{ marginBottom: 15 }}
-          />
+          <FormControl fullWidth style={{ marginBottom: 15 }}>
+            <InputLabel>Motivo do desligamento</InputLabel>
+            <Select
+              value={formState.reason}
+              onChange={(e) => handleChange("reason", e.target.value)}
+            >
+              <MenuItem value="Atestados">Atestados</MenuItem>
+              <MenuItem value="Abandono de emprego">
+                Abandono de emprego
+              </MenuItem>
+              <MenuItem value="Absenteísmo elevado">
+                Absenteísmo elevado
+              </MenuItem>
+              <MenuItem value="Baixa performance">Baixa performance</MenuItem>
+              <MenuItem value="Má conduta">Má conduta</MenuItem>
+              <MenuItem value="Produtividade">Produtividade</MenuItem>
+              <MenuItem value="Conflitos com o gestor">
+                Conflitos com o gestor
+              </MenuItem>
+              <MenuItem value="Colaborador solicitou o desligamento">
+                Colaborador solicitou o desligamento
+              </MenuItem>
+            </Select>
+          </FormControl>
           <TextField
             label="Observação do desligamento"
             fullWidth

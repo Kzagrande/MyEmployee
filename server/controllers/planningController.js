@@ -63,41 +63,6 @@ class PlanningController {
 
       await this.insertRecords(this.dbTable, PlanningModels);
       res.send("Registros inseridos com sucesso");
-
-      //     const select = `SELECT
-      //     ci.employee_id,
-      //     pi.cpf,
-      //     pi.rg,
-      //     ci.role_,
-      //     ci.bu,
-      //     ci.shift,
-      //     ci.work_schedule,
-      //     ci.company,
-      //     ci.status,
-      //     ci.hire_date,
-      //     ci.termination_date,
-      //     ci.reason,
-      //     pi.ethnicity,
-      //     pi.gender,
-      //     pi.neighborhood,
-      //     pi.city,
-      //     pi.email,
-      //     pi.phone,
-      //     ci.integration_date
-      // FROM
-      //     personal_infos pi
-      // JOIN
-      //     company_infos ci ON pi.employee_id = ci.employee_id
-      //     ;
-      //     `
-      //     const preIntegrationCsv = await this.databaseToCsv(select);
-      //     this.createAndSendCSV(
-      //       preIntegrationCsv,
-      //       "bortoletoyan@gmail.com",
-      //       { name: "Yan", email: "bortoletoyan@gmail.com" },
-      //       "d-95083a36e91245949cffc5d3fccfbcf4",
-      //       { name: "Yan" }
-      //     );
     } catch (err) {
       console.error("Erro durante o processamento do CSV:", err);
       res.status(500).send(err.message);
@@ -303,7 +268,7 @@ class PlanningController {
     });
   }
 
-  async addDismissal(req, res) {
+  async requestDismissal(req, res) {
     try {
       const {
         requesting_manager,
@@ -317,13 +282,19 @@ class PlanningController {
         fit_for_hiring_reason,
       } = req.body;
 
-      // console.log('req',req.body)
+      const updateStatusQuery = `
+        UPDATE employees.company_infos 
+        SET
+        status = 'TO BE FIRED'
+        WHERE
+          employee_id = ?`;
 
       const insertQuery = `
         INSERT INTO employees.dismissal_employees (
-          employee_id,manager_id, requesting_manager, employee_name,bu, reason, observation_disconnection, fit_for_hiring, fit_for_hiring_reason
+          employee_id, manager_id, requesting_manager, employee_name, bu, reason, observation_disconnection, fit_for_hiring, fit_for_hiring_reason
         )
         VALUES ?`;
+
       const values = [
         [
           employee_id,
@@ -338,24 +309,12 @@ class PlanningController {
         ],
       ];
 
-      try {
-        await new Promise((resolve, reject) => {
-          pool.query(insertQuery, [values], (err, result) => {
-            if (err) {
-              console.error("Erro durante a execução da query:", err);
-              reject(err);
-            } else {
-              console.log("Inserção bem-sucedida:", result);
-              resolve();
-            }
-          });
-        });
-      } catch (error) {
-        console.error("Erro durante a inserção dos registros:", error);
-        throw error;
-      }
+      // Use Promise.all to run queries concurrently
+      await Promise.all([
+        this.executeQueryValues(updateStatusQuery, [employee_id]),
+        this.executeQueryValues(insertQuery, [values]),
+      ]);
 
-      console.log("req", req.body);
       this.createDismissalEmail(
         "bortoletoyan@gmail.com",
         { name: "Yan", email: "bortoletoyan@gmail.com" },
@@ -367,9 +326,23 @@ class PlanningController {
         .status(200)
         .json({ Status: true, Message: "Registros inseridos com sucesso" });
     } catch (err) {
-      console.error("Erro durante addDismissal:", err.message);
+      console.error("Erro durante requestDismissal:", err.message);
       return res.status(500).json({ Status: false, Error: err.message });
     }
+  }
+
+  async executeQueryValues(query, values) {
+    return new Promise((resolve, reject) => {
+      pool.query(query, values, (err, result) => {
+        if (err) {
+          console.error("Erro durante a execução da query:", err);
+          reject(err);
+        } else {
+          console.log("Inserção bem-sucedida:", result);
+          resolve();
+        }
+      });
+    });
   }
 
   async createDismissalEmail(to, from, templateId, dynamicTemplateData) {

@@ -22,7 +22,7 @@ import ListAltIcon from "@mui/icons-material/ListAlt";
 import { Link, Outlet, useNavigate, Route } from "react-router-dom";
 import axios from "axios";
 import http from "@config/http";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { useEffect } from "react";
 
 const drawerWidth = 240;
@@ -118,21 +118,20 @@ const AgencyDash = () => {
       .catch((err) => console.log(err));
   };
 
-
   useEffect(() => {
     // Verificar se o cookie 'token' existe
-    const token = Cookies.get('token');
+    const token = Cookies.get("token");
 
     if (!token) {
       // Se o cookie 'token' não existir, navegue de volta para '/'
-      navigate('/');
+      navigate("/");
     } else {
       // Verificar se o token está expirado (você pode ajustar isso de acordo com sua lógica)
-      const isTokenExpired = false;  // Substitua isso com a lógica real para verificar a expiração do token
+      const isTokenExpired = false; // Substitua isso com a lógica real para verificar a expiração do token
 
       if (isTokenExpired) {
         // Se o token estiver expirado, navegue de volta para '/'
-        navigate('/');
+        navigate("/");
       }
     }
   }, [navigate]);
@@ -164,7 +163,8 @@ const AgencyDash = () => {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Drawer         sx={{
+      <Drawer
+        sx={{
           boxShadow:
             "0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)",
         }}
@@ -174,8 +174,9 @@ const AgencyDash = () => {
           style: {
             backgroundColor: "#d3d3d3", // Defina a cor desejada aqui
           },
-        }}>
-         <DrawerHeader sx={{ backgroundColor: "#d3d3d3" }}>
+        }}
+      >
+        <DrawerHeader sx={{ backgroundColor: "#d3d3d3" }}>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
               <ChevronRightIcon />
@@ -203,18 +204,18 @@ const AgencyDash = () => {
                     minWidth: 0,
                     mr: open ? 3 : "auto",
                     justifyContent: "center",
-                    color:'#3f3e3e'
+                    color: "#3f3e3e",
                   }}
                 >
                   <ListAltIcon />
-                </ListItemIcon >
+                </ListItemIcon>
                 <ListItemText
                   primary="Ativos"
                   sx={{ opacity: open ? 1 : 0 }}
                   primaryTypographyProps={{
                     style: {
                       fontWeight: "bold", // Defina a cor desejada aqui
-                      color:'#3f3e3e'
+                      color: "#3f3e3e",
                     },
                   }}
                 />
@@ -223,6 +224,10 @@ const AgencyDash = () => {
           </ListItem>
           <Divider></Divider>
           <ListItem disablePadding sx={{ display: "block" }}>
+          <Link
+              to="/agency_dashboard/agency_dismissal_list"
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
             <ListItemButton
               sx={{
                 minHeight: 48,
@@ -231,26 +236,27 @@ const AgencyDash = () => {
               }}
             >
               <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                    color:'#3f3e3e'
-                  }}
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : "auto",
+                  justifyContent: "center",
+                  color: "#3f3e3e",
+                }}
               >
                 <GroupRemoveIcon />
               </ListItemIcon>
               <ListItemText
-                  primary="Desligados"
-                  sx={{ opacity: open ? 1 : 0 }}
-                  primaryTypographyProps={{
-                    style: {
-                      fontWeight: "bold", // Defina a cor desejada aqui
-                      color:'#3f3e3e'
-                    },
-                  }}
-                />
+                primary="Desligados"
+                sx={{ opacity: open ? 1 : 0 }}
+                primaryTypographyProps={{
+                  style: {
+                    fontWeight: "bold", // Defina a cor desejada aqui
+                    color: "#3f3e3e",
+                  },
+                }}
+              />
             </ListItemButton>
+            </Link>
           </ListItem>
         </List>
         <Divider></Divider>
@@ -265,25 +271,25 @@ const AgencyDash = () => {
               }}
             >
               <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                    color:'#e1261c'
-                  }}
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : "auto",
+                  justifyContent: "center",
+                  color: "#e1261c",
+                }}
               >
                 <LogoutIcon />
               </ListItemIcon>
               <ListItemText
-                  primary="Sair"
-                  sx={{ opacity: open ? 1 : 0 }}
-                  primaryTypographyProps={{
-                    style: {
-                      fontWeight: "bold", // Defina a cor desejada aqui
-                      color:'#3f3e3e'
-                    },
-                  }}
-                />
+                primary="Sair"
+                sx={{ opacity: open ? 1 : 0 }}
+                primaryTypographyProps={{
+                  style: {
+                    fontWeight: "bold", // Defina a cor desejada aqui
+                    color: "#3f3e3e",
+                  },
+                }}
+              />
             </ListItemButton>
           </ListItem>
           <Divider></Divider>

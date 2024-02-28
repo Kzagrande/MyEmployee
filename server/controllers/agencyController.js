@@ -23,24 +23,28 @@ class UploadController {
   login(req, res) {
     const sql =
       "SELECT * FROM employees.users_sys WHERE id_employee = ? AND password_ = ? AND status = 2";
-    pool.query(sql, [req.body.id_employee, req.body.password], (err, result) => {
-      if (err) return res.json({ loginStatus: false, Error: "Query error" });
-      if (result.length > 0) {
-        const id_employee = result[0].id_employee;
-        const token = jwt.sign(
-          { role: "agency", id_employee: id_employee, id: result[0].id },
-          "jwt_secret_key",
-          { expiresIn: "1d" }
-        );
-        res.cookie("token", token);
-        return res.json({ loginStatus: true });
-      } else {
-        return res.json({
-          loginStatus: false,
-          Error: "wrong id_employee or password",
-        });
+    pool.query(
+      sql,
+      [req.body.id_employee, req.body.password],
+      (err, result) => {
+        if (err) return res.json({ loginStatus: false, Error: "Query error" });
+        if (result.length > 0) {
+          const id_employee = result[0].id_employee;
+          const token = jwt.sign(
+            { role: "agency", id_employee: id_employee, id: result[0].id },
+            "jwt_secret_key",
+            { expiresIn: "1d" }
+          );
+          res.cookie("token", token);
+          return res.json({ loginStatus: true });
+        } else {
+          return res.json({
+            loginStatus: false,
+            Error: "wrong id_employee or password",
+          });
+        }
       }
-    });
+    );
   }
 
   async logout(req, res) {
@@ -414,6 +418,44 @@ JOIN
     });
   };
 
+  dismissalList = (req, res) => {
+    const query = `SELECT
+    de.requesting_manager,
+    de.manager_id,
+    de.employee_id,
+    de.employee_name,
+    de.bu,
+    de.reason,
+    de.observation_disconnection,
+    de.fit_for_hiring,
+    de.fit_for_hiring_reason,
+    de.created_at
+  FROM
+    employees.dismissal_employees de
+  JOIN
+    employees.company_infos ci ON de.employee_id = ci.employee_id
+  WHERE
+    ci.status = 'TO BE FIRED';`;
+
+    pool.query(query, (error, results) => {
+      if (error) {
+        console.error("Erro ao executar a consulta SQL:", error);
+        res.status(500).json({ error: "Erro interno do servidor" });
+      } else {
+        const modifiedResults = results.map((employee) => {
+          return {
+            ...employee,
+            created_at: moment(employee.created_at).format("DD/MM/YYYY"),
+            fit_for_hiring: employee.fit_for_hiring == 1 ? "Sim" : "Não",
+          };
+        });
+
+        // console.log('modifiedResults', modifiedResults);
+        res.status(200).json(modifiedResults);
+      }
+    });
+  };
+
   async setPresence(req, res) {
     const presenceList = req.body.ids;
     // console.log("presenceList", presenceList);
@@ -475,6 +517,49 @@ JOIN
     } catch (err) {
       console.error("Erro ao marcar presença:", err);
       return res.status(500).json({ status: false, err: err.message });
+    }
+  }
+
+  async setDismissal(req, res) {
+    const dismissal_list = req.body.ids;
+
+    if (
+      !dismissal_list ||
+      !Array.isArray(dismissal_list) ||
+      dismissal_list.length === 0
+    ) {
+      return res
+        .status(500)
+        .json({ status: false, error: "Invalid dismissal list" });
+    }
+
+    const firedStatus = "FIRED";
+    try {
+      // Crie a consulta SQL diretamente com os valores da lista
+      const updateQuery = `
+        UPDATE employees.company_infos
+        SET status = '${firedStatus}'
+        WHERE employee_id IN (${dismissal_list.join(",")})
+      `;
+
+      const firedAtQuery = `
+        UPDATE employees.dismissal_employees
+        SET fired_at = NOW()
+        WHERE employee_id IN (${dismissal_list.join(",")})
+      `;
+
+      // Execute a consulta
+      await Promise.all([
+        this.executeQuery(updateQuery),
+        this.executeQuery(firedAtQuery),
+      ]);
+
+      return res
+        .status(200)
+        .json({ status: true, message: "Registros inseridos com sucesso" });
+    } catch (err) {
+      console.error("Erro ao marcar presença:", err);
+      return res.status(500).json({ status: false, error: err.message });
     }
   }
 }

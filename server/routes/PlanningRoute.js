@@ -22,7 +22,7 @@ router.get("/export_planning_infos", (req, res) => {
 });
 
 router.post("/dismissal_employees", (req, res) => {
-  planningController.addDismissal(req, res);
+  planningController.requestDismissal(req, res);
 });
 
 
