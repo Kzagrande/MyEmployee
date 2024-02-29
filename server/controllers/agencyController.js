@@ -394,7 +394,7 @@ FROM
     personal_infos pi
 JOIN 
     company_infos ci ON pi.employee_id = ci.employee_id
-    WHERE  status = 'INTEGRATION'  AND integration_date BETWEEN CURRENT_DATE - INTERVAL '30' DAY AND CURRENT_DATE;`;
+    WHERE  status = 'INTEGRATION'`;
 
     pool.query(query, (error, results) => {
       if (error) {
