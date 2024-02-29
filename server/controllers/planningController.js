@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import PlanningModel from "../models/planningModel.js";
 import fastcsv from "fast-csv";
 import sgMail from "@sendgrid/mail";
+import moment from 'moment'
 
 class PlanningController {
   login(req, res) {
@@ -227,27 +228,42 @@ class PlanningController {
   };
 
   async exportPlanning(req, res) {
+
+    console.log('chamei o export')
     try {
       const data = await this.executeQuery(
-        `SELECT * FROM company_infos
-        `
+        `SELECT * FROM company_infos`
       );
-      const jsonData = JSON.parse(JSON.stringify(data));
-
+  
+      if (data.length === 0) {
+        return res.status(404).json({ error: "Nenhum dado encontrado para exportar." });
+      }
+  
+      // Formatar as datas antes de escrever no CSV usando moment
+      const formattedData = data.map(row => {
+        const formattedRow = { ...row };
+        formattedRow.hire_date = moment(row.hire_date).format("YYYY-MM-DD");
+        formattedRow.integration_date = moment(row.integration_date).format("YYYY-MM-DD");
+        formattedRow.termination_date = moment(row.termination_date).format("YYYY-MM-DD");
+        return formattedRow;
+      });
+  
+      // Pega as chaves da primeira linha para usar como cabeçalhos
+      const headers = Object.keys(formattedData[0]);
+  
       res.setHeader(
         "Content-Disposition",
         "attachment; filename=agency_data.csv"
       );
       res.setHeader("Content-Type", "text/csv");
-
-      // Criar um stream de escrita no response
+  
+      // Crie um stream de escrita no response
       fastcsv
-        .write(jsonData, { headers: true })
+      .write(formattedData, { headers, includeEndRowDelimiter: true, delimiter: ';' })
         .on("finish", () => {
           console.log("Enviado com sucesso para o usuário!");
         })
         .pipe(res); // Pipe para o response diretamente
-      // console.log(res);
     } catch (err) {
       console.error("Erro:", err);
       return res
