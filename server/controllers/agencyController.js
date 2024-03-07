@@ -52,74 +52,6 @@ class UploadController {
     return res.json({ Status: true });
   }
 
-  async addEmployee(req, res) {
-    try {
-      const {
-        employee_id,
-        name,
-        cpf,
-        role_,
-        bu,
-        shift,
-        schedule_time,
-        company,
-        status,
-        hire_date,
-        date_of_birth,
-        ethnicity,
-        gender,
-        neighborhood,
-        city,
-        email,
-        phone,
-      } = req.body;
-
-      const sql = `
-        INSERT INTO employees.employee_register
-        (employee_id, name, cpf, role_, bu, shift, schedule_time, company, status, hire_date, date_of_birth, ethnicity, gender, neighborhood, city, email, phone)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `;
-
-      const values = [
-        employee_id,
-        name,
-        cpf,
-        role_,
-        bu,
-        shift,
-        schedule_time,
-        company,
-        status,
-        hire_date,
-        date_of_birth,
-        ethnicity,
-        gender,
-        neighborhood,
-        city,
-        email,
-        phone,
-      ];
-
-      pool.query(sql, values, (error, results, fields) => {
-        if (error) {
-          console.error("Error during addEmployee:", error.message);
-          return res.status(500).json({ status: false, error: error.message });
-        }
-
-        console.log("Employee data inserted successfully!");
-        const insertedEmployeeId = results.insertId;
-        return res.json({
-          status: true,
-          message: "Registros inseridos com sucesso",
-          insertedEmployeeId,
-          values,
-        });
-      });
-    } catch (err) {
-      console.error("Error during addEmployee:", err.message);
-      return res.status(500).json({ status: false, error: err.message });
-    }
-  }
 
   formatDate(dateString) {
     return moment(dateString, "DD/MM/YYYY").format("YYYY-MM-DD");
@@ -139,59 +71,48 @@ class UploadController {
             employee_id: registro[0],
             cpf: registro[1],
             name: registro[2],
-            rg: registro[3],
-            role_: registro[4],
-            bu: registro[5],
-            shift: registro[6],
-            schedule_time: registro[7],
-            company: registro[8],
-            status: registro[9],
-            hire_date: this.formatDate(registro[10]),
-            date_of_birth: this.formatDate(registro[11]),
-            termination_date: registro[12]
-              ? this.formatDate(registro[12])
-              : null,
-            reason: registro[13],
-            ethnicity: registro[14],
-            gender: registro[15],
-            neighborhood: registro[16],
-            city: registro[17],
-            email: registro[18],
-            phone: registro[19],
-            integration_date: this.formatDate(registro[20]),
+            role_: registro[3],
+            bu: registro[4],
+            shift: registro[5],
+            schedule_time: registro[6],
+            company: registro[7],
+            status: registro[8],
+            hire_date: this.formatDate(registro[9]),
+            date_of_birth: this.formatDate(registro[10]),
+            ethnicity: registro[11],
+            gender: registro[12],
+            neighborhood: registro[13],
+            city: registro[14],
+            email: registro[15],
+            phone: registro[16],
+            integration_date: this.formatDate(registro[17]),
           })
       );
 
       await this.insertRecords(this.dbTable, agencyModels);
       res.send("Registros inseridos com sucesso");
 
-      const select = `   SELECT 
-      ci.employee_id,
+      const select = `SELECT 
+      pi.name,
       pi.cpf,
-      pi.rg,
-      ci.role_,
-      ci.bu,
-      ci.shift,
-      ci.schedule_time,    
-      ci.company,
       ci.status,
-      ci.hire_date,
-      pi.date_of_birth,
-      ci.termination_date,
-      ci.reason,
-      pi.ethnicity,
-      pi.gender,
-      pi.neighborhood,
-      pi.city,
+      ci.employee_id,
+      ci.company,
+      ci.role_,
+      ci.shift,
+      ci.bu,
+      ci.schedule_time,
+      ci.sector,
+      ci.manager_1,
+      ci.integration_date,
       pi.email,
-      pi.phone,
-      ci.integration_date
+      ci.presence_integration
   FROM 
       personal_infos pi
   JOIN 
       company_infos ci ON pi.employee_id = ci.employee_id
-      ;
-      `;
+      WHERE  status = 'INTEGRATION'`;
+      
       const preIntegrationCsv = await this.databaseToCsv(select);
       this.createAndSendCSV(
         preIntegrationCsv,
@@ -219,7 +140,7 @@ class UploadController {
   }
 
   async createAndSendCSV(dadosCSV, to, from, templateId, dynamicTemplateData) {
-    // console.log(dadosCSV[0]);
+    if (dadosCSV && dadosCSV.length !== 0) {
     const csvWriter = createArrayCsvWriter({
       path: "temp.csv",
       header: dadosCSV[0],
@@ -262,33 +183,40 @@ class UploadController {
       }
     }
   }
+  }
 
   async databaseToCsv(select) {
     const selectQuery = select;
-
     return new Promise((resolve, reject) => {
       pool.query(selectQuery, (err, result) => {
         if (err) {
           reject(err);
         } else {
-          // Format the result as CSV-like array
-          const csvArray = [];
-
-          // Extract headers from the first row
-          const headers = Object.keys(result[0]);
-          csvArray.push(headers);
-
-          // Extract data rows
-          result.forEach((row) => {
-            const rowData = headers.map((header) => row[header]);
-            csvArray.push(rowData);
-          });
-
-          resolve(csvArray);
+          // Check if the result is null or undefined
+          if (result && result.length !== 0) {
+            // Format the result as CSV-like array
+            const csvArray = [];
+          
+            // Extract headers from the first row
+            const headers = Object.keys(result[0]);
+            csvArray.push(headers);
+  
+            // Extract data rows
+            result.forEach((row) => {
+              const rowData = headers.map((header) => row[header]);
+              csvArray.push(rowData);
+            });
+  
+            result = csvArray;
+          }
+  
+          resolve(result);
         }
       });
     });
   }
+  
+  
 
   validateInput(data) {
     if (!data || data.length === 0) {
@@ -299,8 +227,8 @@ class UploadController {
   async insertRecords(table, agencyModels) {
     const insertQuery = `
       INSERT INTO employees.${table}(
-        employee_id, cpf, name, rg, role_, bu, shift, schedule_time, company,
-        status, hire_date, date_of_birth, termination_date, reason, ethnicity,
+        employee_id, cpf, name, role_, bu, shift, schedule_time, company,
+        status, hire_date, date_of_birth, ethnicity,
         gender, neighborhood, city, email, phone,integration_date
       ) VALUES ?`;
 
@@ -377,7 +305,6 @@ class UploadController {
     const query = `SELECT 
     pi.name,
     pi.cpf,
-    pi.rg,
     ci.status,
     ci.employee_id,
     ci.company,
@@ -483,7 +410,6 @@ JOIN
       const select = `SELECT 
       pi.name,
       pi.cpf,
-      pi.rg,
       ci.employee_id,
       ci.company,
       ci.role_,

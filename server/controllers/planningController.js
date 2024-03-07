@@ -244,7 +244,6 @@ class PlanningController {
         const formattedRow = { ...row };
         formattedRow.hire_date = moment(row.hire_date).format("YYYY-MM-DD");
         formattedRow.integration_date = moment(row.integration_date).format("YYYY-MM-DD");
-        formattedRow.termination_date = moment(row.termination_date).format("YYYY-MM-DD");
         return formattedRow;
       });
   
