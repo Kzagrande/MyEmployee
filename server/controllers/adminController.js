@@ -34,12 +34,6 @@ class AdminController {
     );
   }
 
-  formatDate(dateString) {
-    return moment(dateString, "DD/MM/YYYY").format("YYYY-MM-DD");
-  }
-
-  
-
   async addEmployee(req, res) {
     try {
       const {
@@ -143,19 +137,36 @@ class AdminController {
     try {
       dadosCSV.shift();
       dadosCSV.pop();
+
       const DModel = dadosCSV.map(
         (registro) =>
           new dissmissalModel({
             employee_id: registro[0],
             employee_name: registro[1],
-            dismissal_date:this.formatDate(registro[2]),
+            dismissal_date: this.formatDate(registro[2]),
             termination_type: registro[3],
             reason: registro[4],
           })
       );
 
+      const insertQuery = `
+        INSERT INTO employees.dismissal_employees (
+          employee_id, employee_name, dismissal_date, termination_type, reason
+        ) VALUES ?`;
 
-      await this.insertRecords(DModel);
+      const updateStatusQuery = `
+        UPDATE employees.company_infos 
+        SET
+        status = 'FIRED'
+        WHERE
+          employee_id IN (?)`;
+
+      // Use Promise.all to execute both insert and update queries concurrently
+      await Promise.all([
+        this.insertRecords(DModel, insertQuery),
+        this.updateStatus(DModel, updateStatusQuery),
+      ]);
+
       res.send("Registros inseridos com sucesso");
     } catch (err) {
       console.error("Erro durante o processamento do CSV:", err);
@@ -163,48 +174,136 @@ class AdminController {
     }
   }
 
-  async insertRecords(models) {
+  async updateStatus(DModel, updateStatusQuery) {
+    // Extract employee_ids from DModel
+    const employeeIds = DModel.map((data) => data.employee_id);
+    console.log("employee", employeeIds);
+
     try {
-      for (const model of models) {
-        const { employee_id, employee_name, dismissal_date,termination_type,reason} = model;
-
-        const updateStatusQuery = `
-        UPDATE employees.company_infos 
-        SET
-        status = 'FIRED'
-        WHERE
-          employee_id = ?`;
-
-        const insertQuery = `
-          INSERT INTO employees.dismissal_employees (
-            employee_id,employee_name,dismissal_date,termination_type, reason
-          )VALUES (?)`;
-
-        const values = [employee_id,employee_name,dismissal_date, termination_type, reason];
-
-        await Promise.all([
-          this.executeQueryValues(updateStatusQuery, [employee_id]),
-          this.executeQueryValues(insertQuery, [values]),
-        ]);
-      }
+      await new Promise((resolve, reject) => {
+        pool.query(updateStatusQuery, [employeeIds], (err, result) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      });
     } catch (error) {
-      console.error("Erro durante a atualização dos registros:", error);
+      console.error("Erro durante a atualização do status:", error);
       throw error;
     }
   }
 
-  async executeQueryValues(query, values) {
-    return new Promise((resolve, reject) => {
-      pool.query(query, values, (err, result) => {
-        if (err) {
-          console.error("Erro durante a execução da query:", err);
-          reject(err);
-        } else {
-          console.log("Inserção bem-sucedida:", result);
-          resolve();
-        }
+  async insertRecords(dismissalModels, query) {
+    const values = dismissalModels.map((data) => Object.values(data));
+    try {
+      await new Promise((resolve, reject) => {
+        pool.query(query, [values], (err, result) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
       });
-    });
+    } catch (error) {
+      console.error("Erro durante a inserção dos registros:", error);
+      throw error;
+    }
+  }
+
+  
+  formatDate(dateString) {
+    return moment(dateString, "DD/MM/YYYY").format("YYYY-MM-DD");
+  }
+
+  async updateEmployee(req, res) {
+    try {
+      const {
+        employee_id,
+        cpf,
+        name,
+        role_,
+        bu,
+        shift,
+        schedule_time,
+        company,
+        hire_date,
+        date_of_birth,
+        ethnicity,
+        gender,
+        neighborhood,
+        city,
+        email,
+        phone,
+        integration_date
+      } = req.body;
+
+      const updateQuery = `
+      UPDATE employees.employee_register 
+      SET
+        cpf = ?,
+        name = ?,
+        role_ = ?,
+        bu = ?,
+        shift = ?,
+        schedule_time = ?,
+        company = ?,
+        hire_date = ?,
+        date_of_birth = ?,
+        ethnicity = ?,
+        gender = ?,
+        neighborhood = ?,
+        city = ?,
+        email = ?,
+        phone = ?,
+        integration_date = ?
+      WHERE
+        employee_id = ?`;
+
+      const values = [
+        cpf,
+        name,
+        role_,
+        bu,
+        shift,
+        schedule_time,
+        company,
+        this.formatDate(hire_date),
+       this.formatDate(date_of_birth),
+        ethnicity,
+        gender,
+        neighborhood,
+        city,
+        email,
+        phone,
+        this.formatDate(integration_date),
+        employee_id,
+      ];
+
+      try {
+        await new Promise((resolve, reject) => {
+          pool.query(updateQuery, values, (err, result) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          });
+        });
+      } catch (error) {
+        console.error("Erro durante a atualização dos registros:", error);
+        throw error;
+      }
+      // A atualização foi bem-sucedida
+      return res
+        .status(200)
+        .json({ Status: true, Message: "Informações alteradas com sucesso!" });
+    } catch (err) {
+      console.error("Error during updateEmployee:", err.message);
+      return res.status(500).json({ Status: false, Error: err.message });
+    }
   }
 
   listEmployee = (req, res) => {

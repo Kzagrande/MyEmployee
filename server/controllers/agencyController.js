@@ -243,25 +243,7 @@ class UploadController {
           if (err) {
             reject(err);
           } else {
-            // console.log("Registros inseridos com sucesso:", result);
-            // try {
-            //   // console.log("dbTable", this.dbTable);
-            //   slack.client.chat.postMessage({
-            //     token: process.env.SLACK_BOT_TOKEN,
-            //     channel: process.env.SLACK_CHANNEL,
-            //     text:
-            //       this.dbTable == "employee_register"
-            //         ? "A Agência X acabou de subir as informações dos novos colaboradores 😁"
-            //         : "A Agência x acabou de subir as informações dos novos desligados 😪",
-            //   });
-            //   console.log("Mensagem enviada para o Slack com sucesso.");
-            // } catch (slackError) {
-            //   console.error(
-            //     "Erro ao enviar mensagem para o Slack:",
-            //     slackError
-            //   );
-            // }
-            // Integração com a API do Slack após o sucesso da inserção
+
             resolve();
           }
         });
