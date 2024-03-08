@@ -25,6 +25,11 @@ router.get("/export_activities_hc", (req, res) => {
   adminController.exportActivitiesHc(req, res);
 });
 
+
+router.post("/update_dismissal_group", (req, res) => {
+  adminController.updateDismissalGroup(req, res);
+});
+
 router.get('/logout', (req, res) => {
   adminController.logout(req, res);
 });
