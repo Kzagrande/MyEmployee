@@ -106,7 +106,6 @@ class UploadController {
       ci.manager_1,
       ci.integration_date,
       pi.email,
-      ci.presence_integration
   FROM 
       personal_infos pi
   JOIN 
@@ -298,7 +297,6 @@ class UploadController {
     ci.manager_1,
     ci.integration_date,
     pi.email,
-    ci.presence_integration
 FROM 
     personal_infos pi
 JOIN 
@@ -401,9 +399,7 @@ JOIN
       ci.sector,
       ci.manager_1,
       ci.integration_date,
-      pi.email,
-      ci.absence_justification,
-      ci.presence_integration
+      pi.email
   FROM 
       personal_infos pi
   JOIN 

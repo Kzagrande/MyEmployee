@@ -328,6 +328,7 @@ const PlanningTable = () => {
           </Alert>
         </Snackbar>
         <Modal
+        
           open={openModal}
           onClose={() => setOpenModal(false)}
           aria-labelledby="edit-modal"
