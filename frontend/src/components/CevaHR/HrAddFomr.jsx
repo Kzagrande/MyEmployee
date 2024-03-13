@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef, useImperativeHandle } from "react";
 import {
   Grid,
   TextField,
@@ -17,11 +17,10 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { useEffect } from "react";
 import http from "@config/http";
 
-const HrAddForm = ({ employeeData, updateMode, onClose, openFormModal }) => {
+const HrAddForm = forwardRef(({ updateMode, employeeData, onClose, openFormModal }, ref) => {
   const [formData, setFormData] = useState({
     name: employeeData ? employeeData.name : "",
     cpf: employeeData ? employeeData.cpf : "",
-    rg: employeeData ? employeeData.rg : "",
     employee_id: employeeData ? employeeData.employee_id : null,
     role_: employeeData ? employeeData.role_ : "",
     bu: employeeData ? employeeData.bu : "",
@@ -49,7 +48,7 @@ const HrAddForm = ({ employeeData, updateMode, onClose, openFormModal }) => {
     setIsModalOpen(openFormModal);
   }, [openFormModal]);
 
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -57,14 +56,12 @@ const HrAddForm = ({ employeeData, updateMode, onClose, openFormModal }) => {
     }));
   };
 
-  const handleSubmit = async () => {
+  const handleHttpRequest = async (endpoint, successMessage) => {
     setLoading(true);
     try {
-      const response = await http.post("/hr/add_hr_employees", formData);
-      console.log("ok passei pelo ep", response);
+      const response = await http.post(endpoint, formData);
       setMsgEPData(response.data.Message);
-      console.log(response.data.Message);
-      setSnackbarOpen(true); // Open the Snackbar on success
+      setSnackbarOpen(true);
       setLoading(false);
       setTimeout(() => {
         handleCloseModal();
@@ -74,32 +71,21 @@ const HrAddForm = ({ employeeData, updateMode, onClose, openFormModal }) => {
     } catch (error) {
       console.error(error.response.data.Error);
       setMsgEPData(error.response.data.Error);
-      setSnackbarOpen(true); // Open the Snackbar on success
+      setSnackbarOpen(true);
       setLoading(false);
     }
   };
 
-  const handleUpdate = async () => {
-    try {
-      const response = await http.post("/hr/update_hr_employee", formData);
-      console.log("ok passei pelo ep", response);
-      setMsgEPData(response.data.Message);
-      console.log(response.data.Message);
-      setSnackbarOpen(true); // Open the Snackbar on success
-      setLoading(false);
-      setTimeout(() => {
-        handleCloseModal();
-        setSnackbarOpen(false);
-      }, 1000);
-      setFormData(createEmptyFormData());
-      window.location.reload();
-    } catch (error) {
-      console.error(error.response.data.Error);
-      setMsgEPData(error.response.data.Error);
-      setSnackbarOpen(true); // Open the Snackbar on success
-      setLoading(false);
-    }
+  const handleSubmit = () => {
+    handleHttpRequest("/hr/add_hr_employees", "Registros inseridos com sucesso");
   };
+
+  const handleUpdate = () => {
+    handleHttpRequest("/hr/update_hr_employee", "Informações alteradas com sucesso!");
+    window.location.reload();
+  };
+
+
 
   const createEmptyFormData = () => {
     const emptyFormData = {};
@@ -200,7 +186,7 @@ const HrAddForm = ({ employeeData, updateMode, onClose, openFormModal }) => {
       name: "bu",
       label: "BU",
       size: "small",
-      selectItems: ["5500476 - NAVE B  ", "5500480 NAVE D"],
+      selectItems: ["55476 - BLOCO B ", "55480 - NAVE D"],
     },
     {
       name: "shift",
@@ -280,7 +266,7 @@ const HrAddForm = ({ employeeData, updateMode, onClose, openFormModal }) => {
           id="demo-simple-select"
           value={formData[field.name]}
           label="Age"
-          onChange={handleInputChange}
+          onChange={handleChange}
         >
           {field.selectItems && Array.isArray(field.selectItems)
             ? field.selectItems.map((item) => (
@@ -303,7 +289,7 @@ const HrAddForm = ({ employeeData, updateMode, onClose, openFormModal }) => {
         size={field.size}
         name={field.name}
         value={formData[field.name]}
-        onChange={handleInputChange}
+        onChange={handleChange}
         fullWidth
         disabled={field.disabled}
       />
@@ -320,6 +306,10 @@ const HrAddForm = ({ employeeData, updateMode, onClose, openFormModal }) => {
         "date_of_birth",
         "email",
         "phone",
+        "neighborhood",
+        "city",
+        "integration_date"
+        
       ].includes(field.name)
     ) {
       return renderTextField(field);
@@ -330,11 +320,13 @@ const HrAddForm = ({ employeeData, updateMode, onClose, openFormModal }) => {
 
   return (
     <Modal
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
+    sx={{
+      backgroundColor: "white",
+      margin: "1em",
+      padding: "1em",
+      maxHeight: "95vh",  // Defina a altura máxima desejada
+      overflowY: "auto",  // Adiciona rolagem vertical
+    }}
       open={isModalOpen}
       aria-labelledby="add-employee-modal"
       aria-describedby="form-for-adding-employee"
@@ -348,29 +340,15 @@ const HrAddForm = ({ employeeData, updateMode, onClose, openFormModal }) => {
             {formFields.map(renderFormFields)}
           </Grid>
           <Box sx={{}}>
-            {updateMode ? (
-              <LoadingButton
-                loading={loading}
-                loadingPosition="start"
-                variant="contained"
-                color="primary"
-                onClick={handleUpdate}
-                sx={{ marginRight: "1em" }}
-              >
-                Update
-              </LoadingButton>
-            ) : (
-              <LoadingButton
-                loading={loading}
-                loadingPosition="start"
-                variant="contained"
-                color="primary"
-                onClick={handleSubmit}
-                sx={{ marginRight: "1em" }}
-              >
-                Save
-              </LoadingButton>
-            )}
+            <LoadingButton
+              loading={loading}
+              variant="contained"
+              color="primary"
+              onClick={updateMode ? handleUpdate : handleSubmit}
+              sx={{ marginRight: "1em" }}
+            >
+              {updateMode ? "Update" : "Save"}
+            </LoadingButton>
             <LoadingButton variant="contained" onClick={handleCloseModal}>
               Cancel
             </LoadingButton>
@@ -397,6 +375,8 @@ const HrAddForm = ({ employeeData, updateMode, onClose, openFormModal }) => {
       </Container>
     </Modal>
   );
-};
+});
+
+HrAddForm.displayName = 'HrForm';
 
 export default HrAddForm;
