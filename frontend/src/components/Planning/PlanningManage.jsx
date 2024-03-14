@@ -1,52 +1,43 @@
 import React, { useState } from "react";
-import {
-  Grid,
-  Typography,
-  TextField,
-  Snackbar,
-  Alert,
-
-} from "@mui/material";
+import { Grid, Typography, TextField, Snackbar, Alert } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import LoadingButton from "@mui/lab/LoadingButton";
 import CSVReader from "react-csv-reader";
-import axios from "axios";
 import PlanningTable from "./PlanningTable";
 import { Box } from "@mui/system";
-import http from '@config/http.js'
+import http from "@config/http.js";
 
-
-const PlanningCrud = () => {
+const PlanningManage = () => {
   const [msgEP, msgEPData] = useState("");
   const [csvData, setCsvData] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleCsvData = (data) => {
-    setCsvData(data);
-  };
+  // const handleCsvData = (data) => {
+  //   setCsvData(data);
+  // };
 
-  const handleSaveToDatabase = () => {
-    setLoading(true);
-    http
-      .post("/planning/upload_pd_infos", {
-        csvFile: csvData,
-        dbTable: "company_infos",
-      })
-      .then((response) => {
-        msgEPData(response.data);
-        console.log(response.data);
-        setSnackbarOpen(true); // Open the Snackbar on success
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error(error.response.data);
-        msgEPData(error.response.data);
-        setSnackbarOpen(true); // Open the Snackbar on success
-        setLoading(false);
-      });
-  };
+  // const handleSaveToDatabase = () => {
+  //   setLoading(true);
+  //   http
+  //     .post("/planning/upload_pd_infos", {
+  //       csvFile: csvData,
+  //       dbTable: "company_infos",
+  //     })
+  //     .then((response) => {
+  //       msgEPData(response.data);
+  //       console.log(response.data);
+  //       setSnackbarOpen(true); // Open the Snackbar on success
+  //       setLoading(false);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error.response.data);
+  //       msgEPData(error.response.data);
+  //       setSnackbarOpen(true); // Open the Snackbar on success
+  //       setLoading(false);
+  //     });
+  // };
 
   const handleExportAgency = (event) => {
     event.preventDefault();
@@ -76,18 +67,30 @@ const PlanningCrud = () => {
 
   return (
     <Box>
-      <Grid alignItems="center" >
+      <Grid alignItems="center">
         <Grid
           item
           xs={12}
           md={10}
-          sx={{ display: "flex", flexDirection: "row", gap: "3em", placeContent: 'space-between', marginTop: '.5em', marginBottom: '4em' }}
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: "3em",
+            placeContent: "space-between",
+            marginTop: ".5em",
+            marginBottom: "4em",
+          }}
         >
-          <Typography variant="h4" >
-            Integrações
-          </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignContent: 'baseline', gap: '1em' }}>
-            <form style={{}}>
+     <Typography variant="h4" style={{ fontFamily: 'Libre Baskerville, sans-serif' }}>Ativos Planejamento</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignContent: "baseline",
+              gap: "1em",
+            }}
+          >
+            {/* <form style={{}}>
               <TextField
                 label="CSV File"
                 fullWidth
@@ -101,8 +104,8 @@ const PlanningCrud = () => {
                 }}
               />
 
-            </form>
-            <LoadingButton
+            </form> */}
+            {/* <LoadingButton
               size="small"
               loading={loading}
               loadingPosition="start"
@@ -113,7 +116,7 @@ const PlanningCrud = () => {
               sx={{}}
             >
               <span>Salvar no banco de dados</span>
-            </LoadingButton>
+            </LoadingButton> */}
             <LoadingButton
               size="small"
               loadingPosition="start"
@@ -126,8 +129,6 @@ const PlanningCrud = () => {
               <span>Export</span>
             </LoadingButton>
           </Box>
-
-
         </Grid>
       </Grid>
       <Grid
@@ -156,4 +157,4 @@ const PlanningCrud = () => {
   );
 };
 
-export default PlanningCrud;
+export default PlanningManage;

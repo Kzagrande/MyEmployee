@@ -52,7 +52,6 @@ class UploadController {
     return res.json({ Status: true });
   }
 
-
   formatDate(dateString) {
     return moment(dateString, "DD/MM/YYYY").format("YYYY-MM-DD");
   }
@@ -99,19 +98,21 @@ class UploadController {
       ci.employee_id,
       ci.company,
       ci.role_,
+      ci.collar,
+      ci.category,
       ci.shift,
       ci.bu,
       ci.schedule_time,
       ci.sector,
       ci.manager_1,
       ci.integration_date,
-      pi.email,
+      pi.email
   FROM 
       personal_infos pi
   JOIN 
       company_infos ci ON pi.employee_id = ci.employee_id
       WHERE  status = 'INTEGRATION'`;
-      
+
       const preIntegrationCsv = await this.databaseToCsv(select);
       this.createAndSendCSV(
         preIntegrationCsv,
@@ -140,48 +141,48 @@ class UploadController {
 
   async createAndSendCSV(dadosCSV, to, from, templateId, dynamicTemplateData) {
     if (dadosCSV && dadosCSV.length !== 0) {
-    const csvWriter = createArrayCsvWriter({
-      path: "temp.csv",
-      header: dadosCSV[0],
-    });
-    const sliceHeader = dadosCSV.slice(1, -1);
-    try {
-      await csvWriter.writeRecords(sliceHeader);
+      const csvWriter = createArrayCsvWriter({
+        path: "temp.csv",
+        header: dadosCSV[0],
+      });
+      const sliceHeader = dadosCSV.slice(1, -1);
+      try {
+        await csvWriter.writeRecords(sliceHeader);
 
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-      const msg = {
-        to: Array.isArray(to) ? to : [to],
-        from: {
-          name: from.name,
-          email: from.email,
-        },
-        templateId: templateId,
-        dynamicTemplateData: {
-          name: dynamicTemplateData.name,
-        },
-        attachments: [
-          {
-            content: (await fs.readFile("temp.csv")).toString("base64"),
-            filename: "data.csv",
-            type: "application/csv",
-            disposition: "attachment",
+        const msg = {
+          to: Array.isArray(to) ? to : [to],
+          from: {
+            name: from.name,
+            email: from.email,
           },
-        ],
-      };
-      console.log("msg", msg.to);
+          templateId: templateId,
+          dynamicTemplateData: {
+            name: dynamicTemplateData.name,
+          },
+          attachments: [
+            {
+              content: (await fs.readFile("temp.csv")).toString("base64"),
+              filename: "data.csv",
+              type: "application/csv",
+              disposition: "attachment",
+            },
+          ],
+        };
+        console.log("msg", msg.to);
 
-      await sgMail.send(msg);
+        await sgMail.send(msg);
 
-      console.log("E-mail enviado com sucesso!");
-    } catch (error) {
-      console.error("Erro ao criar e enviar o CSV por e-mail:", error);
+        console.log("E-mail enviado com sucesso!");
+      } catch (error) {
+        console.error("Erro ao criar e enviar o CSV por e-mail:", error);
 
-      if (error.response) {
-        console.error(error.response.body);
+        if (error.response) {
+          console.error(error.response.body);
+        }
       }
     }
-  }
   }
 
   async databaseToCsv(select) {
@@ -195,27 +196,25 @@ class UploadController {
           if (result && result.length !== 0) {
             // Format the result as CSV-like array
             const csvArray = [];
-          
+
             // Extract headers from the first row
             const headers = Object.keys(result[0]);
             csvArray.push(headers);
-  
+
             // Extract data rows
             result.forEach((row) => {
               const rowData = headers.map((header) => row[header]);
               csvArray.push(rowData);
             });
-  
+
             result = csvArray;
           }
-  
+
           resolve(result);
         }
       });
     });
   }
-  
-  
 
   validateInput(data) {
     if (!data || data.length === 0) {
@@ -226,7 +225,7 @@ class UploadController {
   async insertRecords(table, agencyModels) {
     const insertQuery = `
       INSERT INTO employees.${table}(
-        employee_id, cpf, name, role_, bu, shift, schedule_time, company,
+        employee_id, cpf, name, role_,collar,category, bu, shift, schedule_time, company,
         status, hire_date, date_of_birth, ethnicity,
         gender, neighborhood, city, email, phone,integration_date
       ) VALUES ?`;
@@ -242,7 +241,6 @@ class UploadController {
           if (err) {
             reject(err);
           } else {
-
             resolve();
           }
         });
@@ -296,7 +294,7 @@ class UploadController {
     ci.sector,
     ci.manager_1,
     ci.integration_date,
-    pi.email,
+    pi.email
 FROM 
     personal_infos pi
 JOIN 

@@ -7,48 +7,18 @@ import {
   Alert,
 
 } from "@mui/material";
-import SaveIcon from "@mui/icons-material/Save";
+
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import LoadingButton from "@mui/lab/LoadingButton";
-import CSVReader from "react-csv-reader";
-import axios from "axios";
-import EnhancedTable from "./AgencyListEmployee";
+import PlanningIntTable from "./PlanningIntTable";
 import { Box } from "@mui/system";
-import http from '@config/http'
 
 
-const AgencyInputEmployee = () => {
+
+const PlanningIntegrations = () => {
   const [msgEP, msgEPData] = useState("");
-  const [csvData, setCsvData] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const handleCsvData = (data) => {
-    setCsvData(data);
-  };
-
-  const handleSaveToDatabase = () => {
-    setLoading(true);
-    http
-      .post("/agency/upload_agency", {
-        csvFile: csvData,
-        dbTable: "employee_register",
-      })
-      .then((response) => {
-        msgEPData(response.data);
-        console.log(response.data);
-        setSnackbarOpen(true); // Open the Snackbar on success
-        setLoading(false); 
-        window.location.reload();
-      })
-      .catch((error) => {
-        console.error(error.response.data);
-        msgEPData(error.response.data);
-        setSnackbarOpen(true); // Open the Snackbar on success
-        setLoading(false);
-      });
-  };
-
   const handleExportAgency = (event) => {
     event.preventDefault();
 
@@ -84,37 +54,9 @@ const AgencyInputEmployee = () => {
           md={10}
           sx={{ display: "flex", flexDirection: "row", gap: "3em", placeContent: 'space-between', marginTop: '.5em', marginBottom: '4em' }}
         >
-          <Typography variant="h4" >
-            Editar vários
-          </Typography>
+<Typography variant="h4" style={{ fontFamily: 'Libre Baskerville, sans-serif' }}>Integrações e Planejamento</Typography>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignContent: 'baseline', gap: '1em' }}>
-            <form style={{}}>
-              <TextField
-                label="CSV File"
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <CSVReader
-                      onFileLoaded={handleCsvData}
-                      cssClass="custom-csv-input"
-                    />
-                  ),
-                }}
-              />
 
-            </form>
-            <LoadingButton
-              size="small"
-              loading={loading}
-              loadingPosition="start"
-              startIcon={<SaveIcon />}
-              variant="contained"
-              color="primary"
-              onClick={handleSaveToDatabase}
-              sx={{}}
-            >
-              <span>Salvar no banco de dados</span>
-            </LoadingButton>
             <LoadingButton
               size="small"
               loadingPosition="start"
@@ -137,7 +79,7 @@ const AgencyInputEmployee = () => {
         md={10}
         sx={{ display: "flex", flexDirection: "row", gap: "3em" }}
       >
-        <EnhancedTable />
+        <PlanningIntTable />
       </Grid>
       <Snackbar
         open={snackbarOpen}
@@ -157,4 +99,4 @@ const AgencyInputEmployee = () => {
   );
 };
 
-export default AgencyInputEmployee;
+export default PlanningIntegrations;
