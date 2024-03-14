@@ -12,11 +12,14 @@ import AgencyListEmployee from "./components/Agency/AgencyListEmployee";
 import HrCrud from "./components/CevaHR/HrCrud";
 import HrDash from "./components/CevaHR/HrDashboard";
 import HrEmployeeTable from "./components/CevaHR/HrEmployeeTable";
-import PlanningCrud from "./components/Planning/PlanningCrud";
-import PlanningTable from "./components/Planning/PlanningTable";
-import PlanningForm from "./components/Planning/PlanningForm";
+import PlanningTable from "./components/Planning/PlanningIntTable";
+import PlanningForm from "./components/Planning/PlanningIntForm";
 import PlanningDIsmissal from "./components/Planning/PlanningDIsmissal";
 import AgencyDismissal from "./components/Agency/AgencyDismissal";
+import PlanningManage from "./components/Planning/PlanningManage";
+import PlanningIntegrations from "./components/Planning/PlanningIntegrations";
+import PlanningIntTable from "./components/Planning/PlanningTable";
+import PlanningIntForm from "./components/Planning/PlanningIntForm";
 
 
 function App() {
@@ -34,9 +37,12 @@ function App() {
 
         <Route path="/planning_login" element={<PlanningLogin />}></Route>
         <Route path="/planning_dashboard" element={<PlanningDash />}>
-          <Route path="planning_crud" element={<PlanningCrud />}></Route>
+          <Route path="planning_manage" element={< PlanningManage/>}></Route>
           <Route path="planning_table" element={<PlanningTable />}></Route>
           <Route path="planning_form" element={<PlanningForm />}></Route>
+          <Route path="planning_integration" element={<PlanningIntegrations />}></Route>
+          <Route path="planning_int_table" element={<PlanningIntTable />}></Route>
+          <Route path="planning_int_form" element={<PlanningIntForm />}></Route>
           <Route path="planning_dismissal" element={<PlanningDIsmissal/>}></Route>
         </Route>
 

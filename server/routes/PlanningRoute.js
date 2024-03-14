@@ -17,6 +17,10 @@ router.post("/update_planning_employee", (req, res) => {
   planningController.updateEmployee(req, res);
 });
 
+router.post("/update_planning_group", (req, res) => {
+  planningController.updateEmployeeGroup(req, res);
+});
+
 router.get("/export_planning_infos", (req, res) => {
   planningController.exportPlanning(req, res);
 });

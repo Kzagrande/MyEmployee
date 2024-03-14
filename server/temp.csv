@@ -1,8 +1,7 @@
-name,cpf,employee_id,company,role_,shift,bu,schedule_time,sector,manager_1,integration_date,email,absence_justification,presence_integration
-ROBERTO PINA DIAS,386.333.078-12,111,VALOR RH,CONFERENTE,2ND SHIFT,55480 - NAVE D,22:35 as 06:00 Segunda a Sabado,,,Tue Jan 30 2024 00:00:00 GMT-0300 (Brasilia Standard Time),roberto_pinaqz@hotmail.com,,
-JADSON DOS SANTOS ARAUJO,526.824.858-80,123456,VALOR RH,AUX. APOIO LOGISTICO,3RD SHIFT,55480 - NAVE D,22:35 as 06:00 Segunda a Sabado,,,Tue Jan 30 2024 00:00:00 GMT-0300 (Brasilia Standard Time),jadsonsantos69652@gmail.com,,
-MARAIZA SILVA,360.284.418-80,222,VALOR RH,AUX. APOIO LOGISTICO,4TH SHIFT,55476 - BLOCO B,22:35 as 06:00 Segunda a Sabado,,,Tue Jan 30 2024 00:00:00 GMT-0300 (Brasilia Standard Time),maraizamara706@gmail.com,,
-RAFAEL ROMEU PEREIRA DA SILVA,398.804.238-28,333,VALOR RH,COORDENADOR DE CONTRATOS,3RD SHIFT,55476 - BLOCO B,22:35 as 06:00 Segunda a Sabado,,,Tue Jan 30 2024 00:00:00 GMT-0300 (Brasilia Standard Time),rafaelprimanu@gmail.com,,
-DOUGLAS JESUS DE OLIVEIRA615,394.624.748-26,444,VALOR RH,AUXILIAR DE PREVENCAO DE PERDAS,3RD SHIFT,55480 - NAVE D,22:35 as 06:00 Segunda a Sabado,,,Tue Jan 30 2024 00:00:00 GMT-0300 (Brasilia Standard Time),oliveiradouglas0729@gmail.com,,
-MICHELLE OLIVEIRA DOS SANTOS,390.062.518-28,555,VALOR RH,AUX. APOIO LOGISTICO,2ND SHIFT,55480 - NAVE D,22:35 as 06:00 Segunda a Sabado,,,Tue Jan 30 2024 00:00:00 GMT-0300 (Brasilia Standard Time),davi171125@gmail.com,,
-ISTER PINHEIRO DOS SANTOS,574.786.758-08,666,VALOR RH,AUX. APOIO LOGISTICO,3RD SHIFT,55480 - NAVE D,22:35 as 06:00 Segunda a Sabado,,,Tue Jan 30 2024 00:00:00 GMT-0300 (Brasilia Standard Time),isteriorena@gmail.com,,
+name,cpf,employee_id,company,role_,shift,bu,schedule_time,sector,manager_1,integration_date,email
+ROBERTO PINA DIAS,386.333.078-12,111,VALOR RH,CONFERENTE MATERIAIS,2ND SHIFT,55480 - NAVE D,22:35 as 06:00 Segunda a Sabado,,,Tue Jan 30 2024 00:00:00 GMT-0300 (Horário Padrão de Brasília),roberto_pinaqz@hotmail.com
+JADSON DOS SANTOS ARAUJO,526.824.858-80,123456,VALOR RH,AUX APOIO LOGISTICO,3RD SHIFT,55480 - NAVE D,22:35 as 06:00 Segunda a Sabado,,,Tue Jan 30 2024 00:00:00 GMT-0300 (Horário Padrão de Brasília),jadsonsantos69652@gmail.com
+MARAIZA SILVA,360.284.418-80,222,VALOR RH,AUX APOIO LOGISTICO,4TH SHIFT,55476 - BLOCO B,22:35 as 06:00 Segunda a Sabado,,,Tue Jan 30 2024 00:00:00 GMT-0300 (Horário Padrão de Brasília),maraizamara706@gmail.com
+RAFAEL ROMEU PEREIRA DA SILVA,398.804.238-28,333,VALOR RH,COORDENADOR DE CONTRATOS,3RD SHIFT,55476 - BLOCO B,22:35 as 06:00 Segunda a Sabado,,,Tue Jan 30 2024 00:00:00 GMT-0300 (Horário Padrão de Brasília),rafaelprimanu@gmail.com
+DOUGLAS JESUS DE OLIVEIRA615,394.624.748-26,444,VALOR RH,AUXILIAR DE PREVENCAO DE PERDAS,3RD SHIFT,55480 - NAVE D,22:35 as 06:00 Segunda a Sabado,,,Tue Jan 30 2024 00:00:00 GMT-0300 (Horário Padrão de Brasília),oliveiradouglas0729@gmail.com
+MICHELLE OLIVEIRA DOS SANTOS,390.062.518-28,555,VALOR RH,INSTRUTOR TECNICO,2ND SHIFT,55480 - NAVE D,22:35 as 06:00 Segunda a Sabado,,,Tue Jan 30 2024 00:00:00 GMT-0300 (Horário Padrão de Brasília),davi171125@gmail.com

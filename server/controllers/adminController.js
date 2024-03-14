@@ -310,7 +310,7 @@ class AdminController {
     // Call the verifyUser middleware before processing the request
     verifyUser(req, res, () => {
       // If the verification is successful, proceed with the database query
-      const query = "SELECT * FROM employees.activities_hc";
+      const query = "SELECT * FROM employees.active_hc";
 
       pool.query(query, (error, results) => {
         if (error) {
@@ -337,10 +337,10 @@ class AdminController {
     });
   };
 
-  async exportActivitiesHc(req, res) {
+  async exportActiveHc(req, res) {
     console.log("chamei o export");
     try {
-      const data = await this.executeQuery(`SELECT * FROM activities_hc`);
+      const data = await this.executeQuery(`SELECT * FROM active_hc`);
 
       if (data.length === 0) {
         return res

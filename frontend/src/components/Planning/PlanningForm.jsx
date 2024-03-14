@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef, useImperativeHandle } from "react";
 import {
-  Button,
   Grid,
   TextField,
   Typography,
@@ -9,12 +8,16 @@ import {
   Box,
   Snackbar,
   Alert,
+  Modal,
+  FormControl,
+  Select,
+  MenuItem,
 } from "@mui/material";
-import axios from "axios";
+import LoadingButton from "@mui/lab/LoadingButton";
 import { useEffect } from "react";
-import http from '@config/http.js'
+import http from "@config/http";
 
-const PlanningForm = ({ employeeData, onClose,openFormModal }) => {
+const HrAddForm = forwardRef(({employeeData, onClose, openFormModal }, ref) => {
   const [formData, setFormData] = useState({
     employee_id: employeeData ? employeeData.employee_id : "",
     name: employeeData ? employeeData.name : "",
@@ -26,32 +29,61 @@ const PlanningForm = ({ employeeData, onClose,openFormModal }) => {
     work_schedule: employeeData ? employeeData.work_schedule : "",
     type_: employeeData ? employeeData.type_ : "",
     schedule_time: employeeData ? employeeData.schedule_time : "",
-    activity_p: employeeData ? employeeData.activity_p : "",
     company: employeeData ? employeeData.company : "",
     manager_1: employeeData ? employeeData.manager_1 : "",
     status: employeeData ? employeeData.status : "",
-    presence_integration: employeeData ? employeeData.presence_integration : "",
-    hire_date: employeeData ? employeeData.hire_date : "",
-    date_of_birth: employeeData ? employeeData.date_of_birth : "",
-    integration_date: employeeData ? employeeData.integration_date : "",
     // Add other form fields as needed
   });
-
+  const [loading, setLoading] = useState(false);
   const [msgEP, setMsgEPData] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(openFormModal);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setIsModalOpen(openFormModal);
   }, [openFormModal]);
 
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const handleHttpRequest = async (endpoint, successMessage) => {
+    setLoading(true);
+    try {
+      const response = await http.post(endpoint, formData);
+      setMsgEPData(response.data.Message);
+      setSnackbarOpen(true);
+      setLoading(false);
+      setTimeout(() => {
+        handleCloseModal();
+        setSnackbarOpen(false);
+      }, 1000);
+      setFormData(createEmptyFormData());
+    } catch (error) {
+      console.error(error.response.data.Error);
+      setMsgEPData(error.response.data.Error);
+      setSnackbarOpen(true);
+      setLoading(false);
+    }
+  };
+
+  const handleUpdate = () => {
+    handleHttpRequest("/planning/update_planning_employee");
+    window.location.reload();
+  };
+
+
+
+  const createEmptyFormData = () => {
+    const emptyFormData = {};
+    Object.keys(formData).forEach((key) => {
+      emptyFormData[key] = "";
+    });
+    return emptyFormData;
   };
 
   const handleSnackbarClose = (event, reason) => {
@@ -60,35 +92,6 @@ const PlanningForm = ({ employeeData, onClose,openFormModal }) => {
     }
     setSnackbarOpen(false);
   };
-
-  
-
-
-
-  const handleUpdate = async () => {
-    try {
-      const response = await http.post(
-        "/planning/update_planning_employee",
-        formData
-      );
-      console.log("ok passei pelo ep", response);
-      setMsgEPData(response.data.Message);
-      console.log(response.data.Message);
-      setSnackbarOpen(true); // Open the Snackbar on success
-      setLoading(false);
-      setTimeout(() => {
-        handleCloseModal();
-        setSnackbarOpen(false);
-        console.log('formModal',openFormModal)
-      }, 1000);
-    } catch (error) {
-      console.log(error.response.data.Error);
-      setMsgEPData(error.response.data.Error);
-      setSnackbarOpen(true); // Open the Snackbar on success
-      setLoading(false);
-    }
-  };
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
     onClose();
@@ -96,87 +99,222 @@ const PlanningForm = ({ employeeData, onClose,openFormModal }) => {
 
   const formFields = [
     { name: "employee_id", label: "Matrícula", size: "small", disabled: true },
-    { name: "name", label: "Name", size: "small", disabled: true },
-    { name: "role_", label: "Role", size: "small" },
-    { name: "bu", label: "BU", size: "small" },
-    { name: "shift", label: "Shift", size: "small" },
-    { name: "sector", label: "Sector", size: "small" },
-    { name: "collar", label: "Collar", size: "small" },
-    { name: "work_schedule", label: "Work Schedule", size: "small" },
-    { name: "type_", label: "Type", size: "small" },
-    { name: "schedule_time", label: "Schedule Time", size: "small" },
-    { name: "activity_p", label: "Activity P", size: "small" },
+    { name: "name", label: "Name", size: "small", disabled: true,disabled: true },
+    { name: "bu", label: "BU", size: "small",selectItems: ["55476 - BLOCO B ", "55480 - NAVE D"], },
+    { name: "shift", label: "Shift", size: "small",      selectItems: [
+      "1ST SHIFT",
+      "2ND SHIFT",
+      "3RD SHIFT",
+      "4TH SHIFT",
+      "5TH SHIFT",
+      "6TH SHIFT",
+      "ADM",
+    ], },
+    { name: "sector", label: "Sector", size: "small",selectItems:["OPERATION", "INVENTORY", "LOSS PREVENTION", "QUALITY HEALTH SECURITY ENVIRONMENT", "PLANNING", "FINANCE", "FACILITIES", "HUMAN RESOURCES", "BUSINESS PROCESS EXCELLENCE", "ADM", "INFORMATION TECHNOLOGY"]},
+    { name: "role_", label: "Role", size: "small" ,  selectItems: [
+        "ANALISTA DE INVENTARIO",
+        "ANALISTA DE PLANEJAMENTO",
+        "ANALISTA EXCELENCIA OPERACIONAL JR",
+        "ANALISTA EXCELENCIA OPERACIONAL SR",
+        "ANALISTA FACILITIES JR",
+        "ANALISTA FINANCEIRO SR",
+        "ANALISTA INVENTARIO JR",
+        "ANALISTA INVENTARIO PL",
+        "ANALISTA INVENTARIO SR",
+        "ANALISTA LOGISTICO JR",
+        "ANALISTA LOGISTICO SR",
+        "ANALISTA PLANEJAMENTO JR",
+        "ANALISTA PLANEJAMENTO PL",
+        "ANALISTA PLANEJAMENTO SR",
+        "ANALISTA PREVENCAO PERDAS PL",
+        "ANALISTA PREVENCAO PERDAS SR",
+        "ANALISTA RECURSOS HUMANOS JR",
+        "ANALISTA RECURSOS HUMANOS PL",
+        "ANALISTA RECURSOS HUMANOS SR",
+        "ANALISTA SUPORTE JR",
+        "ANALISTA TREINAMENTO OPERACIONAL JR",
+        "ASSISTENTE ADMINISTRATIVO",
+        "ASSISTENTE INVENTARIO",
+        "ASSISTENTE PLANEJAMENTO",
+        "ASSISTENTE RECURSOS HUMANOS",
+        "ASSISTENTE TREINAMENTO OPERACIONAL",
+        "AUX APOIO LOGISTICO",
+        "AUXILIAR ADMINISTRATIVO",
+        "AUXILIAR PREVENCAO PERDAS",
+        "COMPRADOR JR",
+        "CONFERENTE MATERIAIS",
+        "COORDENADOR CONTRATO",
+        "COORDENADOR CONTRATO ECOM",
+        "COORDENADOR INVENTARIO",
+        "COORDENADOR MANUTENCAO",
+        "COORDENADOR PLANEJAMENTO",
+        "COORDENADOR PREVENCAO PERDAS",
+        "COORDENADOR RECURSOS HUMANOS",
+        "DIRETOR OPERACOES CL",
+        "ENFERMEIRO TRABALHO",
+        "ENGENHEIRO SEGURANCA TRABALHO",
+        "ESPECIALISTA DADOS I",
+        "ESPECIALISTA PROJETOS",
+        "ESTAGIARIO",
+        "GERENTE CONTRATO ECOM",
+        "GERENTE EXCELENCIA OPERACIONAL",
+        "GERENTE INVENTARIO",
+        "GERENTE OPERACOES CL SR",
+        "GERENTE RECURSOS HUMANOS",
+        "INSTRUTOR TECNICO",
+        "OPERADOR CENTRAL MONITORAMENTO",
+        "OPERADOR LOGISTICO",
+        "SUPERVISOR CONTRATO ECOM",
+        "SUPERVISOR EXCELENCIA OPERACIONAL",
+        "SUPERVISOR MANUTENCAO",
+        "SUPERVISOR PLANEJAMENTO",
+        "SUPERVISOR PREVENCAO PERDAS",
+        "TECNICO DE ENFERMAGEM DO TRABALHO",
+        "TECNICO ENFERMAGEM TRABALHO",
+        "TECNICO SEGURANCA TRABALHO",
+      ],},
+    { name: "collar", label: "Collar", size: "small",selectItems: ["WHITE", "BLUE"], },
+    { name: "work_schedule", label: "Work Schedule", size: "small",selectItems: ["A", "B","C","D","E"], },
+    { name: "type_", label: "Type", size: "small",selectItems: ["DIRECT", "INDIRECT"], },
+    { name: "schedule_time", label: "Schedule Time", size: "small",      selectItems: [
+      "06:00 as 14:20 Segunda a Sabado",
+      "14:20 as 22:35 Segunda a Sabado",
+      "22:35 as 06:00 Segunda a Sabado",
+      "06:00 as 14:20 Terca a Domingo",
+      "14:20 as 22:35 Terca a Domingo",
+      "22:35 as 06:00 Domingo a Sexta",
+      "08:00 as 17:48 Segunda a Sexta",
+    ], },
     { name: "company", label: "Company", size: "small", disabled: true },
     { name: "manager_1", label: "Responsável", size: "small" },
     { name: "status", label: "Status", size: "small", disabled: true },
-    {
-      name: "presence_integration",
-      label: "presence integration Date",
-      size: "small",
-      disabled: true,
-    },
   ];
+
+  const renderSelectField = (field) => (
+    <Grid item xs={6} key={field.name}>
+      <InputLabel sx={{ marginBottom: "8px",fontWeight:'bold' }} htmlFor={field.name}>
+        {field.label}
+      </InputLabel>
+      <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">
+          {formData[field.name]}
+        </InputLabel>
+        <Select
+          displayEmpty
+          size={field.size}
+          name={field.name}
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={formData[field.name]}
+          label="Age"
+          onChange={handleChange}
+        >
+          {field.selectItems && Array.isArray(field.selectItems)
+            ? field.selectItems.map((item) => (
+                <MenuItem key={item} value={item}>
+                  {item}
+                </MenuItem>
+              ))
+            : null}
+        </Select>
+      </FormControl>
+    </Grid>
+  );
 
   const renderTextField = (field) => (
     <Grid item xs={6} key={field.name}>
-      <InputLabel htmlFor={field.name}>{field.label}</InputLabel>
+      <InputLabel sx={{ marginBottom: "8px",fontWeight:'bold' }} htmlFor={field.name}>
+        {field.label}
+      </InputLabel>
       <TextField
         size={field.size}
         name={field.name}
         value={formData[field.name]}
-        onChange={handleInputChange}
+        onChange={handleChange}
         fullWidth
         disabled={field.disabled}
       />
     </Grid>
   );
+
+  const renderFormFields = (field) => {
+    if (
+      [
+        "employee_id",
+        "name",
+        "company",
+        "status",
+        "manager_1"
+        
+      ].includes(field.name)
+    ) {
+      return renderTextField(field);
+    } else {
+      return renderSelectField(field);
+    }
+  };
+
   return (
-    <Container       sx={{
-      backgroundColor: "white",
+    <Modal
+    sx={{
       margin: "1em",
       padding: "1em",
       maxHeight: "95vh",  // Defina a altura máxima desejada
-      overflowY: "auto",  // Adiciona rolagem vertical
-    }}>
-      <Typography variant="h6">Edit Employee</Typography>
-      <form>
-        <Grid container spacing={0.5} sx={{ marginBottom: "1em" }}>
-          {formFields.map(renderTextField)}
-        </Grid>
-        <Box sx={{}}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleUpdate}
-            sx={{ marginRight: "1em" }}
-          >
-            Update
-          </Button>
-          <Button variant="contained" onClick={handleCloseModal}>
-            Cancel
-          </Button>
-        </Box>
-      </form>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
+      overflowY: "auto", 
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center', // Adiciona rolagem vertical
+    }}
+      open={isModalOpen}
+      aria-labelledby="add-employee-modal"
+      aria-describedby="form-for-adding-employee"
+    >
+      <Container
+        sx={{ backgroundColor: "white", margin: "1em", padding: "1em" }}
       >
-        <Alert
+        <Typography variant="h6">Edit Employee</Typography>
+        <form>
+          <Grid container spacing={0.5} sx={{ marginBottom: "1em" }}>
+            {formFields.map(renderFormFields)}
+          </Grid>
+          <Box sx={{}}>
+            <LoadingButton
+              loading={loading}
+              variant="contained"
+              color="primary"
+              onClick={handleUpdate}
+              sx={{ marginRight: "1em" }}
+            >
+              Update
+            </LoadingButton>
+            <LoadingButton variant="contained" onClick={handleCloseModal}>
+              Cancel
+            </LoadingButton>
+          </Box>
+        </form>
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={3000}
           onClose={handleSnackbarClose}
-          severity={
-            msgEP === "Registros inseridos com sucesso"
-              ? "success"
-              : msgEP === "Informações alteradas com sucesso!"
-              ? "info"
-              : "error"
-          }
         >
-          {msgEP}
-        </Alert>
-      </Snackbar>
-    </Container>
+          <Alert
+            onClose={handleSnackbarClose}
+            severity={
+              msgEP === "Registros inseridos com sucesso"
+                ? "success"
+                : msgEP === "Informações alteradas com sucesso!"
+                ? "info"
+                : "error"
+            }
+          >
+            {msgEP}
+          </Alert>
+        </Snackbar>
+      </Container>
+    </Modal>
   );
-};
+});
 
-export default PlanningForm;
+HrAddForm.displayName = 'HrForm';
+
+export default HrAddForm;

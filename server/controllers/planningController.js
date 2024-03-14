@@ -214,8 +214,56 @@ class PlanningController {
     }
   }
 
+  async updateEmployeeGroup(req, res) {
+    try {
+      const employeeIds = req.body.ids;
+      const updatedData = req.body.updates;
+  
+      const updateFields = [];
+      const values = [];
+  
+      // Iterar sobre as chaves do objeto updatedData
+      Object.keys(updatedData).forEach(key => {
+        // Verificar se o valor não está vazio
+        if (updatedData[key] !== '') {
+          updateFields.push(`${key} = ?`);
+          values.push(updatedData[key]);
+        }
+      });
+  
+      // Verificar se há campos a serem atualizados
+      if (updateFields.length === 0) {
+        return res.status(400).json({ Status: false, Error: "Nenhum campo de atualização fornecido" });
+      }
+  
+      const updateQuery = `
+        UPDATE employees.company_infos 
+        SET ${updateFields.join(', ')}
+        WHERE employee_id IN (?)`;
+  
+      values.push(employeeIds);
+  
+      await new Promise((resolve, reject) => {
+        pool.query(updateQuery, values, (err, result) => {
+          if (err) {
+            console.error("Erro durante a atualização dos registros:", err);
+            return reject(err);
+          }
+          resolve();
+        });
+      });
+  
+      return res.status(200).json({ Status: true, Message: "Informações alteradas com sucesso!" });
+    } catch (err) {
+      console.error("Error during updateEmployee:", err.message);
+      return res.status(500).json({ Status: false, Error: err.message });
+    }
+  }
+  
+
   listEmployee = (req, res) => {
-    const query = "SELECT * FROM employees.activities_hc";
+    const dbTable = req.query.dbTable;
+    const query =`SELECT * FROM employees.${dbTable}`;
 
     pool.query(query, (error, results) => {
       if (error) {

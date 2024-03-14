@@ -220,7 +220,7 @@ const HrAddForm = forwardRef(({ updateMode, employeeData, onClose, openFormModal
       name: "company",
       label: "Company",
       size: "small",
-      selectItems: ["CEVA", "VALOR RH", "AMERICA HR", "RH NOSSA"],
+       
     },
     {
       name: "status",
@@ -251,7 +251,7 @@ const HrAddForm = forwardRef(({ updateMode, employeeData, onClose, openFormModal
 
   const renderSelectField = (field) => (
     <Grid item xs={6} key={field.name}>
-      <InputLabel sx={{ marginBottom: "8px" }} htmlFor={field.name}>
+      <InputLabel sx={{ marginBottom: "8px",fontWeight:'bold' }} htmlFor={field.name}>
         {field.label}
       </InputLabel>
       <FormControl fullWidth>
@@ -282,7 +282,7 @@ const HrAddForm = forwardRef(({ updateMode, employeeData, onClose, openFormModal
 
   const renderTextField = (field) => (
     <Grid item xs={6} key={field.name}>
-      <InputLabel sx={{ marginBottom: "8px" }} htmlFor={field.name}>
+      <InputLabel sx={{ marginBottom: "8px",fontWeight:'bold' }} htmlFor={field.name}>
         {field.label}
       </InputLabel>
       <TextField
@@ -321,11 +321,13 @@ const HrAddForm = forwardRef(({ updateMode, employeeData, onClose, openFormModal
   return (
     <Modal
     sx={{
-      backgroundColor: "white",
       margin: "1em",
       padding: "1em",
       maxHeight: "95vh",  // Defina a altura máxima desejada
-      overflowY: "auto",  // Adiciona rolagem vertical
+      overflowY: "auto", 
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center', // Adiciona rolagem vertical
     }}
       open={isModalOpen}
       aria-labelledby="add-employee-modal"
