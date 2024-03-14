@@ -17,14 +17,15 @@ import {
   TextField,
   MenuItem,
   Box,
-  Modal
+  Modal,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SearchIcon from "@mui/icons-material/Search";
-import http from '@config/http'
-import moment from 'moment'
-import PlanningForm from './PlanningIntForm'
+import http from "@config/http";
+import PlanningIntForm from "./PlanningIntForm";
+import PlanningForm from "./PlanningForm";
+import EditIcon from "@mui/icons-material/Edit";
 
 const visuallyHidden = {
   position: "absolute",
@@ -57,11 +58,21 @@ const PlanningIntTable = () => {
   const [buFilter, setBuFilter] = useState("");
   const [shiftFilter, setShiftFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
-  const [openModal, setOpenModal] = useState(false);
+  const [openGroupModal, setGroupModal] = useState(false);
+  const [openSingleModal, setSingleModal] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   useEffect(() => {
     fetchData(); //When components start apply this function
   }, []);
+
+  const handleEditClick = (employeeId) => {
+    const selectedEmployeeData = data.find(
+      (employee) => employee.employee_id === employeeId
+    );
+    setSelectedEmployee(selectedEmployeeData);
+    setSingleModal(true);
+  };
 
   const fetchData = async () => {
     try {
@@ -74,20 +85,20 @@ const PlanningIntTable = () => {
       setUiiniqueStatus(uniqueStatus);
 
       const uniqueBu = [...new Set(response.data.map((row) => row.bu))];
-      const filteredBu = uniqueBu.filter(bu => bu !== '');
+      const filteredBu = uniqueBu.filter((bu) => bu !== "");
       setUniqueBu(filteredBu);
 
       const uniqueShift = [...new Set(response.data.map((row) => row.shift))];
-      const filterShift = uniqueShift.filter(bu => bu !== '');
+      const filterShift = uniqueShift.filter((bu) => bu !== "");
       setUniqueShift(filterShift);
     } catch (error) {
       console.error("Error in the request:", error);
     }
   };
 
-    const updateForm = ()=>{
-        setOpenModal(true)
-    }
+  const updateForm = () => {
+    setGroupModal(true);
+  };
 
   const headCells = [
     // Define columns
@@ -101,10 +112,20 @@ const PlanningIntTable = () => {
     { id: "bu", numeric: false, disablePadding: false, label: "Nave" },
     { id: "shift", numeric: false, disablePadding: false, label: "Turno" },
     { id: "sector", numeric: false, disablePadding: false, label: "Setor" },
-    { id: "work_schedule", numeric: false, disablePadding: false, label: "Escala" },
+    {
+      id: "work_schedule",
+      numeric: false,
+      disablePadding: false,
+      label: "Escala",
+    },
     { id: "type", numeric: false, disablePadding: false, label: "Tipo" },
     { id: "status", numeric: false, disablePadding: false, label: "Status" },
-    { id: "schedule_time", numeric: false, disablePadding: false, label: "Horário" },
+    {
+      id: "schedule_time",
+      numeric: false,
+      disablePadding: false,
+      label: "Horário",
+    },
     {
       id: "manager_1",
       numeric: false,
@@ -170,7 +191,6 @@ const PlanningIntTable = () => {
     page * rowsPerPage + rowsPerPage
   );
 
-
   const handleSnackbarClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -183,15 +203,20 @@ const PlanningIntTable = () => {
     setSearchTerm(event.target.value);
   };
 
-
-  
-    const filteredData = visibleRows.filter(row =>
-      (row.name && row.name.toLowerCase().includes(nameFilter.toLowerCase())) &&
-      (row.employee_id.toString().includes(searchTerm)) &&
-      (statusFilter === "" || (row.status && row.status.toLowerCase().includes(statusFilter.toLowerCase()))) &&
-      (buFilter === "" || (row.bu && row.bu.toLowerCase().includes(buFilter.toLowerCase()))) &&
-      (shiftFilter === "" || (row.shift && row.shift.toLowerCase().includes(shiftFilter.toLowerCase())))
-    );
+  const filteredData = visibleRows.filter(
+    (row) =>
+      row.name &&
+      row.name.toLowerCase().includes(nameFilter.toLowerCase()) &&
+      row.employee_id.toString().includes(searchTerm) &&
+      (statusFilter === "" ||
+        (row.status &&
+          row.status.toLowerCase().includes(statusFilter.toLowerCase()))) &&
+      (buFilter === "" ||
+        (row.bu && row.bu.toLowerCase().includes(buFilter.toLowerCase()))) &&
+      (shiftFilter === "" ||
+        (row.shift &&
+          row.shift.toLowerCase().includes(shiftFilter.toLowerCase())))
+  );
 
   return (
     <Grid container>
@@ -206,19 +231,25 @@ const PlanningIntTable = () => {
           justifyContent: "space-between",
         }}
       >
-                <LoadingButton
-            loading={loading}
-            loadingPosition="start"
-            startIcon={<SaveIcon />}
-            variant="contained"
-            color="warning"
-            onClick={updateForm}
-            sx={{}}
-          >
-            <span>Editar</span>
-          </LoadingButton>
-        <Box sx={{display:'flex',justifyContent:'space-between',alignContent:'baseline',gap:'1em'}}>
-
+        <LoadingButton
+          loading={loading}
+          loadingPosition="start"
+          startIcon={<SaveIcon />}
+          variant="contained"
+          color="warning"
+          onClick={updateForm}
+          sx={{}}
+        >
+          <span>Editar</span>
+        </LoadingButton>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignContent: "baseline",
+            gap: "1em",
+          }}
+        >
           <TextField
             label="Search by Name"
             variant="outlined"
@@ -303,7 +334,6 @@ const PlanningIntTable = () => {
               </MenuItem>
             ))}
           </Select>
-
         </Box>
       </Grid>
       <Grid item xs={12}>
@@ -311,6 +341,7 @@ const PlanningIntTable = () => {
           <Table>
             <TableHead sx={{ backgroundColor: "#f0eef1" }}>
               <TableRow>
+                <TableCell>{/* fake */}</TableCell>
                 <TableCell padding="checkbox">
                   <Checkbox
                     color="primary"
@@ -353,18 +384,24 @@ const PlanningIntTable = () => {
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
-                  <TableRow
-                    hover
-                    onClick={(event) => handleClick(event, row.employee_id)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row.id}
-                    selected={isItemSelected}
-                    sx={{ cursor: "pointer" }}
-                  >
+                  <TableRow>
+                    <TableCell>
+                      <EditIcon
+                        color="primary"
+                        onClick={() => handleEditClick(row.employee_id)}
+                        style={{ cursor: "pointer" }}
+                      />
+                    </TableCell>
                     <TableCell padding="checkbox">
                       <Checkbox
+                        hover
+                        onClick={(event) => handleClick(event, row.employee_id)}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.id}
+                        selected={isItemSelected}
+                        sx={{ cursor: "pointer" }}
                         color="primary"
                         checked={isItemSelected}
                         inputProps={{
@@ -392,7 +429,7 @@ const PlanningIntTable = () => {
           </Table>
 
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25, 50, 100,5000]}
+            rowsPerPageOptions={[5, 10, 25, 50, 100, 5000]}
             component="div"
             count={data.length}
             rowsPerPage={rowsPerPage}
@@ -400,7 +437,6 @@ const PlanningIntTable = () => {
             onPageChange={(event, newPage) => handleChangePage(event, newPage)}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
-
         </TableContainer>
         <Snackbar
           open={snackbarOpen}
@@ -417,22 +453,32 @@ const PlanningIntTable = () => {
           </Alert>
         </Snackbar>
         <Modal
-        
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        aria-labelledby="edit-modal"
-        aria-describedby="form-for-editing"
-      >
-        <PlanningForm
-        ids={selectedIds}
-          employeeData={''}
-          onClose={() => setOpenModal(false)}
-          openFormModal={openModal}
-        />
-      </Modal>
+          open={openGroupModal}
+          onClose={() => setGroupModal(false)}
+          aria-labelledby="edit-modal"
+          aria-describedby="form-for-editing"
+        >
+          <PlanningIntForm
+            ids={selectedIds}
+            employeeData={""}
+            onClose={() => setGroupModal(false)}
+            openFormModal={openGroupModal}
+          />
+        </Modal>
+        <Modal
+          open={openSingleModal}
+          onClose={() => setSingleModal(false)}
+          aria-labelledby="edit-modal"
+          aria-describedby="form-for-editing"
+        >
+          <PlanningForm
+            employeeData={selectedEmployee}
+            onClose={() => setSingleModal(false)}
+            openFormModal={openSingleModal}
+          />
+        </Modal>
       </Grid>
     </Grid>
-    
   );
 };
 

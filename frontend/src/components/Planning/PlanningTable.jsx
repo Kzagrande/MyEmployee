@@ -394,6 +394,18 @@ const PlanningTable = () => {
             openFormModal={openModal}
           />
         </Modal>
+        <Modal
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+          aria-labelledby="edit-modal"
+          aria-describedby="form-for-editing"
+        >
+          <PlanningForm
+            employeeData={selectedEmployee}
+            onClose={() => setOpenModal(false)}
+            openFormModal={openModal}
+          />
+        </Modal>
       </Grid>
     </Grid>
   );

@@ -218,69 +218,48 @@ class PlanningController {
     try {
       const employeeIds = req.body.ids;
       const updatedData = req.body.updates;
-      const {
-        bu,
-        shift,
-        sector,
-        work_schedule,
-        type_,
-        schedule_time,
-        manager_1,
-        manager_2,
-        manager_3,
-      } = updatedData;
-
-      const updateQuery = `
-      UPDATE employees.company_infos 
-      SET
-      bu = ?,
-      shift = ?,
-      sector = ?,
-      work_schedule = ?,
-      type_ = ?,
-      schedule_time = ?,
-      manager_1 = ?,
-      manager_2 = ?,
-      manager_3 = ?,
-      status  = 'ACTIVE'
-      WHERE employee_id IN (${employeeIds.join(",")})`;
-
-      const values = [
-        bu,
-        shift,
-        sector,
-        work_schedule,
-        type_,
-        schedule_time,
-        manager_1,
-        manager_2,
-        manager_3,
-      ];
-
-      try {
-        await new Promise((resolve, reject) => {
-          pool.query(updateQuery, values, (err, result) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve();
-            }
-          });
-        });
-      } catch (error) {
-        console.error("Erro durante a atualização dos registros:", error);
-        throw error;
+  
+      const updateFields = [];
+      const values = [];
+  
+      // Iterar sobre as chaves do objeto updatedData
+      Object.keys(updatedData).forEach(key => {
+        // Verificar se o valor não está vazio
+        if (updatedData[key] !== '') {
+          updateFields.push(`${key} = ?`);
+          values.push(updatedData[key]);
+        }
+      });
+  
+      // Verificar se há campos a serem atualizados
+      if (updateFields.length === 0) {
+        return res.status(400).json({ Status: false, Error: "Nenhum campo de atualização fornecido" });
       }
-
-      // A atualização foi bem-sucedida
-      return res
-        .status(200)
-        .json({ Status: true, Message: "Informações alteradas com sucesso!" });
+  
+      const updateQuery = `
+        UPDATE employees.company_infos 
+        SET ${updateFields.join(', ')}
+        WHERE employee_id IN (?)`;
+  
+      values.push(employeeIds);
+  
+      await new Promise((resolve, reject) => {
+        pool.query(updateQuery, values, (err, result) => {
+          if (err) {
+            console.error("Erro durante a atualização dos registros:", err);
+            return reject(err);
+          }
+          resolve();
+        });
+      });
+  
+      return res.status(200).json({ Status: true, Message: "Informações alteradas com sucesso!" });
     } catch (err) {
       console.error("Error during updateEmployee:", err.message);
       return res.status(500).json({ Status: false, Error: err.message });
     }
   }
+  
 
   listEmployee = (req, res) => {
     const dbTable = req.query.dbTable;
