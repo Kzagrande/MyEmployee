@@ -190,7 +190,7 @@ const HrDash = () => {
         <List>
           <Divider></Divider>
           <ListItem disablePadding sx={{ display: "block" }}>
-            <Link
+            {/* <Link
               to="/planning_dashboard/planning_manage"
               style={{ textDecoration: "none", color: "inherit" }}
             >
@@ -222,7 +222,7 @@ const HrDash = () => {
                   }}
                 />
               </ListItemButton>
-            </Link>
+            </Link> */}
           </ListItem>
           <Divider></Divider>
           <ListItem disablePadding sx={{ display: "block" }}>

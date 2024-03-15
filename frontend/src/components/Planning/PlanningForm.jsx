@@ -17,7 +17,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { useEffect } from "react";
 import http from "@config/http";
 
-const HrAddForm = forwardRef(({employeeData, onClose, openFormModal }, ref) => {
+const PlanningForm = forwardRef(({employeeData, onClose, openFormModal }, ref) => {
   const [formData, setFormData] = useState({
     employee_id: employeeData ? employeeData.employee_id : "",
     name: employeeData ? employeeData.name : "",
@@ -100,7 +100,7 @@ const HrAddForm = forwardRef(({employeeData, onClose, openFormModal }, ref) => {
   const formFields = [
     { name: "employee_id", label: "Matrícula", size: "small", disabled: true },
     { name: "name", label: "Name", size: "small", disabled: true,disabled: true },
-    { name: "bu", label: "BU", size: "small",selectItems: ["55476 - BLOCO B ", "55480 - NAVE D"], },
+    { name: "bu", label: "BU", size: "small",selectItems: ["5500476 - NAVE B", "5500480 - NAVE D"], },
     { name: "shift", label: "Shift", size: "small",      selectItems: [
       "1ST SHIFT",
       "2ND SHIFT",
@@ -110,68 +110,68 @@ const HrAddForm = forwardRef(({employeeData, onClose, openFormModal }, ref) => {
       "6TH SHIFT",
       "ADM",
     ], },
-    { name: "sector", label: "Sector", size: "small",selectItems:["OPERATION", "INVENTORY", "LOSS PREVENTION", "QUALITY HEALTH SECURITY ENVIRONMENT", "PLANNING", "FINANCE", "FACILITIES", "HUMAN RESOURCES", "BUSINESS PROCESS EXCELLENCE", "ADM", "INFORMATION TECHNOLOGY"]},
+    { name: "sector", label: "Sector", size: "small",selectItems:[
+    "INVENTORY", "LOSS PREVENTION", "QUALITY HEALTH SECURITY ENVIRONMENT", 
+    "PLANNING", "FINANCE", "FACILITIES", "HUMAN RESOURCES",
+     "BUSINESS PROCESS EXCELLENCE", "ADM", "INFORMATION TECHNOLOGY","INBOUND","PUTAWAY","PACKING","SORTING (OUT)","PACKING","BOXING"]},
+
     { name: "role_", label: "Role", size: "small" ,  selectItems: [
-        "ANALISTA DE INVENTARIO",
-        "ANALISTA DE PLANEJAMENTO",
-        "ANALISTA EXCELENCIA OPERACIONAL JR",
-        "ANALISTA EXCELENCIA OPERACIONAL SR",
-        "ANALISTA FACILITIES JR",
-        "ANALISTA FINANCEIRO SR",
-        "ANALISTA INVENTARIO JR",
-        "ANALISTA INVENTARIO PL",
-        "ANALISTA INVENTARIO SR",
-        "ANALISTA LOGISTICO JR",
-        "ANALISTA LOGISTICO SR",
-        "ANALISTA PLANEJAMENTO JR",
-        "ANALISTA PLANEJAMENTO PL",
-        "ANALISTA PLANEJAMENTO SR",
-        "ANALISTA PREVENCAO PERDAS PL",
-        "ANALISTA PREVENCAO PERDAS SR",
-        "ANALISTA RECURSOS HUMANOS JR",
-        "ANALISTA RECURSOS HUMANOS PL",
-        "ANALISTA RECURSOS HUMANOS SR",
-        "ANALISTA SUPORTE JR",
-        "ANALISTA TREINAMENTO OPERACIONAL JR",
-        "ASSISTENTE ADMINISTRATIVO",
-        "ASSISTENTE INVENTARIO",
-        "ASSISTENTE PLANEJAMENTO",
-        "ASSISTENTE RECURSOS HUMANOS",
-        "ASSISTENTE TREINAMENTO OPERACIONAL",
-        "AUX APOIO LOGISTICO",
-        "AUXILIAR ADMINISTRATIVO",
-        "AUXILIAR PREVENCAO PERDAS",
-        "COMPRADOR JR",
-        "CONFERENTE MATERIAIS",
-        "COORDENADOR CONTRATO",
-        "COORDENADOR CONTRATO ECOM",
-        "COORDENADOR INVENTARIO",
-        "COORDENADOR MANUTENCAO",
-        "COORDENADOR PLANEJAMENTO",
-        "COORDENADOR PREVENCAO PERDAS",
-        "COORDENADOR RECURSOS HUMANOS",
-        "DIRETOR OPERACOES CL",
-        "ENFERMEIRO TRABALHO",
-        "ENGENHEIRO SEGURANCA TRABALHO",
-        "ESPECIALISTA DADOS I",
-        "ESPECIALISTA PROJETOS",
-        "ESTAGIARIO",
-        "GERENTE CONTRATO ECOM",
-        "GERENTE EXCELENCIA OPERACIONAL",
-        "GERENTE INVENTARIO",
-        "GERENTE OPERACOES CL SR",
-        "GERENTE RECURSOS HUMANOS",
-        "INSTRUTOR TECNICO",
-        "OPERADOR CENTRAL MONITORAMENTO",
-        "OPERADOR LOGISTICO",
-        "SUPERVISOR CONTRATO ECOM",
-        "SUPERVISOR EXCELENCIA OPERACIONAL",
-        "SUPERVISOR MANUTENCAO",
-        "SUPERVISOR PLANEJAMENTO",
-        "SUPERVISOR PREVENCAO PERDAS",
-        "TECNICO DE ENFERMAGEM DO TRABALHO",
-        "TECNICO ENFERMAGEM TRABALHO",
-        "TECNICO SEGURANCA TRABALHO",
+      "AUX. APOIO LOGISTICO",
+      "CONFERENTE MATERIAIS",
+      "COORDENADOR CONTRATO",
+      "ANALISTA LOGISTICO SR.",
+      "TECNICO DE ENFERMAGEM DO TRABALHO",
+      "OPERADOR CENTRAL MONITORAMENTO",
+      "ASSISTENTE ADMINISTRATIVO",
+      "AUXILIAR PREVENCAO PERDAS",
+      "OPERADOR LOGISTICO",
+      "ASSISTENTE RECURSOS HUMANOS",
+      "ANALISTA RECURSOS HUMANOS JR.",
+      "GERENTE INVENTARIO",
+      "GERENTE CONTRATO ECOM",
+      "GERENTE OPERACOES CL SR",
+      "ANALISTA INVENTARIO PL.",
+      "COORDENADOR CONTRATO ECOM",
+      "COORDENADOR RECURSOS HUMANOS",
+      "SUPERVISOR MANUTENCAO",
+      "GERENTE EXCELENCIA OPERACIONAL",
+      "ANALISTA PREVENCAO PERDAS PL.",
+      "GERENTE RECURSOS HUMANOS",
+      "COORDENADOR PREVENCAO PERDAS",
+      "COORDENADOR INVENTARIO",
+      "ANALISTA INVENTARIO SR.",
+      "SUPERVISOR CONTRATO ECOM",
+      "ANALISTA EXCELENCIA OPERACIONAL SR",
+      "ANALISTA EXCELENCIA OPERACIONAL JR",
+      "ASSISTENTE INVENTARIO",
+      "ANALISTA PLANEJAMENTO JR",
+      "ASSISTENTE TREINAMENTO OPERACIONAL",
+      "ANALISTA TREINAMENTO OPERACIONAL JR",
+      "ANALISTA PLANEJAMENTO PL",
+      "ANALISTA PLANEJAMENTO SR.",
+      "ANALISTA INVENTARIO JR.",
+      "ANALISTA FACILITIES JR",
+      "ENGENHEIRO SEGURANCA TRABALHO",
+      "ANALISTA RECURSOS HUMANOS SR.",
+      "ANALISTA RECURSOS HUMANOS PL.",
+      "ANALISTA SUPORTE JR.",
+      "ENFERMEIRO TRABALHO",
+      "TECNICO ENFERMAGEM TRABALHO",
+      "COORDENADOR PLANEJAMENTO",
+      "SUPERVISOR PLANEJAMENTO",
+      "COMPRADOR JR.",
+      "ANALISTA LOGISTICO JR.",
+      "ESTAGIARIO",
+      "TECNICO SEGURANCA TRABALHO",
+      "ESPECIALISTA PROJETOS",
+      "ESPECIALISTA DADOS I",
+      "DIRETOR OPERACOES CL",
+      "SUPERVISOR PREVENCAO PERDAS",
+      "SUPERVISOR EXCELENCIA OPERACIONAL",
+      "ANALISTA PREVENCAO PERDAS SR.",
+      "ASSISTENTE PLANEJAMENTO",
+      "ANALISTA FINANCEIRO SR",
+      "ANALISTA DE INVENTARIO"
       ],},
     { name: "collar", label: "Collar", size: "small",selectItems: ["WHITE", "BLUE"], },
     { name: "work_schedule", label: "Work Schedule", size: "small",selectItems: ["A", "B","C","D","E"], },
@@ -192,7 +192,7 @@ const HrAddForm = forwardRef(({employeeData, onClose, openFormModal }, ref) => {
 
   const renderSelectField = (field) => (
     <Grid item xs={6} key={field.name}>
-      <InputLabel sx={{ marginBottom: "8px",fontWeight:'bold' }} htmlFor={field.name}>
+      <InputLabel sx={{ marginBottom: "8px",fontWeight:'bold',color:'#a53333' }} htmlFor={field.name}>
         {field.label}
       </InputLabel>
       <FormControl fullWidth>
@@ -223,7 +223,7 @@ const HrAddForm = forwardRef(({employeeData, onClose, openFormModal }, ref) => {
 
   const renderTextField = (field) => (
     <Grid item xs={6} key={field.name}>
-      <InputLabel sx={{ marginBottom: "8px",fontWeight:'bold' }} htmlFor={field.name}>
+      <InputLabel sx={{ marginBottom: "8px",fontWeight:'bold',color:'#a53333' }} htmlFor={field.name}>
         {field.label}
       </InputLabel>
       <TextField
@@ -272,9 +272,9 @@ const HrAddForm = forwardRef(({employeeData, onClose, openFormModal }, ref) => {
       <Container
         sx={{ backgroundColor: "white", margin: "1em", padding: "1em" }}
       >
-        <Typography variant="h6">Edit Employee</Typography>
+        <Typography variant="h6" sx={{fontWeight:'bold',marginBottom:'.5em'}} style={{ fontFamily: 'Libre Baskerville, sans-serif' }}>Edit Employee</Typography>
         <form>
-          <Grid container spacing={0.5} sx={{ marginBottom: "1em" }}>
+          <Grid container spacing={2} sx={{ marginBottom: "1em" }}>
             {formFields.map(renderFormFields)}
           </Grid>
           <Box sx={{}}>
@@ -287,7 +287,7 @@ const HrAddForm = forwardRef(({employeeData, onClose, openFormModal }, ref) => {
             >
               Update
             </LoadingButton>
-            <LoadingButton variant="contained" onClick={handleCloseModal}>
+            <LoadingButton color='error' variant="contained" onClick={handleCloseModal}>
               Cancel
             </LoadingButton>
           </Box>
@@ -315,6 +315,6 @@ const HrAddForm = forwardRef(({employeeData, onClose, openFormModal }, ref) => {
   );
 });
 
-HrAddForm.displayName = 'HrForm';
+PlanningForm.displayName = 'PlanningForm';
 
-export default HrAddForm;
+export default PlanningForm;

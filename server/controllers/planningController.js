@@ -53,8 +53,7 @@ class PlanningController {
             shift: registro[5],
             work_schedule: registro[6],
             type_: registro[7],
-            collar: registro[8],
-            status: "ACTIVE",
+            status: registro[8],
             manager_1: registro[10],
             manager_2: registro[11],
             manager_3: registro[12],
@@ -79,7 +78,6 @@ class PlanningController {
     try {
       for (const PlanningModel of PlanningModels) {
         const {
-          name,
           employee_id,
           activity_p,
           area,
@@ -87,7 +85,6 @@ class PlanningController {
           shift,
           work_schedule,
           type_,
-          collar,
           status,
           manager_1,
           manager_2,
@@ -98,7 +95,7 @@ class PlanningController {
         const updateQuery = `
           UPDATE employees.${table}
           SET activity_p = ?, area = ?, sector = ?, shift = ?,  work_schedule = ?, 
-              type_ = ?, collar = ?, status = ?, manager_1 = ?, manager_2 = ?, manager_3 = ?, added_on_call = ?
+              type_ = ?, status = ?, manager_1 = ?, manager_2 = ?, manager_3 = ?, added_on_call = ?
           WHERE employee_id = ?`;
 
         const values = [
@@ -108,7 +105,6 @@ class PlanningController {
           shift,
           work_schedule,
           type_,
-          collar,
           status,
           manager_1,
           manager_2,
