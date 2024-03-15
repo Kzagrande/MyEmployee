@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import PlanningModel from "../models/planningModel.js";
 import fastcsv from "fast-csv";
 import sgMail from "@sendgrid/mail";
-import moment from 'moment'
+import moment from "moment";
 
 class PlanningController {
   login(req, res) {
@@ -53,8 +53,7 @@ class PlanningController {
             shift: registro[5],
             work_schedule: registro[6],
             type_: registro[7],
-            collar: registro[8],
-            status: "ACTIVE",
+            status: registro[8],
             manager_1: registro[10],
             manager_2: registro[11],
             manager_3: registro[12],
@@ -79,7 +78,6 @@ class PlanningController {
     try {
       for (const PlanningModel of PlanningModels) {
         const {
-          name,
           employee_id,
           activity_p,
           area,
@@ -87,7 +85,6 @@ class PlanningController {
           shift,
           work_schedule,
           type_,
-          collar,
           status,
           manager_1,
           manager_2,
@@ -98,7 +95,7 @@ class PlanningController {
         const updateQuery = `
           UPDATE employees.${table}
           SET activity_p = ?, area = ?, sector = ?, shift = ?,  work_schedule = ?, 
-              type_ = ?, collar = ?, status = ?, manager_1 = ?, manager_2 = ?, manager_3 = ?, added_on_call = ?
+              type_ = ?, status = ?, manager_1 = ?, manager_2 = ?, manager_3 = ?, added_on_call = ?
           WHERE employee_id = ?`;
 
         const values = [
@@ -108,7 +105,6 @@ class PlanningController {
           shift,
           work_schedule,
           type_,
-          collar,
           status,
           manager_1,
           manager_2,
@@ -214,8 +210,56 @@ class PlanningController {
     }
   }
 
+  async updateEmployeeGroup(req, res) {
+    try {
+      const employeeIds = req.body.ids;
+      const updatedData = req.body.updates;
+  
+      const updateFields = [];
+      const values = [];
+  
+      // Iterar sobre as chaves do objeto updatedData
+      Object.keys(updatedData).forEach(key => {
+        // Verificar se o valor não está vazio
+        if (updatedData[key] !== '') {
+          updateFields.push(`${key} = ?`);
+          values.push(updatedData[key]);
+        }
+      });
+  
+      // Verificar se há campos a serem atualizados
+      if (updateFields.length === 0) {
+        return res.status(400).json({ Status: false, Error: "Nenhum campo de atualização fornecido" });
+      }
+  
+      const updateQuery = `
+        UPDATE employees.company_infos 
+        SET ${updateFields.join(', ')}
+        WHERE employee_id IN (?)`;
+  
+      values.push(employeeIds);
+  
+      await new Promise((resolve, reject) => {
+        pool.query(updateQuery, values, (err, result) => {
+          if (err) {
+            console.error("Erro durante a atualização dos registros:", err);
+            return reject(err);
+          }
+          resolve();
+        });
+      });
+  
+      return res.status(200).json({ Status: true, Message: "Informações alteradas com sucesso!" });
+    } catch (err) {
+      console.error("Error during updateEmployee:", err.message);
+      return res.status(500).json({ Status: false, Error: err.message });
+    }
+  }
+  
+
   listEmployee = (req, res) => {
-    const query = "SELECT * FROM employees.activities_hc";
+    const dbTable = req.query.dbTable;
+    const query =`SELECT * FROM employees.${dbTable}`;
 
     pool.query(query, (error, results) => {
       if (error) {
@@ -228,38 +272,42 @@ class PlanningController {
   };
 
   async exportPlanning(req, res) {
-
-    console.log('chamei o export')
+    console.log("chamei o export");
     try {
-      const data = await this.executeQuery(
-        `SELECT * FROM company_infos`
-      );
-  
+      const data = await this.executeQuery(`SELECT * FROM company_infos`);
+
       if (data.length === 0) {
-        return res.status(404).json({ error: "Nenhum dado encontrado para exportar." });
+        return res
+          .status(404)
+          .json({ error: "Nenhum dado encontrado para exportar." });
       }
-  
+
       // Formatar as datas antes de escrever no CSV usando moment
-      const formattedData = data.map(row => {
+      const formattedData = data.map((row) => {
         const formattedRow = { ...row };
         formattedRow.hire_date = moment(row.hire_date).format("YYYY-MM-DD");
-        formattedRow.integration_date = moment(row.integration_date).format("YYYY-MM-DD");
-        formattedRow.termination_date = moment(row.termination_date).format("YYYY-MM-DD");
+        formattedRow.integration_date = moment(row.integration_date).format(
+          "YYYY-MM-DD"
+        );
         return formattedRow;
       });
-  
+
       // Pega as chaves da primeira linha para usar como cabeçalhos
       const headers = Object.keys(formattedData[0]);
-  
+
       res.setHeader(
         "Content-Disposition",
         "attachment; filename=agency_data.csv"
       );
       res.setHeader("Content-Type", "text/csv");
-  
+
       // Crie um stream de escrita no response
       fastcsv
-      .write(formattedData, { headers, includeEndRowDelimiter: true, delimiter: ';' })
+        .write(formattedData, {
+          headers,
+          includeEndRowDelimiter: true,
+          delimiter: ";",
+        })
         .on("finish", () => {
           console.log("Enviado com sucesso para o usuário!");
         })

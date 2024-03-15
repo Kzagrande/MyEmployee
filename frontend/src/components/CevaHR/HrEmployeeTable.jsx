@@ -323,7 +323,7 @@ const HrEmployeeTable = () => {
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.id}
+                    key={row.employee_id}
                     selected={isItemSelected}
                     sx={{ cursor: "pointer" }}
                   >
@@ -384,7 +384,6 @@ const HrEmployeeTable = () => {
           aria-describedby="form-for-editing"
         >
           <HrAddForm
-          
             updateMode={true}
             employeeData={selectedEmployee}
             onClose={() => setOpenModal(false)}

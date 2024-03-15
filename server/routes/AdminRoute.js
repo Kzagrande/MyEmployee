@@ -21,8 +21,13 @@ router.get("/list_employee", (req, res) => {
   adminController.listEmployee(req, res);
 });
 
-router.get("/export_activities_hc", (req, res) => {
-  adminController.exportActivitiesHc(req, res);
+router.get("/export_active_hc", (req, res) => {
+  adminController.exportActiveHc(req, res);
+});
+
+
+router.post("/update_dismissal_group", (req, res) => {
+  adminController.updateDismissalGroup(req, res);
 });
 
 router.get('/logout', (req, res) => {

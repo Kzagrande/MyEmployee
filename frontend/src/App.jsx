@@ -3,8 +3,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import HrLogin from "./components/CevaHR/HrLogin";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import Start from "./components/Start";
-import PlanningLogin from "./components/Planning/PlanningLogin";
-import PlanningDash from "./components/Planning/PlanningDash";
 import AgencyDash from "./components/Agency/AgencyDash";
 import AgencyLogin from "./components/Agency/AgencyLogin";
 import AgencyInputEmployee from "./components/Agency/AgencyInputEmployee";
@@ -12,11 +10,13 @@ import AgencyListEmployee from "./components/Agency/AgencyListEmployee";
 import HrCrud from "./components/CevaHR/HrCrud";
 import HrDash from "./components/CevaHR/HrDashboard";
 import HrEmployeeTable from "./components/CevaHR/HrEmployeeTable";
-import PlanningCrud from "./components/Planning/PlanningCrud";
+import PlanningLogin from "./components/Planning/PlanningLogin";
+import PlanningDash from "./components/Planning/PlanningDash";
 import PlanningTable from "./components/Planning/PlanningTable";
 import PlanningForm from "./components/Planning/PlanningForm";
-import PlanningDIsmissal from "./components/Planning/PlanningDIsmissal";
-import AgencyDismissal from "./components/Agency/AgencyDismissal";
+import PlanningManage from "./components/Planning/PlanningManage";
+import PlanningDIsmissal from './components/Planning/PlanningDIsmissal'
+import AgencyDismissal from './components/Agency/AgencyDismissal'
 
 
 function App() {
@@ -34,7 +34,7 @@ function App() {
 
         <Route path="/planning_login" element={<PlanningLogin />}></Route>
         <Route path="/planning_dashboard" element={<PlanningDash />}>
-          <Route path="planning_crud" element={<PlanningCrud />}></Route>
+          <Route path="planning_manage" element={< PlanningManage/>}></Route>
           <Route path="planning_table" element={<PlanningTable />}></Route>
           <Route path="planning_form" element={<PlanningForm />}></Route>
           <Route path="planning_dismissal" element={<PlanningDIsmissal/>}></Route>

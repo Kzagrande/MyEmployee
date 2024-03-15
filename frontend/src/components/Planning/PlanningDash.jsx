@@ -16,6 +16,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ListAltIcon from "@mui/icons-material/ListAlt";
@@ -189,8 +190,8 @@ const HrDash = () => {
         <List>
           <Divider></Divider>
           <ListItem disablePadding sx={{ display: "block" }}>
-            <Link
-              to="/planning_dashboard/planning_crud"
+            {/* <Link
+              to="/planning_dashboard/planning_manage"
               style={{ textDecoration: "none", color: "inherit" }}
             >
               <ListItemButton
@@ -205,13 +206,49 @@ const HrDash = () => {
                     minWidth: 0,
                     mr: open ? 3 : "auto",
                     justifyContent: "center",
-                    color:'#3f3e3e'
+                    color:'#2e2080'
                   }}
                 >
                   <ListAltIcon />
                 </ListItemIcon >
                 <ListItemText
                   primary="Ativos"
+                  sx={{ opacity: open ? 1 : 0 }}
+                  primaryTypographyProps={{
+                    style: {
+                      fontWeight: "bold", // Defina a cor desejada aqui
+                      color:'#3f3e3e'
+                    },
+                  }}
+                />
+              </ListItemButton>
+            </Link> */}
+          </ListItem>
+          <Divider></Divider>
+          <ListItem disablePadding sx={{ display: "block" }}>
+            <Link
+              to="/planning_dashboard/planning_integration"
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <GroupAddIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                    color:'#0f4d0d'
+                  }}
+                >
+                  <ListAltIcon />
+                </GroupAddIcon >
+                <ListItemText
+                  primary="Integrações e Plan."
                   sx={{ opacity: open ? 1 : 0 }}
                   primaryTypographyProps={{
                     style: {
@@ -241,7 +278,7 @@ const HrDash = () => {
                     minWidth: 0,
                     mr: open ? 3 : "auto",
                     justifyContent: "center",
-                    color:'#3f3e3e'
+                    color:'#6e1616'
                   }}
               >
                 <GroupRemoveIcon />

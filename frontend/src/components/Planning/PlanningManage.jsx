@@ -1,30 +1,48 @@
 import React, { useState } from "react";
-import {
-  Grid,
-  Typography,
-  TextField,
-  Snackbar,
-  Alert,
+import { Grid, Typography, TextField, Snackbar, Alert } from "@mui/material";
 
-} from "@mui/material";
-import SaveIcon from "@mui/icons-material/Save";
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import LoadingButton from "@mui/lab/LoadingButton";
-import CSVReader from "react-csv-reader";
-import axios from "axios";
-import PlanningTable from "./PlanningTable";
+import PlanningForm from "./PlanningTable";
 import { Box } from "@mui/system";
-import http from '@config/http.js'
+import CSVReader from "react-csv-reader";
+import SaveIcon from "@mui/icons-material/Save";
+import http from '@config/http'
 
-
-const PlanningCrud = () => {
-  const [msgEP, msgEPData] = useState("");
+const PlanningManage = () => {
   const [csvData, setCsvData] = useState([]);
+  const [msgEP, msgEPData] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const handleExportAgency = (event) => {
+    event.preventDefault();
+
+    // Criar um link temporário
+    const link = document.createElement("a");
+    link.href = "https://myemployee.com.br/api/agency/export_agency";
+    link.download = "agency_data.csv";
+
+    // Adicionar o link à página
+    document.body.appendChild(link);
+
+    // Disparar o clique no link
+    link.click();
+
+    // Remover o link após o download iniciar
+    document.body.removeChild(link);
+  };
 
   const handleCsvData = (data) => {
     setCsvData(data);
+  };
+
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSnackbarOpen(false);
   };
 
   const handleSaveToDatabase = () => {
@@ -39,6 +57,7 @@ const PlanningCrud = () => {
         console.log(response.data);
         setSnackbarOpen(true); // Open the Snackbar on success
         setLoading(false);
+        window.location.reload();
       })
       .catch((error) => {
         console.error(error.response.data);
@@ -48,46 +67,37 @@ const PlanningCrud = () => {
       });
   };
 
-  const handleExportAgency = (event) => {
-    event.preventDefault();
-
-    // Criar um link temporário
-    const link = document.createElement("a");
-    link.href = "https://myemployee.com.br/api/planning/export_planning_infos";
-    link.download = "agency_data.csv";
-
-    // Adicionar o link à página
-    document.body.appendChild(link);
-
-    // Disparar o clique no link
-    link.click();
-
-    // Remover o link após o download iniciar
-    document.body.removeChild(link);
-  };
-
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setSnackbarOpen(false);
-  };
-
   return (
     <Box>
-      <Grid alignItems="center" >
+      <Grid alignItems="center">
         <Grid
           item
           xs={12}
           md={10}
-          sx={{ display: "flex", flexDirection: "row", gap: "3em", placeContent: 'space-between', marginTop: '.5em', marginBottom: '4em' }}
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: "3em",
+            placeContent: "space-between",
+            marginTop: ".5em",
+            marginBottom: "4em",
+          }}
         >
-          <Typography variant="h4" >
-            Integrações
+          <Typography
+            variant="h4"
+            style={{ fontFamily: "Libre Baskerville, sans-serif" }}
+          >
+            Integrações e Planejamento
           </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignContent: 'baseline', gap: '1em' }}>
-            <form style={{}}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignContent: "baseline",
+              gap: "1em",
+            }}
+          >
+             <form style={{}}>
               <TextField
                 label="CSV File"
                 fullWidth
@@ -101,8 +111,14 @@ const PlanningCrud = () => {
                 }}
               />
 
-            </form>
-            <LoadingButton
+            </form> 
+            <Box  sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignContent: "baseline",
+              
+            }}>
+             <LoadingButton
               size="small"
               loading={loading}
               loadingPosition="start"
@@ -110,7 +126,7 @@ const PlanningCrud = () => {
               variant="contained"
               color="primary"
               onClick={handleSaveToDatabase}
-              sx={{}}
+              
             >
               <span>Salvar no banco de dados</span>
             </LoadingButton>
@@ -119,15 +135,14 @@ const PlanningCrud = () => {
               loadingPosition="start"
               startIcon={<FileDownloadIcon />}
               variant="contained"
-              color="primary"
+              color="success"
               onClick={handleExportAgency}
-              sx={{}}
+              sx={{marginLeft:'5px'}}
             >
               <span>Export</span>
             </LoadingButton>
+            </Box>
           </Box>
-
-
         </Grid>
       </Grid>
       <Grid
@@ -136,7 +151,7 @@ const PlanningCrud = () => {
         md={10}
         sx={{ display: "flex", flexDirection: "row", gap: "3em" }}
       >
-        <PlanningTable />
+        <PlanningForm />
       </Grid>
       <Snackbar
         open={snackbarOpen}
@@ -156,4 +171,4 @@ const PlanningCrud = () => {
   );
 };
 
-export default PlanningCrud;
+export default PlanningManage;
