@@ -47,7 +47,7 @@ class AgencyModel {
   // Método para calcular a cor com base no papel (role_)
   calculateCollar() {
     const allowedRoles = [
-      "AUX APOIO LOGISTICO",
+      "AUX. APOIO LOGISTICO",
       "CONFERENTE MATERIAIS",
       "INSTRUTOR TECNICO",
       "OPERADOR LOGISTICO",
