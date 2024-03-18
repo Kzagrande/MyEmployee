@@ -146,12 +146,13 @@ class AdminController {
             dismissal_date: this.formatDate(registro[2]),
             termination_type: registro[3],
             reason: registro[4],
+            comunication_date: registro[5],
           })
       );
 
       const insertQuery = `
         INSERT INTO employees.dismissal_employees (
-          employee_id, employee_name, dismissal_date, termination_type, reason
+          employee_id, employee_name, dismissal_date, termination_type, reason,comunication_date
         ) VALUES ?`;
 
       const updateStatusQuery = `
@@ -173,6 +174,7 @@ class AdminController {
       res.status(500).send(err.message);
     }
   }
+
 
   async updateStatus(DModel, updateStatusQuery) {
     // Extract employee_ids from DModel
