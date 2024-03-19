@@ -228,6 +228,7 @@ class AdminController {
         name,
         role_,
         bu,
+        status,
         shift,
         schedule_time,
         company,
@@ -249,6 +250,7 @@ class AdminController {
         name = ?,
         role_ = ?,
         bu = ?,
+        status = ?,
         shift = ?,
         schedule_time = ?,
         company = ?,
@@ -269,6 +271,7 @@ class AdminController {
         name,
         role_,
         bu,
+        status,
         shift,
         schedule_time,
         company,
@@ -307,7 +310,6 @@ class AdminController {
       return res.status(500).json({ Status: false, Error: err.message });
     }
   }
-
   listEmployee = (req, res) => {
     // Call the verifyUser middleware before processing the request
     verifyUser(req, res, () => {

@@ -24,6 +24,7 @@ const HrAddForm = forwardRef(({ updateMode, employeeData, onClose, openFormModal
     employee_id: employeeData ? employeeData.employee_id : null,
     role_: employeeData ? employeeData.role_ : "",
     bu: employeeData ? employeeData.bu : "",
+    status: employeeData ? employeeData.status : "",
     shift: employeeData ? employeeData.shift : "",
     schedule_time: employeeData ? employeeData.schedule_time : "",
     company: employeeData ? employeeData.company : "",
@@ -342,7 +343,7 @@ const HrAddForm = forwardRef(({ updateMode, employeeData, onClose, openFormModal
       >
         <Typography variant="h6" sx={{fontWeight:'bold',marginBottom:'.5em'}} style={{ fontFamily: 'Libre Baskerville, sans-serif' }}>Edit Employee</Typography>
         <form>
-          <Grid container spacing={0.5} sx={{ marginBottom: "1em",paddingTop:'6em' }}>
+          <Grid container spacing={1} sx={{ marginBottom: "1em",paddingTop:'6em' }}>
             {formFields.map(renderFormFields)}
           </Grid>
           <Box sx={{}}>
