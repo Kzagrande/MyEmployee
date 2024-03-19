@@ -185,6 +185,13 @@ const HrAddForm = forwardRef(({ updateMode, employeeData, onClose, openFormModal
       selectItems: ["5500476 - NAVE B", "5500480 - NAVE D"],
     },
     {
+      name: "status",
+      label: "Status",
+      size: "small",
+      selectItems: ["ACTIVE", "AFASTADO","AWAY","TO BE FIRED","FIRED","NO SHOW"],
+    },
+    
+    {
       name: "shift",
       label: "Shift",
       size: "small",
@@ -216,6 +223,7 @@ const HrAddForm = forwardRef(({ updateMode, employeeData, onClose, openFormModal
       name: "company",
       label: "Company",
       size: "small",
+      selectItems: ["AMERICA RH", "CEVA","RH NOSSA","VALOR RH"],
        
     },
     {
@@ -247,7 +255,7 @@ const HrAddForm = forwardRef(({ updateMode, employeeData, onClose, openFormModal
 
   const renderSelectField = (field) => (
     <Grid item xs={6} key={field.name}>
-      <InputLabel sx={{ marginBottom: "8px",fontWeight:'bold' }} htmlFor={field.name}>
+<InputLabel sx={{fontWeight:'bold',color:'#a53333' }} htmlFor={field.name}>
         {field.label}
       </InputLabel>
       <FormControl fullWidth>
@@ -278,7 +286,7 @@ const HrAddForm = forwardRef(({ updateMode, employeeData, onClose, openFormModal
 
   const renderTextField = (field) => (
     <Grid item xs={6} key={field.name}>
-      <InputLabel sx={{ marginBottom: "8px",fontWeight:'bold' }} htmlFor={field.name}>
+      <InputLabel sx={{ marginBottom: "8px",fontWeight:'bold',color:'#a53333' }} htmlFor={field.name}>
         {field.label}
       </InputLabel>
       <TextField
@@ -315,11 +323,11 @@ const HrAddForm = forwardRef(({ updateMode, employeeData, onClose, openFormModal
   };
 
   return (
+
     <Modal
     sx={{
       margin: "1em",
       padding: "1em",
-      maxHeight: "95vh",  // Defina a altura máxima desejada
       overflowY: "auto", 
       display: 'flex',
       alignItems: 'center',
@@ -332,9 +340,9 @@ const HrAddForm = forwardRef(({ updateMode, employeeData, onClose, openFormModal
       <Container
         sx={{ backgroundColor: "white", margin: "1em", padding: "1em" }}
       >
-        <Typography variant="h6">Edit Employee</Typography>
+        <Typography variant="h6" sx={{fontWeight:'bold',marginBottom:'.5em'}} style={{ fontFamily: 'Libre Baskerville, sans-serif' }}>Edit Employee</Typography>
         <form>
-          <Grid container spacing={0.5} sx={{ marginBottom: "1em" }}>
+          <Grid container spacing={0.5} sx={{ marginBottom: "1em",paddingTop:'6em' }}>
             {formFields.map(renderFormFields)}
           </Grid>
           <Box sx={{}}>
@@ -372,6 +380,7 @@ const HrAddForm = forwardRef(({ updateMode, employeeData, onClose, openFormModal
         </Snackbar>
       </Container>
     </Modal>
+
   );
 });
 
