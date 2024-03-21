@@ -231,6 +231,10 @@ const HrDash = () => {
           </ListItem>
           <Divider></Divider>
           <ListItem disablePadding sx={{ display: "block" }}>
+          <Link
+              to="/hr_dashboard/hr_dismissal"
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
             <ListItemButton
               sx={{
                 minHeight: 48,
@@ -259,6 +263,7 @@ const HrDash = () => {
                   }}
                 />
             </ListItemButton>
+            </Link>
           </ListItem>
         </List>
         <Divider></Divider>

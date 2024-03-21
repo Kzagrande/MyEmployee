@@ -7,9 +7,7 @@ class AgencyModel {
     role_,
     bu,
     shift,
-    schedule_time,
     company,
-    status,
     hire_date,
     date_of_birth,
     ethnicity,
@@ -28,9 +26,9 @@ class AgencyModel {
     this.category = this.calculateCategory();
     this.bu = bu;
     this.shift = shift;
-    this.schedule_time = schedule_time;
+    this.schedule_time = this.calculateScheduleTime(this.shift);
     this.company = company;
-    this.status = status;
+    this.status = 'INTEGRATION';
     this.hire_date = hire_date;
     this.date_of_birth = date_of_birth;
     this.ethnicity = ethnicity;
@@ -73,6 +71,29 @@ class AgencyModel {
     } else {
       return "ADMIN";
     }
+  }
+
+  calculateScheduleTime(shift){
+    switch (shift) {
+      case '1ST SHIFT':
+          return '06:00 AS 14:20 SEGUNDA A SABADO';
+      case '2ND SHIFT':
+          return '14:20 AS 22:35 SEGUNDA A SABADO';
+      case '3RD SHIFT':
+          return '22:35 AS 06:00 SEGUNDA A SABADO';
+      case '4TH SHIFT':
+          return '06:00 AS 14:20 TERCA A DOMINGO';
+      case '5TH SHIFT':
+          return '14:20 AS 22:35 TERCA A DOMINGO';
+      case '6TH SHIFT':
+          return '22:35 AS 06:00 DOMINGO A SEXTA';
+      case 'ADM':
+          return '08:00 AS 17:48 SEGUNDA A SEXTA';
+      default:
+          // Se ney_this_shift não for nenhum dos casos acima, retorne uma string vazia ou outra mensagem adequada
+          return '';
+  }
+
   }
 }
 

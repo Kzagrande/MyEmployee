@@ -12,13 +12,13 @@ import {
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import LoadingButton from "@mui/lab/LoadingButton";
-import HrEmployeeTable from "./HrEmployeeTable";
-import HrAddForm from "./HrAddFomr";
+import HrDismissalTable from "./HrDismissalTable";
+import HrDismissalForm from "./HrAddFomr";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
 import CSVReader from "react-csv-reader";
 import http from '@config/http'
 
-const HrCrud = () => {
+const HrDismissal = () => {
   const [msgEP, msgEPData] = useState("");
   const [csvData, setCsvData] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -64,26 +64,26 @@ const HrCrud = () => {
     setSnackbarOpen(false);
   };
 
-  // const handleDismissalGroup = () => {
-  //   setLoading(true);
-  //   http
-  //     .post("/hr/update_dismissal_group", {
-  //       csvFile: csvData,
-  //     })
-  //     .then((response) => {
-  //       msgEPData(response.data);
-  //       console.log(response.data);
-  //       setSnackbarOpen(true); // Open the Snackbar on success
-  //       setLoading(false);
-  //       setDismissalModal(false)
-  //     })
-  //     .catch((error) => {
-  //       console.error(error.response.data);
-  //       msgEPData(error.response.data);
-  //       setSnackbarOpen(true); // Open the Snackbar on success
-  //       setLoading(false);
-  //     });
-  // };
+  const handleDismissalGroup = () => {
+    setLoading(true);
+    http
+      .post("/hr/update_dismissal_group", {
+        csvFile: csvData,
+      })
+      .then((response) => {
+        msgEPData(response.data);
+        console.log(response.data);
+        setSnackbarOpen(true); // Open the Snackbar on success
+        setLoading(false);
+        setDismissalModal(false)
+      })
+      .catch((error) => {
+        console.error(error.response.data);
+        msgEPData(error.response.data);
+        setSnackbarOpen(true); // Open the Snackbar on success
+        setLoading(false);
+      });
+  };
 
 
   return (
@@ -102,7 +102,7 @@ const HrCrud = () => {
             marginBottom: "4em",
           }}
         >
-          <Typography variant="h4">Quadro de Ativos</Typography>
+          <Typography variant="h4">Quadro de Desligados</Typography>
           <Box
             sx={{
               display: "flex",
@@ -111,7 +111,7 @@ const HrCrud = () => {
               gap: "1em",
             }}
           >
-            <LoadingButton
+            {/* <LoadingButton
               size="small"
               loading={loading}
               loadingPosition="start"
@@ -122,7 +122,7 @@ const HrCrud = () => {
               sx={{}}
             >
               <span>Adicionar colaborador</span>
-            </LoadingButton>
+            </LoadingButton> */}
             <LoadingButton
               size="small"
               loadingPosition="start"
@@ -135,7 +135,7 @@ const HrCrud = () => {
               <span>Export</span>
             </LoadingButton>
 
-            {/* <LoadingButton
+            <LoadingButton
               size="small"
               loading={loading}
               loadingPosition="start"
@@ -146,7 +146,7 @@ const HrCrud = () => {
               sx={{}}
             >
               <span>Desligar em lote</span>
-            </LoadingButton> */}
+            </LoadingButton>
           </Box>
         </Grid>
       </Grid>
@@ -156,7 +156,7 @@ const HrCrud = () => {
         md={10}
         sx={{ display: "flex", flexDirection: "row", gap: "3em" }}
       >
-        <HrEmployeeTable />
+        <HrDismissalTable />
       </Grid>
       <Snackbar
         open={snackbarOpen}
@@ -173,7 +173,7 @@ const HrCrud = () => {
         </Alert>
       </Snackbar>
 
-      {/* <Modal
+      <Modal
         sx={{
           display: "flex",
           alignItems: "center",
@@ -222,8 +222,8 @@ const HrCrud = () => {
             </Box>
           </form>
         </Container>
-      </Modal> */}
-      <HrAddForm
+      </Modal>
+      <HrDismissalForm
         employeeData={selectedEmployee}
         onClose={handleCloseModal}
         openFormModal={openModal}
@@ -232,4 +232,4 @@ const HrCrud = () => {
   );
 };
 
-export default HrCrud;
+export default HrDismissal;

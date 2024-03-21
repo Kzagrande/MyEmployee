@@ -146,7 +146,6 @@ class AdminController {
             dismissal_date: this.formatDate(registro[2]),
             termination_type: registro[3],
             reason: registro[4],
-            comunication_date: registro[5],
           })
       );
 
@@ -310,6 +309,60 @@ class AdminController {
       return res.status(500).json({ Status: false, Error: err.message });
     }
   }
+
+
+  async updateDismissalEmployee(req, res) {
+    try {
+      const {
+        employee_id,
+        dismissal_date,
+        termination_type,
+        reason,
+        communication_date
+      } = req.body;
+
+      const updateQuery = `
+      UPDATE employees.dismissal_employees
+      SET
+      dismissal_date = ?,
+      termination_type = ?,
+      reason = ?,
+      comunication_date = ?
+      WHERE
+        employee_id = ?`;
+
+      const values = [
+        this.formatDate(dismissal_date),
+        termination_type,
+        reason,
+       this.formatDate(communication_date),
+        employee_id,
+      ];
+
+      try {
+        await new Promise((resolve, reject) => {
+          pool.query(updateQuery, values, (err, result) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          });
+        });
+      } catch (error) {
+        console.error("Erro durante a atualização dos registros:", error);
+        throw error;
+      }
+      // A atualização foi bem-sucedida
+      return res
+        .status(200)
+        .json({ Status: true, Message: "Informações alteradas com sucesso!" });
+    } catch (err) {
+      console.error("Error during updateEmployee:", err.message);
+      return res.status(500).json({ Status: false, Error: err.message });
+    }
+  }
+
   listEmployee = (req, res) => {
     // Call the verifyUser middleware before processing the request
     verifyUser(req, res, () => {
@@ -329,6 +382,43 @@ class AdminController {
                 "DD/MM/YYYY"
               ),
               date_of_birth: moment(employee.date_of_birth).format(
+                "DD/MM/YYYY"
+              ),
+            };
+          });
+
+          // console.log('modifiedResults', modifiedResults);
+          res.status(200).json(modifiedResults);
+        }
+      });
+    });
+  };
+
+  dismissalEmployee = (req, res) => {
+    // Call the verifyUser middleware before processing the request
+    verifyUser(req, res, () => {
+      // If the verification is successful, proceed with the database query
+      const query = "SELECT * FROM employees.dismissal_hc";
+
+      pool.query(query, (error, results) => {
+        if (error) {
+          console.error("Erro ao executar a consulta SQL:", error);
+          res.status(500).json({ error: "Erro interno do servidor" });
+        } else {
+          const modifiedResults = results.map((employee) => {
+            return {
+              ...employee,
+              hire_date: moment(employee.hire_date).format("DD/MM/YYYY"),
+              integration_date: moment(employee.integration_date).format(
+                "DD/MM/YYYY"
+              ),
+              date_of_birth: moment(employee.date_of_birth).format(
+                "DD/MM/YYYY"
+              ),
+              dismissal_date: moment(employee.dismissal_date).format(
+                "DD/MM/YYYY"
+              ),
+              communication_date: moment(employee.communication_date).format(
                 "DD/MM/YYYY"
               ),
             };

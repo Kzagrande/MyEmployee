@@ -17,28 +17,23 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { useEffect } from "react";
 import http from "@config/http";
 
-const HrAddForm = (
+const HrDismissalForm = (
   ({ updateMode, employeeData, onClose, openFormModal }) => {
     const [formData, setFormData] = useState({
       name: employeeData ? employeeData.name : "",
       cpf: employeeData ? employeeData.cpf : "",
       employee_id: employeeData ? employeeData.employee_id : null,
       role_: employeeData ? employeeData.role_ : "",
-      bu: employeeData ? employeeData.bu : "",
       status: employeeData ? employeeData.status : "",
-      shift: employeeData ? employeeData.shift : "",
-      schedule_time: employeeData ? employeeData.schedule_time : "",
       company: employeeData ? employeeData.company : "",
-      status: employeeData ? employeeData.status : "",
       hire_date: employeeData ? employeeData.hire_date : "",
-      date_of_birth: employeeData ? employeeData.date_of_birth : "",
-      ethnicity: employeeData ? employeeData.ethnicity : "",
-      gender: employeeData ? employeeData.gender : "",
-      neighborhood: employeeData ? employeeData.neighborhood : "",
-      city: employeeData ? employeeData.city : "",
+      phone: employeeData ? employeeData.phone : "",
       email: employeeData ? employeeData.email : "",
       integration_date: employeeData ? employeeData.integration_date : "",
-      phone: employeeData ? employeeData.phone : "",
+      dismissal_date: employeeData ? employeeData.dismissal_date : "",
+      termination_type: employeeData ? employeeData.termination_type : "",
+      reason:   employeeData? employeeData.reason: "",
+      communication_date: employeeData ? employeeData.communication_date : "",
       // Add other form fields as needed
     });
     const [loading, setLoading] = useState(false);
@@ -78,16 +73,10 @@ const HrAddForm = (
       }
     };
 
-    const handleSubmit = () => {
-      handleHttpRequest(
-        "/hr/add_hr_employees",
-        "Registros inseridos com sucesso"
-      );
-    };
 
     const handleUpdate = () => {
       handleHttpRequest(
-        "/hr/update_hr_employee",
+        "/hr/update_dismissal_employee",
         "Informações alteradas com sucesso!"
       );
       window.location.reload();
@@ -120,7 +109,7 @@ const HrAddForm = (
         disabled: updateMode ? true : false,
       },
       { name: "cpf", label: "CPF", size: "small" },
-      { name: "name", label: "Name", size: "small" },
+      { name: "name", label: "Name", size: "small",disabled:true },
       {
         name: "role_",
         label: "Role",
@@ -183,109 +172,32 @@ const HrAddForm = (
           "ANALISTA FINANCEIRO SR",
           "ANALISTA DE INVENTARIO",
         ],
+        disabled:true
       },
-      {
-        name: "bu",
-        label: "BU",
-        size: "small",
-        selectItems: ["5500476 - NAVE B", "5500480 - NAVE D"],
-      },
+
       {
         name: "status",
         label: "Status",
         size: "small",
         selectItems: ["ACTIVE", "AWAY", "TO BE FIRED", "FIRED", "NO SHOW"],
+        disabled:true
       },
 
-      {
-        name: "shift",
-        label: "Shift",
-        size: "small",
-        selectItems: [
-          "1ST SHIFT",
-          "2ND SHIFT",
-          "3RD SHIFT",
-          "4TH SHIFT",
-          "5TH SHIFT",
-          "6TH SHIFT",
-          "ADM",
-        ],
-      },
-      {
-        name: "schedule_time",
-        label: "Schedule Time",
-        size: "small",
-        selectItems: [
-          "06:00 AS 14:20 SEGUNDA A SABADO",
-          "14:20 AS 22:35 SEGUNDA A SABADO",
-          "22:35 AS 06:00 SEGUNDA A SABADO",
-          "06:00 AS 14:20 TERCA A DOMINGO",
-          "14:20 AS 22:35 TERCA A DOMINGO",
-          "22:35 AS 06:00 DOMINGO A SEXTA",
-          "08:00 AS 17:48 SEGUNDA A SEXTA",
-        ],
-      },
       {
         name: "company",
         label: "Company",
         size: "small",
         selectItems: ["AMERICA RH", "CEVA", "RH NOSSA", "VALOR RH"],
+        disabled:true
       },
-
-      { name: "hire_date", label: "Hire Date", size: "small" },
-      { name: "date_of_birth", label: "Date of Birth", size: "small" },
-      {
-        name: "ethnicity",
-        label: "Etinicity",
-        size: "small",
-        selectItems: ["PARDA", "BRANCA", "PRETA/NEGRA", "AMARELA", "INDIGENA"],
-      },
-      {
-        name: "gender",
-        label: "Gender",
-        size: "small",
-        selectItems: ["FEMININO", "MASCULINO"],
-      },
-      { name: "neighborhood", label: "Neighborhood", size: "small" },
-      { name: "city", label: "City", size: "small" },
-      { name: "email", label: "Email", size: "small" },
-      { name: "phone", label: "Phone", size: "small" },
-      { name: "integration_date", label: "Integration Date", size: "small" },
+      { name: "hire_date", label: "Hire Date", size: "small" ,disabled:true},
+      { name: "email", label: "Email", size: "small" ,disabled:true},
+      { name: "phone", label: "Phone", size: "small" ,disabled:true},
+      { name: "dismissal_date", label: "Dia da demissão", size: "small", },
+      { name: "termination_type", label: "Natureza", size: "small" },
+      { name: "reason", label: "Motivo", size: "small" },
+      { name: "communication_date", label: "Data da comunicação", size: "small" },
     ];
-
-    const renderSelectField = (field) => (
-      <Grid item xs={6} key={field.name}>
-        <InputLabel
-          sx={{ fontWeight: "bold", color: "#a53333" }}
-          htmlFor={field.name}
-        >
-          {field.label}
-        </InputLabel>
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">
-            {formData[field.name]}
-          </InputLabel>
-          <Select
-            displayEmpty
-            size={field.size}
-            name={field.name}
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={formData[field.name]}
-            label="Age"
-            onChange={handleChange}
-          >
-            {field.selectItems && Array.isArray(field.selectItems)
-              ? field.selectItems.map((item) => (
-                  <MenuItem key={item} value={item}>
-                    {item}
-                  </MenuItem>
-                ))
-              : null}
-          </Select>
-        </FormControl>
-      </Grid>
-    );
 
     const renderTextField = (field) => (
       <Grid item xs={6} key={field.name}>
@@ -307,25 +219,8 @@ const HrAddForm = (
     );
 
     const renderFormFields = (field) => {
-      if (
-        [
-          "employee_id",
-          "cpf",
-          "name",
-          "hire_date",
-          "date_of_birth",
-          "email",
-          "phone",
-          "neighborhood",
-          "city",
-          "integration_date",
-        ].includes(field.name)
-      ) {
         return renderTextField(field);
-      } else {
-        return renderSelectField(field);
-      }
-    };
+}
 
     return (
       <Modal
@@ -361,10 +256,10 @@ const HrAddForm = (
                 loading={loading}
                 variant="contained"
                 color="primary"
-                onClick={updateMode ? handleUpdate : handleSubmit}
+                onClick={ handleUpdate}
                 sx={{ marginRight: "1em" }}
               >
-                {updateMode ? "Update" : "Save"}
+                Update
               </LoadingButton>
               <LoadingButton color="error" variant="contained" onClick={handleCloseModal}>
                 Cancel
@@ -395,6 +290,6 @@ const HrAddForm = (
   }
 );
 
-HrAddForm.displayName = "HrForm";
+HrDismissalForm.displayName = "HrForm";
 
-export default HrAddForm;
+export default HrDismissalForm;

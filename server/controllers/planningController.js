@@ -47,17 +47,12 @@ class PlanningController {
           new PlanningModel({
             name: registro[0],
             employee_id: registro[1],
-            activity_p: registro[2],
-            area: registro[3],
-            sector: registro[4],
-            shift: registro[5],
-            work_schedule: registro[6],
-            type_: registro[7],
-            status: registro[8],
-            manager_1: registro[10],
-            manager_2: registro[11],
-            manager_3: registro[12],
-            added_on_call: registro[13],
+            sector: registro[2],
+            work_schedule: registro[3],
+            type_: registro[4],
+            manager_1: registro[5],
+            manager_2: registro[6],
+            manager_3: registro[7]
           })
       );
 
@@ -79,37 +74,29 @@ class PlanningController {
       for (const PlanningModel of PlanningModels) {
         const {
           employee_id,
-          activity_p,
-          area,
           sector,
-          shift,
           work_schedule,
           type_,
           status,
           manager_1,
           manager_2,
           manager_3,
-          added_on_call,
         } = PlanningModel;
 
         const updateQuery = `
           UPDATE employees.${table}
-          SET activity_p = ?, area = ?, sector = ?, shift = ?,  work_schedule = ?, 
-              type_ = ?, status = ?, manager_1 = ?, manager_2 = ?, manager_3 = ?, added_on_call = ?
+          SET  sector = ?, work_schedule = ?, 
+              type_ = ?, status = ?, manager_1 = ?, manager_2 = ?, manager_3 = ?
           WHERE employee_id = ?`;
 
         const values = [
-          activity_p,
-          area,
           sector,
-          shift,
           work_schedule,
           type_,
           status,
           manager_1,
           manager_2,
           manager_3,
-          added_on_call,
           employee_id,
         ];
 
@@ -123,13 +110,6 @@ class PlanningController {
           });
         });
       }
-      // Integração com a API do Slack após o sucesso da atualização
-      // slack.client.chat.postMessage({
-      //   token: process.env.SLACK_BOT_TOKEN,
-      //   channel: process.env.SLACK_CHANNEL,
-      //   text: `Os registros foram atualizados com sucesso na tabela ${table}.`,
-      // });
-      // console.log("Mensagem enviada para o Slack com sucesso.");
     } catch (error) {
       console.error("Erro durante a atualização dos registros:", error);
       throw error;
@@ -149,7 +129,6 @@ class PlanningController {
         type_,
         status,
         schedule_time,
-        activity_p,
         manager_1,
       } = req.body;
 
@@ -165,7 +144,6 @@ class PlanningController {
       type_ =?,
       status =?,
       schedule_time =?,
-      activity_p =?,
       manager_1 =?
       WHERE
         employee_id = ?`;
@@ -180,7 +158,6 @@ class PlanningController {
         type_,
         status,
         schedule_time,
-        activity_p,
         manager_1,
         employee_id,
       ];
