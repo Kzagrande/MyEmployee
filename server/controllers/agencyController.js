@@ -73,18 +73,16 @@ class UploadController {
             role_: registro[3],
             bu: registro[4],
             shift: registro[5],
-            schedule_time: registro[6],
-            company: registro[7],
-            status: registro[8],
-            hire_date: this.formatDate(registro[9]),
-            date_of_birth: this.formatDate(registro[10]),
-            ethnicity: registro[11],
-            gender: registro[12],
-            neighborhood: registro[13],
-            city: registro[14],
-            email: registro[15],
-            phone: registro[16],
-            integration_date: this.formatDate(registro[17]),
+            company: registro[6],
+            hire_date: this.formatDate(registro[7]),
+            date_of_birth: this.formatDate(registro[8]),
+            ethnicity: registro[9],
+            gender: registro[10],
+            neighborhood: registro[11],
+            city: registro[12],
+            email: registro[13],
+            phone: registro[14],
+            integration_date: this.formatDate(registro[15]),
           })
       );
 
@@ -103,8 +101,6 @@ class UploadController {
       ci.shift,
       ci.bu,
       ci.schedule_time,
-      ci.sector,
-      ci.manager_1,
       ci.integration_date,
       pi.email
   FROM 
@@ -116,7 +112,7 @@ class UploadController {
       const preIntegrationCsv = await this.databaseToCsv(select);
       this.createAndSendCSV(
         preIntegrationCsv,
-        ["bortoletoyan@gmail.com", "yan.bortoleto@cevalogistics.com"],
+        ["bortoletoyan@gmail.com", "yan.bortoleto@cevalogistics.com","maikom.rondado@cevalogistics.com","julio.mariano@cevalogistics.com"],
         { name: "Yan", email: "bortoletoyan@gmail.com" },
         "d-95083a36e91245949cffc5d3fccfbcf4",
         { name: "Yan" }
@@ -145,8 +141,8 @@ class UploadController {
         path: "temp.csv",
         header: dadosCSV[0],
       });
-      const sliceHeader = dadosCSV.slice(1, -1);
       try {
+        const sliceHeader = dadosCSV.slice(1);
         await csvWriter.writeRecords(sliceHeader);
 
         sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -209,7 +205,7 @@ class UploadController {
 
             result = csvArray;
           }
-
+          // console.log('result',result)
           resolve(result);
         }
       });
@@ -394,8 +390,6 @@ JOIN
       ci.shift,
       ci.bu,
       ci.schedule_time,
-      ci.sector,
-      ci.manager_1,
       ci.integration_date,
       pi.email
   FROM 
@@ -407,7 +401,7 @@ JOIN
       const integrationCsv = await this.databaseToCsv(select);
       this.createAndSendCSV(
         integrationCsv,
-        "bortoletoyan@gmail.com",
+        ["bortoletoyan@gmail.com", "yan.bortoleto@cevalogistics.com","maikom.rondado@cevalogistics.com","julio.mariano@cevalogistics.com"],
         { name: "Yan", email: "bortoletoyan@gmail.com" },
         "d-eaf3e8a86d354c3090a764f706444b8d",
         { name: "Yan" }

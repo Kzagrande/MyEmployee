@@ -85,7 +85,7 @@ const AgencyInputEmployee = () => {
           sx={{ display: "flex", flexDirection: "row", gap: "3em", placeContent: 'space-between', marginTop: '.5em', marginBottom: '4em' }}
         >
           <Typography variant="h4" >
-            Editar vários
+            Integrações Agência
           </Typography>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignContent: 'baseline', gap: '1em' }}>
             <form style={{}}>
