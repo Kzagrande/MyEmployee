@@ -22,7 +22,9 @@ import axios from "axios";
 import EditIcon from "@mui/icons-material/Edit";
 import Modal from "@mui/material/Modal";
 import HrAddForm from "./HrAddFomr";
-import http from '@config/http'
+import http from "@config/http";
+import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
+import FiredForm from "./FiredForm";
 
 const visuallyHidden = {
   position: "absolute",
@@ -53,6 +55,7 @@ const HrEmployeeTable = () => {
   const [dateFilter, setDateFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
   const [openModal, setOpenModal] = useState(false);
+  const [dismissalModal, setDismissalModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   useEffect(() => {
@@ -70,11 +73,17 @@ const HrEmployeeTable = () => {
     setOpenModal(true);
   };
 
+  const handleDismissalEmployee = (employeeId) => {
+    const selectedEmployeeData = data.find(
+      (employee) => employee.employee_id === employeeId
+    );
+    setSelectedEmployee(selectedEmployeeData);
+    setDismissalModal(true);
+  };
+
   const fetchData = async () => {
     try {
-      const response = await http.get(
-        "/hr/list_employee"
-      ); // Get ep and return data from employee_register
+      const response = await http.get("/hr/list_employee"); // Get ep and return data from employee_register
       setData(response.data);
 
       const uniqueCompanies = [
@@ -275,14 +284,7 @@ const HrEmployeeTable = () => {
           <Table>
             <TableHead sx={{ backgroundColor: "#f0eef1" }}>
               <TableRow>
-                <TableCell padding="checkbox">
-                  {/* <Checkbox
-                    color="primary"
-                    checked={selected.length === data.length}
-                    onChange={handleSelectAllClick}
-                    inputProps={{ "aria-label": "select all employee_id" }}
-                  /> */}
-                </TableCell>
+                <TableCell padding="checkbox"></TableCell>
                 {headCells.map((headCell) => (
                   <TableCell
                     key={headCell.id}
@@ -315,7 +317,6 @@ const HrEmployeeTable = () => {
               {filteredData.map((row, index) => {
                 const isItemSelected = isSelected(row.employee_id);
                 const labelId = `enhanced-table-checkbox-${index}`;
-
                 return (
                   <TableRow
                     hover
@@ -328,7 +329,16 @@ const HrEmployeeTable = () => {
                     sx={{ cursor: "pointer" }}
                   >
                     <TableCell padding="checkbox">
+                      <GroupRemoveIcon
+                        fontSize="small"
+                        color="error"
+                        onClick={() => handleDismissalEmployee(row.employee_id)}
+                        style={{ cursor: "pointer" }}
+                      />
+                    </TableCell>
+                    <TableCell padding="checkbox">
                       <EditIcon
+                        fontSize="small"
                         color="primary"
                         onClick={() => handleEditClick(row.employee_id)}
                         style={{ cursor: "pointer" }}
@@ -354,7 +364,7 @@ const HrEmployeeTable = () => {
           </Table>
 
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25, 50, 100]}
+            rowsPerPageOptions={[5, 10, 25, 50, 5000]}
             component="div"
             count={data.length}
             rowsPerPage={rowsPerPage}
@@ -388,6 +398,20 @@ const HrEmployeeTable = () => {
             employeeData={selectedEmployee}
             onClose={() => setOpenModal(false)}
             openFormModal={openModal}
+          />
+        </Modal>
+
+        <Modal
+          open={dismissalModal}
+          onClose={() => setDismissalModal(true)}
+          aria-labelledby="edit-modal"
+          aria-describedby="form-for-editing"
+        >
+          <FiredForm
+            updateMode={true}
+            employeeData={selectedEmployee}
+            onClose={() => setDismissalModal(false)}
+            openFormModal={dismissalModal}
           />
         </Modal>
       </Grid>

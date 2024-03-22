@@ -73,7 +73,7 @@ const HrDismissalTable = () => {
   const fetchData = async () => {
     try {
       const response = await http.get(
-        "/hr/dismisaal_employee"
+        "/hr/dismisaal_employee_list"
       ); // Get ep and return data from employee_register
       setData(response.data);
 
@@ -354,7 +354,7 @@ const HrDismissalTable = () => {
           </Table>
 
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25, 50, 100]}
+            rowsPerPageOptions={[5, 10, 25, 50, 5000]}
             component="div"
             count={data.length}
             rowsPerPage={rowsPerPage}
