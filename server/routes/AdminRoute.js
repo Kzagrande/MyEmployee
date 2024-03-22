@@ -21,12 +21,16 @@ router.post("/update_dismissal_employee", (req, res) => {
   adminController.updateDismissalEmployee(req, res);
 });
 
+router.post("/fire_employee", (req, res) => {
+  adminController.fireEmployee(req, res);
+});
+
 router.get("/list_employee", (req, res) => {
   adminController.listEmployee(req, res);
 });
 
-router.get("/dismisaal_employee", (req, res) => {
-  adminController.dismissalEmployee(req, res);
+router.get("/dismisaal_employee_list", (req, res) => {
+  adminController.dismissalEmployeeList(req, res);
 });
 
 router.get("/export_active_hc", (req, res) => {

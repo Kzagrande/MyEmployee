@@ -40,7 +40,6 @@ class AdminController {
         employee_id,
         cpf,
         name,
-        rg,
         role_,
         bu,
         shift,
@@ -68,7 +67,7 @@ class AdminController {
 
       const insertQuery = `
         INSERT INTO employees.employee_register (
-          employee_id, cpf, name,rg, role_, bu, shift, schedule_time, company, status, 
+          employee_id, cpf, name, role_, bu, shift, schedule_time, company, status, 
           hire_date, date_of_birth, ethnicity, gender, 
           neighborhood, city, email, phone, integration_date
         )
@@ -79,7 +78,6 @@ class AdminController {
           employee_id,
           cpf,
           name,
-          rg,
           role_,
           bu,
           shift,
@@ -174,7 +172,6 @@ class AdminController {
     }
   }
 
-
   async updateStatus(DModel, updateStatusQuery) {
     // Extract employee_ids from DModel
     const employeeIds = DModel.map((data) => data.employee_id);
@@ -214,7 +211,6 @@ class AdminController {
     }
   }
 
-  
   formatDate(dateString) {
     return moment(dateString, "DD/MM/YYYY").format("YYYY-MM-DD");
   }
@@ -239,7 +235,7 @@ class AdminController {
         city,
         email,
         phone,
-        integration_date
+        integration_date,
       } = req.body;
 
       const updateQuery = `
@@ -275,7 +271,7 @@ class AdminController {
         schedule_time,
         company,
         this.formatDate(hire_date),
-       this.formatDate(date_of_birth),
+        this.formatDate(date_of_birth),
         ethnicity,
         gender,
         neighborhood,
@@ -310,56 +306,48 @@ class AdminController {
     }
   }
 
-
-  async updateDismissalEmployee(req, res) {
+  async fireEmployee(req, res) {
     try {
-      const {
-        employee_id,
-        dismissal_date,
-        termination_type,
-        reason,
-        communication_date
-      } = req.body;
+      const { employee_id, name, dismissal_date, termination_type, reason } =
+        req.body;
+      const formattedDismissalDate = this.formatDate(dismissal_date);
+      const comunicationDate = moment().format("YYYY-MM-DD");
+
+      const insertQuery = `
+        INSERT INTO employees.dismissal_employees (
+          employee_id, employee_name, dismissal_date, termination_type, reason, comunication_date
+        )
+        VALUES (?, ?, ?, ?, ?, ?)`;
 
       const updateQuery = `
-      UPDATE employees.dismissal_employees
-      SET
-      dismissal_date = ?,
-      termination_type = ?,
-      reason = ?,
-      comunication_date = ?
-      WHERE
-        employee_id = ?`;
+        UPDATE employees.employee_register
+        SET status = 'FIRED'
+        WHERE employee_id = ?`;
 
-      const values = [
-        this.formatDate(dismissal_date),
+      const insertResult = await this.executeQueryParams(insertQuery, [
+        employee_id,
+        name,
+        formattedDismissalDate,
         termination_type,
         reason,
-       this.formatDate(communication_date),
+        comunicationDate,
+      ]);
+      const updateResult = await this.executeQueryParams(updateQuery, [
         employee_id,
-      ];
+      ]);
 
-      try {
-        await new Promise((resolve, reject) => {
-          pool.query(updateQuery, values, (err, result) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve();
-            }
-          });
-        });
-      } catch (error) {
-        console.error("Erro durante a atualização dos registros:", error);
-        throw error;
-      }
-      // A atualização foi bem-sucedida
+      console.log("Registros inseridos com sucesso:", insertResult);
+      console.log(
+        "Registro de funcionário atualizado com sucesso:",
+        updateResult
+      );
+
       return res
         .status(200)
-        .json({ Status: true, Message: "Informações alteradas com sucesso!" });
-    } catch (err) {
-      console.error("Error during updateEmployee:", err.message);
-      return res.status(500).json({ Status: false, Error: err.message });
+        .json({ Status: true, Message: "Registros inseridos com sucesso" });
+    } catch (error) {
+      console.error("Erro durante fireEmployee:", error.message);
+      return res.status(500).json({ Status: false, Error: error.message });
     }
   }
 
@@ -394,7 +382,7 @@ class AdminController {
     });
   };
 
-  dismissalEmployee = (req, res) => {
+  dismissalEmployeeList = (req, res) => {
     // Call the verifyUser middleware before processing the request
     verifyUser(req, res, () => {
       // If the verification is successful, proceed with the database query
@@ -490,6 +478,19 @@ class AdminController {
           reject(err);
         } else {
           resolve(data);
+        }
+      });
+    });
+  }
+
+  executeQueryParams(query, params) {
+    return new Promise((resolve, reject) => {
+      pool.query(query, params, (error, result) => {
+        if (error) {
+          console.error("Erro durante a execução da query:", error);
+          reject(error);
+        } else {
+          resolve(result);
         }
       });
     });
