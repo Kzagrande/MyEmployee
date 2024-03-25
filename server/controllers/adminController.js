@@ -172,6 +172,94 @@ class AdminController {
     }
   }
 
+  async updateDismissalEmployee(req, res) {
+    try {
+      const { employee_register, company_infos, dismissal_infos } = req.body;
+
+      const update_register_query = `
+      UPDATE employees.employee_register 
+      SET
+        cpf = ?,
+        name = ?,
+        role_ = ?,
+        bu = ?,
+        status = ?,
+        shift = ?,
+        schedule_time = ?,
+        company = ?,
+        hire_date = ?,
+        date_of_birth = ?,
+        ethnicity = ?,
+        gender = ?,
+        neighborhood = ?,
+        city = ?,
+        email = ?,
+        phone = ?,
+        integration_date = ?
+      WHERE
+        employee_id = ?`;
+
+      const update_company_query = `
+      UPDATE employees.company_infos 
+      SET
+      sector=?
+      WHERE
+        employee_id = ?`;
+
+      const update_dismissal_query = `
+      UPDATE employees.dismissal_employees
+      SET
+      dismissal_date =?,
+      termination_type = ?,
+      reason = ?,
+      comunication_date = ?
+      WHERE
+        employee_id = ?`;
+
+      const register_values = [
+        employee_register.cpf,
+        employee_register.name,
+        employee_register.role_,
+        employee_register.bu,
+        employee_register.status,
+        employee_register.shift,
+        employee_register.schedule_time,
+        employee_register.company,
+        this.formatDate(employee_register.hire_date),
+        this.formatDate(employee_register.date_of_birth),
+        employee_register.ethnicity,
+        employee_register.gender,
+        employee_register.neighborhood,
+        employee_register.city,
+        employee_register.email,
+        employee_register.phone,
+        this.formatDate(employee_register.integration_date),
+        employee_register.employee_id,
+      ];
+
+      const company_values = [company_infos.sector, company_infos.employee_id];
+
+      const dismissal_values = [
+        this.formatDate(dismissal_infos.dismissal_date),
+        dismissal_infos.termination_type,
+        dismissal_infos.reason,
+        this.formatDate(dismissal_infos.communication_date),
+        dismissal_infos.employee_id,
+      ];
+
+      await this.executeQueryParams(update_register_query, register_values);
+      await this.executeQueryParams(update_company_query, company_values);
+      await this.executeQueryParams(update_dismissal_query, dismissal_values);
+
+      return res
+        .status(200)
+        .json({ Status: true, Message: "Registros inseridos com sucesso" });
+    } catch (err) {
+      console.error("Erro durante addEmployee:", err.message);
+      return res.status(500).json({ Status: false, Error: err.message });
+    }
+  }
+  ;
   async updateStatus(DModel, updateStatusQuery) {
     // Extract employee_ids from DModel
     const employeeIds = DModel.map((data) => data.employee_id);
@@ -483,9 +571,9 @@ class AdminController {
     });
   }
 
-  executeQueryParams(query, params) {
+  executeQueryParams(query, values) {
     return new Promise((resolve, reject) => {
-      pool.query(query, params, (error, result) => {
+      pool.query(query, values, (error, result) => {
         if (error) {
           console.error("Erro durante a execução da query:", error);
           reject(error);
