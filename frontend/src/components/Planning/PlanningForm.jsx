@@ -200,13 +200,8 @@ const PlanningForm = forwardRef(({employeeData, onClose, openFormModal }, ref) =
   return (
     <Modal
     sx={{
-      margin: "1em",
-      padding: "1em",
-      maxHeight: "95vh",  // Defina a altura máxima desejada
-      overflowY: "auto", 
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center', // Adiciona rolagem vertical
+      overflowY: "auto",
+      marginY: "2em",
     }}
       open={isModalOpen}
       aria-labelledby="add-employee-modal"

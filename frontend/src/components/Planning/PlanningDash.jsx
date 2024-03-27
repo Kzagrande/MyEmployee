@@ -227,7 +227,7 @@ const HrDash = () => {
           <Divider></Divider>
           <ListItem disablePadding sx={{ display: "block" }}>
             <Link
-              to="/planning_dashboard/planning_integration"
+              to="/planning_dashboard/planning_manage"
               style={{ textDecoration: "none", color: "inherit" }}
             >
               <ListItemButton

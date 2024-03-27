@@ -28,6 +28,9 @@ router.get("/export_planning_infos", (req, res) => {
 router.post("/dismissal_employees", (req, res) => {
   planningController.requestDismissal(req, res);
 });
+router.post("/set_no_show", (req, res) => {
+  planningController.setNoShow(req, res);
+});
 
 
 router.get('/logout', (req, res) => {

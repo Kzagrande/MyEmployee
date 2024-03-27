@@ -66,44 +66,44 @@ const HrDismissalForm = ({ employeeData, onClose, openFormModal }) => {
 
   const prepareData = () => {
     const employee_register = {
-      cpf:formData.cpf,
-      employee_id:formData.employee_id,
-      name : formData.name,
-      role_ : formData.role_,
-      bu : formData.bu,
-      status : formData.status,
-      shift : formData.shift,
-      schedule_time : formData.schedule_time,
-      company : formData.company,
-      hire_date : formData.hire_date,
-      date_of_birth : formData.date_of_birth,
-      ethnicity : formData.ethnicity,
-      gender : formData.gender,
-      neighborhood : formData.neighborhood,
-      city : formData.city,
-      email : formData.email,
-      phone : formData.phone,
-      integration_date:formData.integration_date 
+      cpf: formData.cpf,
+      employee_id: formData.employee_id,
+      name: formData.name,
+      role_: formData.role_,
+      bu: formData.bu,
+      status: formData.status,
+      shift: formData.shift,
+      schedule_time: formData.schedule_time,
+      company: formData.company,
+      hire_date: formData.hire_date,
+      date_of_birth: formData.date_of_birth,
+      ethnicity: formData.ethnicity,
+      gender: formData.gender,
+      neighborhood: formData.neighborhood,
+      city: formData.city,
+      email: formData.email,
+      phone: formData.phone,
+      integration_date: formData.integration_date
     };
-  
+
     const company_infos = {
       sector: formData.sector,
-      employee_id:formData.employee_id
+      employee_id: formData.employee_id
       // Adicione outros campos de informações da empresa conforme necessário
     };
-  
+
     const dismissal_infos = {
       dismissal_date: formData.dismissal_date,
       termination_type: formData.termination_type,
       reason: formData.reason,
       communication_date: formData.communication_date,
-      employee_id:formData.employee_id
+      employee_id: formData.employee_id
       // Adicione outros campos de informações de demissão conforme necessário
     };
-  
+
     return { employee_register, company_infos, dismissal_infos };
   };
-  
+
   const handleHttpRequest = async (endpoint, successMessage) => {
     setLoading(true);
     try {
@@ -125,15 +125,15 @@ const HrDismissalForm = ({ employeeData, onClose, openFormModal }) => {
       setLoading(false);
     }
   };
-  
+
   const handleUpdate = () => {
     handleHttpRequest(
       "/hr/update_dismissal_employee",
       "Informações alteradas com sucesso!"
     );
-   
+
   };
-  
+
   const createEmptyFormData = () => {
     const emptyFormData = {};
     Object.keys(formData).forEach((key) => {
@@ -317,8 +317,34 @@ const HrDismissalForm = ({ employeeData, onClose, openFormModal }) => {
     { name: "email", label: "Email", size: "small" },
     { name: "phone", label: "Phone", size: "small" },
     { name: "dismissal_date", label: "Dia da demissão", size: "small" },
-    { name: "termination_type", label: "Natureza", size: "small" },
-    { name: "reason", label: "Motivo", size: "small" },
+    {
+      name: "termination_type",
+      label: "Natureza",
+      size: "small",
+      selectItems: ["VOLUNTARIO", "INVOLUNTARIO", "DESISTENCIA", "EFETIVACAO"],
+    },
+    {
+      name: "reason",
+      label: "Motivo",
+      size: "small",
+      selectItems: [
+        "ABANDONO DE TRABALHO",
+        "ABSENTEISMO ELEVADO",
+        "BAIXA PERFORMANCE",
+        "COMPORTAMENTO",
+        "CONFLITOS COM O GESTOR",
+        "DESISTENCIA",
+        "EFETIVACAO",
+        "EX-COLABORADOR CEVA",
+        "HORARIO INCOMPATIVEL",
+        "MA CONDUTA",
+        "MOTIVOS PESSOAIS/FAMILIAR",
+        "NAO CONTABILIZAR TO",
+        "NOVA OPORTUNIDADE PROFISSIONAL",
+        "READQUACAO DE QUADRO",
+        "REESTRUTURACAO ORGANIZACIONAL",
+      ],
+    },
     { name: "communication_date", label: "Data da comunicação", size: "small" },
   ];
 
@@ -346,10 +372,10 @@ const HrDismissalForm = ({ employeeData, onClose, openFormModal }) => {
         >
           {field.selectItems && Array.isArray(field.selectItems)
             ? field.selectItems.map((item) => (
-                <MenuItem key={item} value={item}>
-                  {item}
-                </MenuItem>
-              ))
+              <MenuItem key={item} value={item}>
+                {item}
+              </MenuItem>
+            ))
             : null}
         </Select>
       </FormControl>
@@ -389,8 +415,6 @@ const HrDismissalForm = ({ employeeData, onClose, openFormModal }) => {
         "city",
         "integration_date",
         "dismissal_date",
-        "termination_type",
-        "reason",
         "communication_date",
         "status",
       ].includes(field.name)
@@ -453,8 +477,8 @@ const HrDismissalForm = ({ employeeData, onClose, openFormModal }) => {
               msgEP === "Registros inseridos com sucesso"
                 ? "success"
                 : msgEP === "Informações alteradas com sucesso!"
-                ? "info"
-                : "error"
+                  ? "info"
+                  : "error"
             }
           >
             {msgEP}
