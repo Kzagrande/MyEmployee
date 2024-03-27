@@ -36,6 +36,9 @@ router.get("/dismisaal_employee_list", (req, res) => {
 router.get("/export_active_hc", (req, res) => {
   adminController.exportActiveHc(req, res);
 });
+router.get("/export_dismissal_hc", (req, res) => {
+  adminController.exportDismissaHc(req, res);
+});
 
 
 router.post("/update_dismissal_group", (req, res) => {

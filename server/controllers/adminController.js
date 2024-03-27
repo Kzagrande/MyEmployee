@@ -558,6 +558,57 @@ class AdminController {
         .json({ error: "Erro ao exportar dados da agência" });
     }
   }
+  async exportDismissaHc(req, res) {
+    console.log("chamei o export");
+    try {
+      const data = await this.executeQuery(`SELECT * FROM dismissal_hc`);
+
+      if (data.length === 0) {
+        return res
+          .status(404)
+          .json({ error: "Nenhum dado encontrado para exportar." });
+      }
+
+      // Formatar as datas antes de escrever no CSV usando moment
+      const formattedData = data.map((row) => {
+        const formattedRow = { ...row };
+        formattedRow.date_of_birth = moment(row.date_of_birth).format(
+          "YYYY-MM-DD"
+        );
+        formattedRow.hire_date = moment(row.hire_date).format("YYYY-MM-DD");
+        formattedRow.integration_date = moment(row.integration_date).format(
+          "YYYY-MM-DD"
+        );
+        return formattedRow;
+      });
+
+      // Pega as chaves da primeira linha para usar como cabeçalhos
+      const headers = Object.keys(formattedData[0]);
+
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=agency_data.csv"
+      );
+      res.setHeader("Content-Type", "text/csv");
+
+      // Crie um stream de escrita no response
+      fastcsv
+        .write(formattedData, {
+          headers,
+          includeEndRowDelimiter: true,
+          delimiter: ";",
+        })
+        .on("finish", () => {
+          console.log("Enviado com sucesso para o usuário!");
+        })
+        .pipe(res); // Pipe para o response diretamente
+    } catch (err) {
+      console.error("Erro:", err);
+      return res
+        .status(500)
+        .json({ error: "Erro ao exportar dados da agência" });
+    }
+  }
 
   executeQuery(query) {
     return new Promise((resolve, reject) => {

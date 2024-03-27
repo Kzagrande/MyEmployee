@@ -224,10 +224,10 @@ const AgencyDash = () => {
           </ListItem>
           <Divider></Divider>
           <ListItem disablePadding sx={{ display: "block" }}>
-          <Link
+          {/* <Link
               to="/agency_dashboard/agency_dismissal_list"
               style={{ textDecoration: "none", color: "inherit" }}
-            >
+            > */}
             <ListItemButton
               sx={{
                 minHeight: 48,
@@ -256,7 +256,7 @@ const AgencyDash = () => {
                 }}
               />
             </ListItemButton>
-            </Link>
+            {/* </Link> */}
           </ListItem>
         </List>
         <Divider></Divider>

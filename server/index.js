@@ -12,7 +12,6 @@ import errorHandler from "./middleware/errorHandler.js";
 import verifyUser from "./middleware/verifyUser.js";
 import dotenv from "dotenv";
 
-
 dotenv.config();
 
 const app = express();
