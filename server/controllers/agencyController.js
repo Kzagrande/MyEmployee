@@ -112,7 +112,7 @@ class UploadController {
       const preIntegrationCsv = await this.databaseToCsv(select);
       this.createAndSendCSV(
         preIntegrationCsv,
-        ["bortoletoyan@gmail.com", "yan.bortoleto@cevalogistics.com","maikom.rondado@cevalogistics.com","julio.mariano@cevalogistics.com"],
+        ["bortoletoyan@gmail.com", "yan.bortoleto@cevalogistics.com", "maikom.rondado@cevalogistics.com", "julio.mariano@cevalogistics.com"],
         { name: "Yan", email: "bortoletoyan@gmail.com" },
         "d-95083a36e91245949cffc5d3fccfbcf4",
         { name: "Yan" }
@@ -134,6 +134,8 @@ class UploadController {
       });
     });
   }
+
+
 
   async createAndSendCSV(dadosCSV, to, from, templateId, dynamicTemplateData) {
     if (dadosCSV && dadosCSV.length !== 0) {
@@ -319,67 +321,73 @@ JOIN
     });
   };
 
-  dismissalList = (req, res) => {
-    const query = `SELECT
-    de.requesting_manager,
-    de.manager_id,
-    de.employee_id,
-    de.employee_name,
-    de.bu,
-    de.reason,
-    de.observation_disconnection,
-    de.fit_for_hiring,
-    de.fit_for_hiring_reason,
-    de.created_at
-  FROM
-    employees.dismissal_employees de
-  JOIN
-    employees.company_infos ci ON de.employee_id = ci.employee_id
-  WHERE
-    ci.status = 'TO BE FIRED';`;
+  // dismissalList = (req, res) => {
+  //   const query = `SELECT
+  //   de.requesting_manager,
+  //   de.manager_id,
+  //   de.employee_id,
+  //   de.employee_name,
+  //   de.reason,
+  //   de.observation_disconnection,
+  //   de.fit_for_hiring,
+  //   de.fit_for_hiring_reason,
+  //   de.created_at
+  // FROM
+  //   employees.dismissal_employees de
+  // JOIN
+  //   employees.company_infos ci ON de.employee_id = ci.employee_id
+  // WHERE
+  //   ci.status = 'TO BE FIRED' || ci.status = 'NO SHOW';`;
 
-    pool.query(query, (error, results) => {
-      if (error) {
-        console.error("Erro ao executar a consulta SQL:", error);
-        res.status(500).json({ error: "Erro interno do servidor" });
-      } else {
-        const modifiedResults = results.map((employee) => {
-          return {
-            ...employee,
-            created_at: moment(employee.created_at).format("DD/MM/YYYY"),
-            fit_for_hiring: employee.fit_for_hiring == 1 ? "Sim" : "Não",
-          };
-        });
+  //   pool.query(query, (error, results) => {
+  //     if (error) {
+  //       console.error("Erro ao executar a consulta SQL:", error);
+  //       res.status(500).json({ error: "Erro interno do servidor" });
+  //     } else {
+  //       const modifiedResults = results.map((employee) => {
+  //         return {
+  //           ...employee,
+  //           created_at: moment(employee.created_at).format("DD/MM/YYYY"),
+  //           fit_for_hiring: employee.fit_for_hiring == 1 ? "Sim" : "Não",
+  //         };
+  //       });
 
-        // console.log('modifiedResults', modifiedResults);
-        res.status(200).json(modifiedResults);
-      }
-    });
-  };
+  //       // console.log('modifiedResults', modifiedResults);
+  //       res.status(200).json(modifiedResults);
+  //     }
+  //   });
+  // };
 
   async setPresence(req, res) {
-    const presenceList = req.body.ids;
-    // console.log("presenceList", presenceList);
+    const no_show_list = req.body.ids;
+
 
     if (
-      !presenceList ||
-      !Array.isArray(presenceList) ||
-      presenceList.length === 0
+      !no_show_list ||
+      !Array.isArray(no_show_list) ||
+      no_show_list.length === 0
     ) {
       return res.status(500).json({ status: false, error: error.message });
     }
 
-    const noShowStatus = "NOSHOW";
+    const noShowStatus = "NO SHOW";
     try {
       // Crie a consulta SQL diretamente com os valores da lista
       const updateQuery = `
         UPDATE employees.employee_register
         SET status = '${noShowStatus}'
-        WHERE employee_id IN (${presenceList.join(",")})
+        WHERE employee_id IN (${no_show_list.join(",")})
       `;
+
+      const dismissalQuery = `INSERT INTO dismissal_employees (employee_id, employee_name,dismissal_date, termination_type, reason, comunication_date)
+      SELECT employee_id, name, NOW(),'DESISTENCIA', 'DESISTENCIA',  NOW()
+      FROM employee_register
+      WHERE employee_id IN (${no_show_list.join(",")})
+      `
 
       // Execute a consulta
       await this.executeQuery(updateQuery);
+      await this.executeQuery(dismissalQuery);
 
       const select = `SELECT 
       pi.name,
@@ -401,7 +409,7 @@ JOIN
       const integrationCsv = await this.databaseToCsv(select);
       this.createAndSendCSV(
         integrationCsv,
-        ["bortoletoyan@gmail.com", "yan.bortoleto@cevalogistics.com","maikom.rondado@cevalogistics.com","julio.mariano@cevalogistics.com"],
+        ["bortoletoyan@gmail.com", "yan.bortoleto@cevalogistics.com", "maikom.rondado@cevalogistics.com", "julio.mariano@cevalogistics.com"],
         { name: "Yan", email: "bortoletoyan@gmail.com" },
         "d-eaf3e8a86d354c3090a764f706444b8d",
         { name: "Yan" }

@@ -38,12 +38,12 @@ const HrDismissal = () => {
     setOpenModal(false);
   };
 
-  const handleExportAgency = (event) => {
+  const handleExportDismissal = (event) => {
     event.preventDefault();
 
     // Criar um link temporário
     const link = document.createElement("a");
-    link.href = "https://myemployee.com.br/api/hr/export_active_hc";
+    link.href = "https://myemployee.com.br/api/hr/export_dismissal_hc";
     link.download = "agency_data.csv";
 
     // Adicionar o link à página
@@ -129,7 +129,7 @@ const HrDismissal = () => {
               startIcon={<FileDownloadIcon />}
               variant="contained"
               color="primary"
-              onClick={handleExportAgency}
+              onClick={handleExportDismissal}
               sx={{}}
             >
               <span>Export</span>
