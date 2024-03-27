@@ -419,6 +419,46 @@ class PlanningController {
     }
   }
 
+  async setNoShow(req, res) {
+    const no_show_list = req.body.ids;
+
+    if (
+      !no_show_list ||
+      !Array.isArray(no_show_list) ||
+      no_show_list.length === 0
+    ) {
+      return res.status(500).json({ status: false, error: error.message });
+    }
+
+    const noShowStatus = "NO SHOW";
+    try {
+      // Crie a consulta SQL diretamente com os valores da lista
+      const updateQuery = `
+        UPDATE employees.employee_register
+        SET status = '${noShowStatus}'
+        WHERE employee_id IN (${no_show_list.join(",")})
+      `;
+
+      const dismissalQuery = `INSERT INTO dismissal_employees (employee_id, employee_name,dismissal_date, termination_type, reason, comunication_date)
+      SELECT employee_id, name, NOW(),'DESISTENCIA', 'DESISTENCIA',  NOW()
+      FROM employee_register
+      WHERE employee_id IN (${no_show_list.join(",")})
+      `
+
+      // Execute a consulta
+      await this.executeQuery(updateQuery);
+      await this.executeQuery(dismissalQuery);
+
+      return res.json({
+        status: true,
+        message: "Registros inseridos com sucesso",
+      });
+    } catch (err) {
+      console.error("Erro ao marcar presença:", err);
+      return res.status(500).json({ status: false, err: err.message });
+    }
+  }
+
   logout(req, res) {
     res.clearCookie("token");
     return res.json({ Status: true });

@@ -48,7 +48,13 @@ const HrDismissalTable = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [msgEP, msgEPData] = useState("");
   const [loading, setLoading] = useState(false);
+  const [uniqueShift, setUniqueShift] = useState([]);
+  const [uniqueBu, setUniqueBu] = useState([]);
+  const [uniqueStatus, setUiiniqueStatus] = useState([]);
   const [uniqueCompanies, setUniqueCompanies] = useState([]);
+  const [shiftFilter, setShiftFilter] = useState("");
+  const [buFilter, setBuFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
   const [companyFilter, setCompanyFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
@@ -81,6 +87,18 @@ const HrDismissalTable = () => {
         ...new Set(response.data.map((row) => row.company)),
       ];
       setUniqueCompanies(uniqueCompanies);
+
+      const uniqueStatus = [...new Set(response.data.map((row) => row.status))];
+      setUiiniqueStatus(uniqueStatus);
+
+      const uniqueBu = [...new Set(response.data.map((row) => row.bu))];
+      const filteredBu = uniqueBu.filter((bu) => bu !== "");
+      setUniqueBu(filteredBu);
+
+      const uniqueShift = [...new Set(response.data.map((row) => row.shift))];
+      const filterShift = uniqueShift.filter((shift) => shift !== "");
+      setUniqueShift(filterShift);
+
     } catch (error) {
       console.error("Error in the request:", error);
     }
@@ -188,6 +206,17 @@ const HrDismissalTable = () => {
       (formattedDateFilter === "" ||
         (row.integration_date &&
           row.integration_date.substring(0, 10) === formattedDateFilter))
+          &&
+      (statusFilter === "" ||
+        (row.status &&
+          row.status.toLowerCase().includes(statusFilter.toLowerCase())))
+          &&
+      (buFilter === "" ||
+        (row.bu && row.bu.toLowerCase().includes(buFilter.toLowerCase()))) 
+        &&
+        (shiftFilter === "" ||
+          (row.shift &&
+            row.shift.toLowerCase().includes(shiftFilter.toLowerCase())))
   );
 
   return (
@@ -241,7 +270,7 @@ const HrDismissalTable = () => {
               ),
             }}
           />
-          <Select
+          {/* <Select
             label="Filter by Company"
             variant="outlined"
             size="small"
@@ -255,8 +284,62 @@ const HrDismissalTable = () => {
                 {company}
               </MenuItem>
             ))}
+          </Select> */}
+          <Select
+            displayEmpty
+            size="small"
+            name="test"
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Stauts"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            sx={{ marginLeft: "1em", minWidth: "150px" }}
+          >
+            <MenuItem value="">Status...</MenuItem>
+            {uniqueStatus.map((status) => (
+              <MenuItem key={status} value={status}>
+                {status}
+              </MenuItem>
+            ))}
           </Select>
-          <TextField
+          <Select
+            displayEmpty
+            size="small"
+            name="test"
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Stauts"
+            value={buFilter}
+            onChange={(e) => setBuFilter(e.target.value)}
+            sx={{ marginLeft: "1em", minWidth: "150px" }}
+          >
+            <MenuItem value="">Nave...</MenuItem>
+            {uniqueBu.map((bu) => (
+              <MenuItem key={bu} value={bu}>
+                {bu}
+              </MenuItem>
+            ))}
+          </Select>
+          <Select
+            displayEmpty
+            size="small"
+            name="test"
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Shift"
+            value={shiftFilter}
+            onChange={(e) => setShiftFilter(e.target.value)}
+            sx={{ marginLeft: "1em", minWidth: "150px" }}
+          >
+            <MenuItem value="">Turno...</MenuItem>
+            {uniqueShift.map((shift) => (
+              <MenuItem key={shift} value={shift}>
+                {shift}
+              </MenuItem>
+            ))}
+          </Select>
+          {/* <TextField
             label="Filter by Integration Day"
             type="date"
             variant="outlined"
@@ -267,7 +350,7 @@ const HrDismissalTable = () => {
             InputLabelProps={{
               shrink: true,
             }}
-          />
+          /> */}
         </Box>
       </Grid>
       <Grid item xs={12}>

@@ -73,7 +73,6 @@ const PlanningIntForm = forwardRef(
           setMsgEPData(response.data.message);
           setSnackbarOpen(true); // Open the Snackbar on success
           setLoading(false);
-          fetchData();
         })
         .catch((error) => {
           // console.error('error.response.data -->', error.response.data);
@@ -86,6 +85,31 @@ const PlanningIntForm = forwardRef(
     const handleUpdate = () => {
       handleHttpRequest("/planning/update_planning_group");
       window.location.reload();
+    };
+
+    const handleSetNoShow = () => {
+      setLoading(true);
+      // console.log('selected-->', selected);
+      http
+        .post("/planning/set_no_show", {
+          ids: ids,
+        })
+        .then((response) => {
+          // console.log('response.data-->', response.data);
+          setMsgEPData(response.data.message);
+          setLoading(false);
+          setTimeout(() => {
+            handleCloseModal();
+            setSnackbarOpen(false);
+          }, 1000);
+          window.location.reload()
+        })
+        .catch((error) => {
+          // console.error('error.response.data -->', error.response.data);
+          setMsgEPData(response.data.message);
+          setSnackbarOpen(true); // Open the Snackbar on success
+          setLoading(false);
+        });
     };
 
     const handleSnackbarClose = (event, reason) => {
@@ -105,10 +129,11 @@ const PlanningIntForm = forwardRef(
     };
 
     const formFields = [
-        { name: "employee_id", label: "Matrícula", size: "small", disabled: true },
-        { name: "name", label: "Name", size: "small", disabled: true,disabled: true },
-        { name: "bu", label: "BU", size: "small",selectItems: ["5500476 - NAVE B", "5500480 - NAVE D"], },
-        { name: "shift", label: "Shift", size: "small",      selectItems: [
+      { name: "employee_id", label: "Matrícula", size: "small", disabled: true },
+      { name: "name", label: "Name", size: "small", disabled: true, disabled: true },
+      { name: "bu", label: "BU", size: "small", selectItems: ["5500476 - NAVE B", "5500480 - NAVE D"], },
+      {
+        name: "shift", label: "Shift", size: "small", selectItems: [
           "1ST SHIFT",
           "2ND SHIFT",
           "3RD SHIFT",
@@ -116,13 +141,17 @@ const PlanningIntForm = forwardRef(
           "5TH SHIFT",
           "6TH SHIFT",
           "ADM",
-        ], },
-        { name: "sector", label: "Sector", size: "small",selectItems:[
-        "INVENTORY", "LOSS PREVENTION", "QUALITY HEALTH SECURITY ENVIRONMENT", 
-        "PLANNING", "FINANCE", "FACILITIES", "HUMAN RESOURCES",
-         "BUSINESS PROCESS EXCELLENCE", "ADM", "INFORMATION TECHNOLOGY","INBOUND","PUTAWAY","PACKING","SORTING (OUT)","PACKING","BOXING"]},
-    
-        { name: "role_", label: "Role", size: "small" ,  selectItems: [
+        ],
+      },
+      {
+        name: "sector", label: "Sector", size: "small", selectItems: [
+          "INVENTORY", "LOSS PREVENTION", "QUALITY HEALTH SECURITY ENVIRONMENT",
+          "PLANNING", "FINANCE", "FACILITIES", "HUMAN RESOURCES",
+          "BUSINESS PROCESS EXCELLENCE", "ADM", "INFORMATION TECHNOLOGY", "INBOUND", "PUTAWAY", "PACKING", "SORTING (OUT)", "PACKING", "BOXING"]
+      },
+
+      {
+        name: "role_", label: "Role", size: "small", selectItems: [
           "AUX. APOIO LOGISTICO",
           "CONFERENTE MATERIAIS",
           "COORDENADOR CONTRATO",
@@ -179,10 +208,12 @@ const PlanningIntForm = forwardRef(
           "ASSISTENTE PLANEJAMENTO",
           "ANALISTA FINANCEIRO SR",
           "ANALISTA DE INVENTARIO"
-          ],},
-        { name: "work_schedule", label: "Work Schedule", size: "small",selectItems: ["A", "B","C","D","E"], },
-        { name: "type_", label: "Type", size: "small",selectItems: ["DIRECT", "INDIRECT"], },
-        { name: "schedule_time", label: "Schedule Time", size: "small",      selectItems: [
+        ],
+      },
+      { name: "work_schedule", label: "Work Schedule", size: "small", selectItems: ["A", "B", "C", "D", "E"], },
+      { name: "type_", label: "Type", size: "small", selectItems: ["DIRECT", "INDIRECT"], },
+      {
+        name: "schedule_time", label: "Schedule Time", size: "small", selectItems: [
           "06:00 as 14:20 Segunda a Sabado",
           "14:20 as 22:35 Segunda a Sabado",
           "22:35 as 06:00 Segunda a Sabado",
@@ -190,13 +221,14 @@ const PlanningIntForm = forwardRef(
           "14:20 as 22:35 Terca a Domingo",
           "22:35 as 06:00 Domingo a Sexta",
           "08:00 as 17:48 Segunda a Sexta",
-        ], },
-        { name: "manager_1", label: "Responsável", size: "small" },
-        { name: "manager_2", label: "Responsável 2", size: "small" },
-        { name: "manager_3", label: "Responsável 3", size: "small" },
+        ],
+      },
+      { name: "manager_1", label: "Responsável", size: "small" },
+      { name: "manager_2", label: "Responsável 2", size: "small" },
+      { name: "manager_3", label: "Responsável 3", size: "small" },
 
-      ];
-    
+    ];
+
 
     const renderSelectField = (field) => (
       <Grid item xs={6} key={field.name}>
@@ -222,10 +254,10 @@ const PlanningIntForm = forwardRef(
           >
             {field.selectItems && Array.isArray(field.selectItems)
               ? field.selectItems.map((item) => (
-                  <MenuItem key={item} value={item}>
-                    {item}
-                  </MenuItem>
-                ))
+                <MenuItem key={item} value={item}>
+                  {item}
+                </MenuItem>
+              ))
               : null}
           </Select>
         </FormControl>
@@ -263,16 +295,13 @@ const PlanningIntForm = forwardRef(
       }
     };
 
+
+
     return (
       <Modal
         sx={{
-          margin: "1em",
-          padding: "1em",
-          maxHeight: "95vh", // Defina a altura máxima desejada
           overflowY: "auto",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center", // Adiciona rolagem vertical
+          marginY: "2em",
         }}
         open={isModalOpen}
         aria-labelledby="add-employee-modal"
@@ -281,7 +310,12 @@ const PlanningIntForm = forwardRef(
         <Container
           sx={{ backgroundColor: "white", margin: "1em", padding: "1em" }}
         >
-          <Typography variant="h6">Edit Employee</Typography>
+          <Box sx={{ display: 'flex', gap: '1em', justifyContent: 'space-between' }}>
+            <Typography variant="h6">Edit Employee</Typography>
+            <LoadingButton variant="contained" color="warning" onClick={handleSetNoShow}>
+              AUSENTES
+            </LoadingButton>
+          </Box>
           <form>
             <Grid container spacing={0.5} sx={{ marginBottom: "1em" }}>
               {formFields.map(renderFormFields)}
@@ -310,10 +344,10 @@ const PlanningIntForm = forwardRef(
                 onClick={handleUpdate}
                 sx={{ marginRight: "1em" }}
               >
-                Update
+                Atualizar dados
               </LoadingButton>
-              <LoadingButton variant="contained" onClick={handleCloseModal}>
-                Cancel
+              <LoadingButton sx={{ marginRight: "2em" }} color="error" variant="contained" onClick={handleCloseModal}>
+                Cancelar
               </LoadingButton>
             </Box>
           </form>
@@ -328,8 +362,8 @@ const PlanningIntForm = forwardRef(
                 msgEP === "Registros inseridos com sucesso"
                   ? "success"
                   : msgEP === "Informações alteradas com sucesso!"
-                  ? "info"
-                  : "error"
+                    ? "info"
+                    : "error"
               }
             >
               {msgEP}
