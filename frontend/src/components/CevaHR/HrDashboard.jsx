@@ -1,31 +1,34 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
+import {
+  Box,
+  Toolbar,
+  List,
+  CssBaseline,
+  Typography,
+  IconButton,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+} from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import GroupRemoveIcon from '@mui/icons-material/GroupRemove';
-import LogoutIcon from '@mui/icons-material/Logout';
-import UpdateIcon from '@mui/icons-material/Update';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-import { Link, Outlet, useNavigate, Route } from 'react-router-dom';
-import axios from 'axios'
-import http from '@config/http'
-import Divider from '@mui/material/Divider'
-import { useEffect } from 'react';
+import MuiDrawer from '@mui/material/Drawer';
+import {
+  Menu as MenuIcon,
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
+  GroupRemove as GroupRemoveIcon,
+  Logout as LogoutIcon,
+  ListAlt as ListAltIcon,
+  AddCircle as AddCircleIcon
+} from '@mui/icons-material';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import http from '@config/http';
 import Cookies from 'js-cookie';
-
+import { jwtDecode } from "jwt-decode";
 
 
 const drawerWidth = 240;
@@ -56,7 +59,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'flex-end',
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
 
@@ -96,24 +98,17 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 const HrDash = () => {
-
-
   const navigate = useNavigate();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
+  const handleDrawerOpen = () => setOpen(true);
+  const handleDrawerClose = () => setOpen(false);
 
   axios.defaults.withCredentials = true;
+
   const handleLogout = () => {
-    http
-      .get("/hr/logout")
+    http.get("/hr/logout")
       .then((result) => {
         if (result.data.Status) {
           localStorage.removeItem("valid");
@@ -124,24 +119,21 @@ const HrDash = () => {
   };
 
   useEffect(() => {
-    // Verificar se o cookie 'token' existe
     const token = Cookies.get('token');
-
-    if (!token) {
-      // Se o cookie 'token' não existir, navegue de volta para '/'
+    if (!token ) {
       navigate('/');
-    } else {
-      // Verificar se o token está expirado (você pode ajustar isso de acordo com sua lógica)
-      const isTokenExpired = false;  // Substitua isso com a lógica real para verificar a expiração do token
-
-      if (isTokenExpired) {
-        // Se o token estiver expirado, navegue de volta para '/'
-        navigate('/');
-      }
     }
   }, [navigate]);
 
-  
+  useEffect(() => {
+    // Verifica se há um token no localStorage
+    const token = localStorage.getItem('token');
+    const decoded = jwtDecode(token);
+    const role = decoded.role;
+    console.log('token',role)
+  }, []); 
+
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -179,7 +171,7 @@ const HrDash = () => {
         open={open}
         PaperProps={{
           style: {
-            backgroundColor: "#d3d3d3", // Defina a cor desejada aqui
+            backgroundColor: "#d3d3d3",
           },
         }}
       >
@@ -193,121 +185,55 @@ const HrDash = () => {
           </IconButton>
         </DrawerHeader>
         <List>
-          <Divider></Divider>
-          <ListItem disablePadding sx={{ display: "block" }}>
-            <Link
-              to="/hr_dashboard/hr_crud"
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                    color:'#3f3e3e'
-                  }}
-                >
-                  <ListAltIcon />
-                </ListItemIcon >
-                <ListItemText
-                  primary="Ativos"
-                  sx={{ opacity: open ? 1 : 0 }}
-                  primaryTypographyProps={{
-                    style: {
-                      fontWeight: "bold", // Defina a cor desejada aqui
-                      color:'#3f3e3e'
-                    },
-                  }}
-                />
-              </ListItemButton>
-            </Link>
-          </ListItem>
-          <Divider></Divider>
-          <ListItem disablePadding sx={{ display: "block" }}>
-          <Link
-              to="/hr_dashboard/hr_dismissal"
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
-            >
-              <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                    color:'#3f3e3e'
-                  }}
-              >
-                <GroupRemoveIcon />
-              </ListItemIcon>
-              <ListItemText
-                  primary="Desligados"
-                  sx={{ opacity: open ? 1 : 0 }}
-                  primaryTypographyProps={{
-                    style: {
-                      fontWeight: "bold", // Defina a cor desejada aqui
-                      color:'#3f3e3e'
-                    },
-                  }}
-                />
-            </ListItemButton>
-            </Link>
-          </ListItem>
+          <Divider />
+          {renderListItem('/hr_dashboard/hr_crud', 'Ativos', <ListAltIcon />)}
+          <Divider />
+          {renderListItem('/hr_dashboard/hr_dismissal', 'Desligados', <GroupRemoveIcon />)}
+          {renderListItem('/hr_dashboard/hr_register', 'Registrar', <AddCircleIcon />)}
         </List>
-        <Divider></Divider>
+        <Divider />
         <List>
-          <ListItem disablePadding sx={{ display: "block" }}>
-            <ListItemButton
-              onClick={handleLogout}
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
-            >
-              <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                    color:'#e1261c'
-                  }}
-              >
-                <LogoutIcon />
-              </ListItemIcon>
-              <ListItemText
-                  primary="Sair"
-                  sx={{ opacity: open ? 1 : 0 }}
-                  primaryTypographyProps={{
-                    style: {
-                      fontWeight: "bold", // Defina a cor desejada aqui
-                      color:'#3f3e3e'
-                    },
-                  }}
-                />
-            </ListItemButton>
-          </ListItem>
-          <Divider></Divider>
+          {renderListItem(null, 'Sair', <LogoutIcon />, handleLogout)}
+          <Divider />
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        {/* Defina suas rotas dentro do componente Outlet */}
         <Outlet />
       </Box>
     </Box>
+  );
+};
+
+const renderListItem = (to, primary, icon, onClick) => {
+  return (
+    <ListItem disablePadding sx={{ display: "block" }}>
+      {to ? (
+        <Link to={to} style={{ textDecoration: "none", color: "inherit" }}>
+          <ListItemButton sx={{ minHeight: 48, justifyContent: "initial", px: 2.5 }}>
+            <ListItemIcon sx={{ minWidth: 0, mr: 3, justifyContent: "center" }}>
+              {icon}
+            </ListItemIcon>
+            <ListItemText
+              primary={primary}
+              sx={{ opacity: 1 }}
+              primaryTypographyProps={{ style: { fontWeight: "bold", color:'#3f3e3e' }}}
+            />
+          </ListItemButton>
+        </Link>
+      ) : (
+        <ListItemButton onClick={onClick} sx={{ minHeight: 48, justifyContent: "initial", px: 2.5 }}>
+          <ListItemIcon sx={{ minWidth: 0, mr: 3, justifyContent: "center", color:'#e1261c' }}>
+            {icon}
+          </ListItemIcon>
+          <ListItemText
+            primary={primary}
+            sx={{ opacity: 1 }}
+            primaryTypographyProps={{ style: { fontWeight: "bold", color:'#3f3e3e' }}}
+          />
+        </ListItemButton>
+      )}
+    </ListItem>
   );
 };
 
