@@ -18,8 +18,7 @@ import PlanningManage from "./components/Planning/PlanningManage";
 import PlanningDIsmissal from './components/Planning/PlanningDIsmissal'
 import AgencyDismissal from './components/Agency/AgencyDismissal'
 import HrDismissal from "./components/CevaHR/HrDismissal";
-import HrDismissalTable from "./components/CevaHR/HrDismissalTable";
-import HrDismissalForm from "./components/CevaHR/HrDismissalForm";
+import Register from "./components/CevaHR/Register";
 
 
 function App() {
@@ -34,8 +33,7 @@ function App() {
           <Route path="hr_crud" element={<HrCrud />}></Route>
           <Route path="hr_employee_table" element={<HrEmployeeTable />}></Route>
           <Route path="hr_dismissal" element={<HrDismissal />}></Route>
-          <Route path="hr_dismissal" element={<HrDismissalTable />}></Route>
-          <Route path="hr_dismissal" element={<HrDismissalForm />}></Route>
+          <Route path="hr_register" element={<Register />}></Route>
         </Route>
 
         <Route path="/planning_login" element={<PlanningLogin />}></Route>

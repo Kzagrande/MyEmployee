@@ -17,6 +17,12 @@ router.post("/update_hr_employee", (req, res) => {
   adminController.updateEmployee(req, res);
 });
 
+router.post("/register_user", (req, res) => {
+  adminController.registerUser(req, res);
+});
+
+
+
 router.post("/update_dismissal_employee", (req, res) => {
   adminController.updateDismissalEmployee(req, res);
 });
