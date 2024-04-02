@@ -9,16 +9,18 @@ import dissmissalModel from "../models/adminModel.js";
 class AdminController {
   login(req, res) {
     const sql =
-      "SELECT * from employees.users_sys Where id_employee = ? and password_ = ? and status = 0";
+      "SELECT * FROM employees.users_sys WHERE employee_id = ? AND password_ = ? AND status_ BETWEEN 0 AND 4;"
+    
     pool.query(
       sql,
       [req.body.id_employee, req.body.password],
       (err, result) => {
+        console.log('result',result)
         if (err) return res.json({ loginStatus: false, Error: "Query error" });
         if (result.length > 0) {
-          const id_employee = result[0].id_employee;
+          const employee_id = result[0].employee_id;
           const token = jwt.sign(
-            { role: "admin", id_employee: id_employee, id: result[0].id },
+            { role: "admin", employee_id: employee_id, id: result[0].id },
             "jwt_secret_key",
             { expiresIn: "1d" }
           );
@@ -27,7 +29,7 @@ class AdminController {
         } else {
           return res.json({
             loginStatus: false,
-            Error: "wrong id_employee or password",
+            Error: "wrong employee_id or password",
           });
         }
       }
@@ -393,6 +395,23 @@ class AdminController {
       return res.status(500).json({ Status: false, Error: err.message });
     }
   }
+
+
+
+async  registerUser(req, res) {
+  try {
+    const new_user = req.body;
+
+    // Insira o novo usuário no banco de dados
+    await pool.promise().query('INSERT INTO employees.users_sys SET ?', new_user);
+
+    console.log('Novo usuário adicionado:', new_user);
+    res.status(201).send('Usuário registrado com sucesso.');
+  } catch (error) {
+    console.error('Erro ao registrar o usuário:', error);
+    res.status(500).send('Erro ao registrar o usuário.');
+  }
+}
 
   async fireEmployee(req, res) {
     try {

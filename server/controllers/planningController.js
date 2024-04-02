@@ -9,16 +9,16 @@ import moment from "moment";
 class PlanningController {
   login(req, res) {
     const sql =
-      "SELECT * FROM employees.users_sys WHERE id_employee = ? AND password_ = ? AND status = 1";
+      "SELECT * FROM employees.users_sys WHERE employee_id = ? AND password_ = ? AND status_ BETWEEN 5 AND 10;"
     pool.query(
       sql,
       [req.body.id_employee, req.body.password],
       (err, result) => {
         if (err) return res.json({ loginStatus: false, Error: "Query error" });
         if (result.length > 0) {
-          const id_employee = result[0].id_employee;
+          const employee_id = result[0].employee_id;
           const token = jwt.sign(
-            { role: "planning", id_employee: id_employee, id: result[0].id },
+            { role: "planning", employee_id: employee_id, id: result[0].id },
             "jwt_secret_key",
             { expiresIn: "1d" }
           );
@@ -27,7 +27,7 @@ class PlanningController {
         } else {
           return res.json({
             loginStatus: false,
-            Error: "wrong id_employee or password",
+            Error: "wrong employee_id or password",
           });
         }
       }
