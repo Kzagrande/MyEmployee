@@ -23,7 +23,7 @@ class AdminController {
             { expiresIn: "1d" }
           );
           res.cookie("token", token);
-          return res.json({ loginStatus: true });
+          return res.json({ loginStatus: true,token,result });
         } else {
           return res.json({
             loginStatus: false,

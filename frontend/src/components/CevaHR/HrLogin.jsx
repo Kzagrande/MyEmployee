@@ -20,15 +20,14 @@ const HrLogin = () => {
   const navigate = useNavigate();
 
   axios.defaults.withCredentials = true;
-
   const handleSubmit = (event) => {
     event.preventDefault();
-
     http
       .post("/hr/adminlogin", values)
       .then((result) => {
         if (result.data.loginStatus) {
           navigate("/hr_dashboard/hr_crud");
+          localStorage.setItem('token',result.data.token)
         } else {
           setError(result.data.Error);
         }

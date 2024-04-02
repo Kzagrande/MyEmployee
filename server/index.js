@@ -9,7 +9,7 @@ import { adminRouter } from "./routes/AdminRoute.js";
 import { planningRouter } from "./routes/PlanningRoute.js";
 import { agencyRouter } from "./routes/AgencyRoute.js";
 import errorHandler from "./middleware/errorHandler.js";
-import verifyUser from "./middleware/verifyUser.js";
+// import verifyUser from "./middleware/verifyUser.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -17,7 +17,7 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-    origin: [process.env.CORS_ORIGIN],
+    origin: true,
     methods: ['GET', 'POST', 'PUT','OPTIONS'],
     credentials: true
 }));
@@ -29,9 +29,9 @@ app.use('/hr', adminRouter);
 app.use('/planning', planningRouter);
 app.use('/agency', agencyRouter);
 
-app.use('/verify', verifyUser, (req, res) => {
-    return res.json({ Status: true, role: req.role, id: req.id });
-});
+// app.use('/verify', verifyUser, (req, res) => {
+//     return res.json({ Status: true, role: req.role, id: req.id });
+// });
 
 // Rota para lidar com rotas não encontradas
 // app.use((req, res, next) => {
