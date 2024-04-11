@@ -308,7 +308,7 @@ class AdminController {
   }
 
   async updateEmployee(req, res) {
-    console.log('req',req.body)
+    // console.log('req',req.body)
     try {
       const {
         employee_id,
@@ -329,7 +329,6 @@ class AdminController {
         email,
         phone,
         integration_date,
-        editor_id,
       } = req.body.data;
 
       const updateQuery = `
@@ -375,7 +374,6 @@ class AdminController {
         this.formatDate(integration_date),
         employee_id,
       ];
-
       try {
         await new Promise((resolve, reject) => {
           pool.query(updateQuery, values, (err, result) => {
