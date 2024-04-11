@@ -114,6 +114,7 @@ const HrEmployeeTable = () => {
 
   const headCells = [
     // Define columns
+
     {
       id: "employee_id",
       numeric: false,
@@ -366,6 +367,7 @@ const HrEmployeeTable = () => {
           <Table>
             <TableHead sx={{ backgroundColor: "#f0eef1" }}>
               <TableRow>
+                <TableCell padding="checkbox"></TableCell>
                 <TableCell padding="checkbox"></TableCell>
                 {headCells.map((headCell) => (
                   <TableCell

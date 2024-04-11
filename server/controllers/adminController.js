@@ -15,7 +15,7 @@ class AdminController {
       sql,
       [req.body.id_employee, req.body.password],
       (err, result) => {
-        console.log('result',result)
+        // console.log('result',req.body)
         if (err) return res.json({ loginStatus: false, Error: "Query error" });
         if (result.length > 0) {
           const employee_id = result[0].employee_id;
@@ -57,7 +57,7 @@ class AdminController {
         email,
         phone,
         integration_date,
-      } = req.body;
+      } = req.body.data;
 
       // const formatDate = (dateString) => {
       //   return moment(dateString, 'DD/MM/YYYY').format('YYYY-MM-DD');
@@ -176,7 +176,7 @@ class AdminController {
 
   async updateDismissalEmployee(req, res) {
     try {
-      const { employee_register, company_infos, dismissal_infos } = req.body;
+      const { employee_register, company_infos, dismissal_infos } = req.body.data;
 
       const update_register_query = `
       UPDATE employees.employee_register 
@@ -253,6 +253,8 @@ class AdminController {
       await this.executeQueryParams(update_company_query, company_values);
       await this.executeQueryParams(update_dismissal_query, dismissal_values);
 
+      this.editsLog(req.body.oldData,req.body.newData,req.body.ids)
+
       return res
         .status(200)
         .json({ Status: true, Message: "Registros inseridos com sucesso" });
@@ -306,6 +308,7 @@ class AdminController {
   }
 
   async updateEmployee(req, res) {
+    console.log('req',req.body)
     try {
       const {
         employee_id,
@@ -326,7 +329,8 @@ class AdminController {
         email,
         phone,
         integration_date,
-      } = req.body;
+        editor_id,
+      } = req.body.data;
 
       const updateQuery = `
       UPDATE employees.employee_register 
@@ -387,6 +391,8 @@ class AdminController {
         throw error;
       }
       // A atualização foi bem-sucedida
+      this.editsLog(req.body.oldData,req.body.newData,req.body.ids)
+
       return res
         .status(200)
         .json({ Status: true, Message: "Informações alteradas com sucesso!" });
@@ -396,7 +402,29 @@ class AdminController {
     }
   }
 
+  async editsLog(oldData,newData,ids){
 
+    const editedFields = Object.keys(newData);
+    try {
+    for (const field of editedFields) {
+      // Montar o objeto de dados para inserção na tabela edit_history
+      const logData = {
+        editor_id: ids.editor_id,
+        employee_id: ids.employee_id,
+        edited_field: field,
+        old_value: oldData[field],
+        new_value: newData[field]
+      };
+      pool.query('INSERT INTO edit_history SET ?', logData)
+    }
+    console.log("Registros de edição inseridos com sucesso.");
+    
+    } catch (error) {
+      console.error("Erro ao inserir registros de edição:", error);
+    }
+  }
+
+  
 
 async  registerUser(req, res) {
   try {

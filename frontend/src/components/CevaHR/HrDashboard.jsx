@@ -129,8 +129,8 @@ const HrDash = () => {
     // Verifica se há um token no localStorage
     const token = localStorage.getItem('token');
     const decoded = jwtDecode(token);
-    const role = decoded.role;
-    console.log('token',role)
+    const employee_id = decoded.employee_id;
+    // console.log('employee_id',employee_id)
   }, []); 
 
 
