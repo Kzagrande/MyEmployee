@@ -16,6 +16,8 @@ import {
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useEffect } from "react";
 import http from "@config/http";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 const HrDismissalForm = ({ employeeData, onClose, openFormModal }) => {
   const [formData, setFormData] = useState({
@@ -45,12 +47,26 @@ const HrDismissalForm = ({ employeeData, onClose, openFormModal }) => {
     termination_type: employeeData ? employeeData.termination_type : "",
     reason: employeeData ? employeeData.reason : "",
     communication_date: employeeData ? employeeData.communication_date : "",
+    editor_id: "",
     // Add other form fields as needed
   });
+  const [originalFormData, setOriginalFormData] = useState({ ...formData });
   const [loading, setLoading] = useState(false);
   const [msgEP, setMsgEPData] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(openFormModal);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decoded = jwtDecode(token);
+      const editor_id = decoded.employee_id;
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        editor_id: editor_id,
+      }));
+    }
+  }, []); // Executar apenas uma vez, quando o componente é montado
 
   useEffect(() => {
     setIsModalOpen(openFormModal);
@@ -61,6 +77,10 @@ const HrDismissalForm = ({ employeeData, onClose, openFormModal }) => {
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
+    }));
+    setOriginalFormData((prevOriginalData) => ({
+      ...prevOriginalData,
+      [name]: employeeData ? employeeData[name] : "", // Se não houver dados do funcionário, defina o valor como vazio
     }));
   };
 
@@ -83,12 +103,12 @@ const HrDismissalForm = ({ employeeData, onClose, openFormModal }) => {
       city: formData.city,
       email: formData.email,
       phone: formData.phone,
-      integration_date: formData.integration_date
+      integration_date: formData.integration_date,
     };
 
     const company_infos = {
       sector: formData.sector,
-      employee_id: formData.employee_id
+      employee_id: formData.employee_id,
       // Adicione outros campos de informações da empresa conforme necessário
     };
 
@@ -97,7 +117,7 @@ const HrDismissalForm = ({ employeeData, onClose, openFormModal }) => {
       termination_type: formData.termination_type,
       reason: formData.reason,
       communication_date: formData.communication_date,
-      employee_id: formData.employee_id
+      employee_id: formData.employee_id,
       // Adicione outros campos de informações de demissão conforme necessário
     };
 
@@ -108,7 +128,31 @@ const HrDismissalForm = ({ employeeData, onClose, openFormModal }) => {
     setLoading(true);
     try {
       const data = prepareData();
-      const response = await http.post(endpoint, data);
+      const modifiedFields = {};
+      const newData = {}; // Novo objeto para conter apenas os campos modificados
+
+      // Comparar os valores antigos com os novos e adicionar apenas os modificados ao objeto modifiedFields
+      for (const key in formData) {
+        if (formData[key] !== originalFormData[key]) {
+          if (key !== "editor_id") {
+            // Exclua o editor_id dos campos modificados
+            modifiedFields[key] = originalFormData[key];
+            newData[key] = formData[key]; // Adicione os campos modificados ao newData
+          }
+        }
+      }
+
+      const requestData = {
+        oldData: modifiedFields,
+        newData: newData,
+        data: data,
+        ids: {
+          editor_id: formData.editor_id,
+          employee_id: formData.employee_id,
+        },
+      };
+
+      const response = await http.post(endpoint, requestData);
       setMsgEPData(response.data.Message);
       setSnackbarOpen(true);
       setLoading(false);
@@ -131,7 +175,6 @@ const HrDismissalForm = ({ employeeData, onClose, openFormModal }) => {
       "/hr/update_dismissal_employee",
       "Informações alteradas com sucesso!"
     );
-
   };
 
   const createEmptyFormData = () => {
@@ -372,10 +415,10 @@ const HrDismissalForm = ({ employeeData, onClose, openFormModal }) => {
         >
           {field.selectItems && Array.isArray(field.selectItems)
             ? field.selectItems.map((item) => (
-              <MenuItem key={item} value={item}>
-                {item}
-              </MenuItem>
-            ))
+                <MenuItem key={item} value={item}>
+                  {item}
+                </MenuItem>
+              ))
             : null}
         </Select>
       </FormControl>
@@ -477,8 +520,8 @@ const HrDismissalForm = ({ employeeData, onClose, openFormModal }) => {
               msgEP === "Registros inseridos com sucesso"
                 ? "success"
                 : msgEP === "Informações alteradas com sucesso!"
-                  ? "info"
-                  : "error"
+                ? "info"
+                : "error"
             }
           >
             {msgEP}

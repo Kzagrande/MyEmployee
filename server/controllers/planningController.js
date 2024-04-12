@@ -130,7 +130,7 @@ class PlanningController {
         status,
         schedule_time,
         manager_1,
-      } = req.body;
+      } = req.body.data;
 
       const updateQuery = `
       UPDATE employees.company_infos 
@@ -178,6 +178,8 @@ class PlanningController {
       }
 
       // A atualização foi bem-sucedida
+      this.editsLog(req.body.oldData,req.body.newData,req.body.ids)
+
       return res
         .status(200)
         .json({ Status: true, Message: "Informações alteradas com sucesso!" });
@@ -187,20 +189,71 @@ class PlanningController {
     }
   }
 
+  async editsLog(oldData,newData,ids){
+
+
+    const editedFields = Object.keys(newData);
+    try {
+    for (const field of editedFields) {
+      // Montar o objeto de dados para inserção na tabela edit_history
+      const logData = {
+        editor_id: ids.editor_id,
+        employee_id: ids.employee_id,
+        edited_field: field,
+        old_value: oldData[field],
+        new_value: newData[field]
+      };
+      pool.query('INSERT INTO edit_history SET ?', logData)
+    }
+    console.log("Registros de edição inseridos com sucesso.");
+    
+    } catch (error) {
+      console.error("Erro ao inserir registros de edição:", error);
+    }
+  }
+
+  async editsLogGroup(oldData,newData,ids){
+
+    const editedFields = Object.keys(newData);
+    try {
+      for (const employee_id of ids.employee_id) {
+        // Iterar sobre cada campo modificado
+        for (const field of editedFields) {
+          // Montar o objeto de dados para inserção na tabela edit_history
+          const logData = {
+            editor_id: ids.editor_id,
+            employee_id: employee_id,
+            edited_field: field,
+            old_value: oldData[field],
+            new_value: newData[field]
+          };
+      pool.query('INSERT INTO edit_history SET ?', logData)
+    }
+  }
+    console.log("Registros de edição inseridos com sucesso.");
+    
+    } catch (error) {
+      console.error("Erro ao inserir registros de edição:", error);
+    }
+  }
+
   async updateEmployeeGroup(req, res) {
+    console.log('req',req.body)
     try {
       const employeeIds = req.body.ids;
-      const updatedData = req.body.updates;
+      const updatedData = req.body.updates.data; // tira o editor_id que não tem na tabela company infos
+      const cleanData = { ...updatedData };
+      delete cleanData.editor_id;
   
       const updateFields = [];
       const values = [];
   
       // Iterar sobre as chaves do objeto updatedData
-      Object.keys(updatedData).forEach(key => {
+      Object.keys(cleanData).forEach(key => {
         // Verificar se o valor não está vazio
-        if (updatedData[key] !== '') {
+        if (cleanData[key] !== '') {
           updateFields.push(`${key} = ?`);
-          values.push(updatedData[key]);
+          values.push(cleanData[key]);
         }
       });
   
@@ -226,6 +279,7 @@ class PlanningController {
         });
       });
   
+      this.editsLogGroup(req.body.updates.oldData,req.body.updates.newData,req.body.updates.ids)
       return res.status(200).json({ Status: true, Message: "Informações alteradas com sucesso!" });
     } catch (err) {
       console.error("Error during updateEmployee:", err.message);

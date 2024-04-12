@@ -17,6 +17,7 @@ import {
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useEffect } from "react";
 import http from "@config/http";
+import { jwtDecode } from "jwt-decode";
 
 const PlanningIntForm = forwardRef(
   ({ employeeData, onClose, openFormModal, ids }, ref) => {
@@ -31,13 +32,27 @@ const PlanningIntForm = forwardRef(
       manager_2: employeeData ? employeeData.manager_2 : "",
       manager_3: employeeData ? employeeData.manager_3 : "",
       status: employeeData ? employeeData.status : "",
+      editor_id: "",
       // Add other form fields as needed
     });
+    const [originalFormData, setOriginalFormData] = useState({ ...formData });
     const [loading, setLoading] = useState(false);
     const [msgEP, setMsgEPData] = useState("");
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(openFormModal);
     const [checkIntegration, setCheckIntegration] = useState(false);
+
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const decoded = jwtDecode(token);
+        const editor_id = decoded.employee_id;
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          editor_id: editor_id,
+        }));
+      }
+    }, []); // Executar apenas uma vez, quando o componente é montado
 
     useEffect(() => {
       setIsModalOpen(openFormModal);
@@ -58,15 +73,44 @@ const PlanningIntForm = forwardRef(
         ...prevData,
         [name]: value,
       }));
+      setOriginalFormData((prevOriginalData) => ({
+        ...prevOriginalData,
+        [name]: employeeData ? employeeData[name] : "", // Se não houver dados do funcionário, defina o valor como vazio
+      }));
     };
 
     const handleHttpRequest = async () => {
       setLoading(true);
+
+      const modifiedFields = {};
+      const newData = {}; // Novo objeto para conter apenas os campos modificados
+
+      // Comparar os valores antigos com os novos e adicionar apenas os modificados ao objeto modifiedFields
+      for (const key in formData) {
+        if (formData[key] !== originalFormData[key]) {
+          if (key !== "editor_id") {
+            // Exclua o editor_id dos campos modificados
+            modifiedFields[key] = originalFormData[key];
+            newData[key] = formData[key]; // Adicione os campos modificados ao newData
+          }
+        }
+      }
+
+      const requestData = {
+        oldData: modifiedFields,
+        newData: newData,
+        data: formData,
+        ids: {
+          editor_id: formData.editor_id,
+          employee_id: ids,
+        },
+      };
+
       // console.log('selected-->', selected);
       http
         .post("/planning/update_planning_group", {
           ids: ids,
-          updates: formData,
+          updates: requestData,
         })
         .then((response) => {
           // console.log('response.data-->', response.data);
