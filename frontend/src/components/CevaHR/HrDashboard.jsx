@@ -22,7 +22,8 @@ import {
   GroupRemove as GroupRemoveIcon,
   Logout as LogoutIcon,
   ListAlt as ListAltIcon,
-  AddCircle as AddCircleIcon
+  AddCircle as AddCircleIcon,
+  WifiProtectedSetup as WifiProtectedSetupIcon
 } from '@mui/icons-material';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -111,7 +112,7 @@ const HrDash = () => {
     http.get("/hr/logout")
       .then((result) => {
         if (result.data.Status) {
-          localStorage.removeItem("valid");
+          localStorage.removeItem("token");
           navigate("/");
         }
       })
@@ -189,6 +190,7 @@ const HrDash = () => {
           {renderListItem('/hr_dashboard/hr_crud', 'Ativos', <ListAltIcon />)}
           <Divider />
           {renderListItem('/hr_dashboard/hr_dismissal', 'Desligados', <GroupRemoveIcon />)}
+          {renderListItem('/hr_dashboard/hr_promotion', 'Efetivações', <WifiProtectedSetupIcon />)}
           {renderListItem('/hr_dashboard/hr_register', 'Registrar', <AddCircleIcon />)}
         </List>
         <Divider />

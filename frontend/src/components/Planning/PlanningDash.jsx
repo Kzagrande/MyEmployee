@@ -25,6 +25,7 @@ import axios from "axios";
 import http from "@config/http.js";
 import Cookies from 'js-cookie';
 import { useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
 
 const drawerWidth = 240;
@@ -113,12 +114,14 @@ const HrDash = () => {
       .get("/planning/logout")
       .then((result) => {
         if (result.data.Status) {
-          localStorage.removeItem("valid");
+          localStorage.removeItem("token");
           navigate("/");
         }
       })
       .catch((err) => console.log(err));
   };
+
+  
 
   useEffect(() => {
     // Verificar se o cookie 'token' existe
@@ -137,6 +140,17 @@ const HrDash = () => {
       }
     }
   }, [navigate]);
+
+
+  // useEffect(() => {
+  //   // Verifica se há um token no localStorage
+  //   const token = localStorage.getItem('token');
+  //   const decoded = jwtDecode(token);
+  //   const user_name = decoded.user_name;
+  //   console.log('user_name',user_name)
+  // }, []);
+
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />

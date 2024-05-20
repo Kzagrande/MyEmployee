@@ -24,7 +24,7 @@ import Modal from "@mui/material/Modal";
 import HrAddForm from "./HrAddFomr";
 import http from "@config/http";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
-import FiredForm from "./FiredForm";
+import HrFiredForm from "./HrFiredForm";
 
 const visuallyHidden = {
   position: "absolute",
@@ -491,7 +491,7 @@ const HrEmployeeTable = () => {
           aria-labelledby="edit-modal"
           aria-describedby="form-for-editing"
         >
-          <FiredForm
+          <HrFiredForm
             updateMode={true}
             employeeData={selectedEmployee}
             onClose={() => setDismissalModal(false)}

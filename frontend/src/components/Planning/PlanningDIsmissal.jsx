@@ -16,15 +16,18 @@ import {
 import LoadingButton from "@mui/lab/LoadingButton";
 import http from "@config/http";
 import { Box } from "@mui/system";
+import { useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
 const PlanningDIsmissal = () => {
-  const [formState, setFormState] = useState({
+  const [formData, setformData] = useState({
     requesting_manager: "",
     manager_id: "",
     employee_id: "",
     employee_name: "",
     bu: "",
     reason: "",
+    termination_type:"",
     observation_disconnection: "",
     fit_for_hiring: false,
     fit_for_hiring_reason: "",
@@ -35,11 +38,43 @@ const PlanningDIsmissal = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleChange = (field, value) => {
-    setFormState((prevState) => ({
-      ...prevState,
-      [field]: value,
-    }));
+    setformData({ ...formData, [field]: value });
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decoded = jwtDecode(token);
+      const manager_id = decoded.employee_id;
+      const user_name = decoded.user_name;
+      setformData((prevFormData) => ({
+        ...prevFormData,
+        manager_id: manager_id,
+        requesting_manager: user_name,
+      }));
+    }
+  }, []); // Executar apenas uma vez, quando o componente é montado
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (formData.employee_id) {
+          const response = await http.get(
+            `planning/find_employee/${formData.employee_id}`
+          );
+          setformData({
+            ...formData,
+            employee_name: response.data.name,
+            bu: response.data.bu,
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao buscar informações do colaborador:", error);
+      }
+    };
+
+    fetchData();
+  }, [formData.employee_id]);
 
   const handleSnackbarClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -54,14 +89,14 @@ const PlanningDIsmissal = () => {
     try {
       const response = await http.post(
         "/planning/dismissal_employees",
-        formState
+        formData
       );
       console.log("ok passei pelo ep", response);
       setMsgEPData(response.data.Message);
       console.log(response.data.Message);
       setSnackbarOpen(true); // Open the Snackbar on success
       setLoading(false);
-      setFormState(createEmptyFormState());
+      setformData(createEmptyformData());
     } catch (error) {
       console.error("erro", error);
       console.error(error.response.data.Error);
@@ -71,13 +106,18 @@ const PlanningDIsmissal = () => {
     }
   };
 
-  const createEmptyFormState = () => {
-    const emptyFormState = {};
-    Object.keys(formState).forEach((key) => {
-      emptyFormState[key] = "";
+  const createEmptyformData = () => {
+    const emptyformData = {};
+    Object.keys(formData).forEach((key) => {
+      if (key === 'manager_id' || key === 'requesting_manager') {
+        emptyformData[key] = formData[key];
+      } else {
+        emptyformData[key] = "";
+      }
     });
-    return emptyFormState;
+    return emptyformData;
   };
+  
 
   return (
     <Container maxWidth="md">
@@ -94,7 +134,9 @@ const PlanningDIsmissal = () => {
               label="Gerente solicitante"
               fullWidth
               required
-              value={formState.requesting_manager}
+              disabled={true}
+
+              value={formData.requesting_manager}
               onChange={(e) =>
                 handleChange("requesting_manager", e.target.value)
               }
@@ -103,7 +145,8 @@ const PlanningDIsmissal = () => {
               label="Matrícula do Solicitante"
               fullWidth
               required
-              value={formState.manager_id}
+              disabled={true}
+              value={formData.manager_id}
               onChange={(e) => handleChange("manager_id", e.target.value)}
             />
           </Box>
@@ -112,49 +155,61 @@ const PlanningDIsmissal = () => {
             fullWidth
             required
             type="number"
-            value={formState.employee_id}
+            value={formData.employee_id}
             onChange={(e) => handleChange("employee_id", e.target.value)}
             style={{ marginBottom: 15 }}
           />
           <TextField
             label="Nome Colaborador"
             fullWidth
-            required
-            value={formState.employee_name}
-            onChange={(e) => handleChange("employee_name", e.target.value)}
+            disabled={true}
+            value={formData.employee_name}
             style={{ marginBottom: 15 }}
           />
-          <FormControl fullWidth style={{ marginBottom: 15 }}>
-            <InputLabel>Nave Colaborador</InputLabel>
-            <Select
-              value={formState.bu}
-              onChange={(e) => handleChange("bu", e.target.value)}
-            >
-              <MenuItem value="B">Nave B</MenuItem>
-              <MenuItem value="D">Nave D</MenuItem>
-            </Select>
-          </FormControl>
+          <TextField
+            label="Nave"
+            fullWidth
+            disabled={true}
+            value={formData.bu}
+            style={{ marginBottom: 15 }}
+          />
+
           <FormControl fullWidth style={{ marginBottom: 15 }}>
             <InputLabel>Motivo do desligamento</InputLabel>
             <Select
-              value={formState.reason}
+              value={formData.reason}
               onChange={(e) => handleChange("reason", e.target.value)}
             >
-              <MenuItem value="Atestados">Atestados</MenuItem>
-              <MenuItem value="Abandono de emprego">
+              <MenuItem value="ATESTADIS">Atestados</MenuItem>
+              <MenuItem value="ABANDONO DE EMPREGO">
                 Abandono de emprego
               </MenuItem>
-              <MenuItem value="Absenteísmo elevado">
+              <MenuItem value="ABASTENSEISMO ELEVADO">
                 Absenteísmo elevado
               </MenuItem>
-              <MenuItem value="Baixa performance">Baixa performance</MenuItem>
-              <MenuItem value="Má conduta">Má conduta</MenuItem>
-              <MenuItem value="Produtividade">Produtividade</MenuItem>
-              <MenuItem value="Conflitos com o gestor">
+              <MenuItem value="BAIXA PERFORMANCE">Baixa performance</MenuItem>
+              <MenuItem value="MA CONDUTA">Má conduta</MenuItem>
+              <MenuItem value="PRODUTIVIDADE">Produtividade</MenuItem>
+              <MenuItem value="CONFLITOS COM O GESTOR">
                 Conflitos com o gestor
               </MenuItem>
-              <MenuItem value="Colaborador solicitou o desligamento">
+              <MenuItem value="COLABORADOR SOLICITOU O DESLIGAMENTO">
                 Colaborador solicitou o desligamento
+              </MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl fullWidth style={{ marginBottom: 15 }}>
+            <InputLabel>Natureza do Desligamento</InputLabel>
+            <Select
+              value={formData.termination_type}
+              onChange={(e) => handleChange("termination_type", e.target.value)}
+            >
+              <MenuItem value="VOLUNTARIO">Voluntário</MenuItem>
+              <MenuItem value="IVOLUNTARIO">
+                Ivoluntário
+              </MenuItem>
+              <MenuItem value="ABANDONO">
+                Abandono
               </MenuItem>
             </Select>
           </FormControl>
@@ -164,7 +219,7 @@ const PlanningDIsmissal = () => {
             required
             multiline
             rows={4}
-            value={formState.observation_disconnection}
+            value={formData.observation_disconnection}
             onChange={(e) =>
               handleChange("observation_disconnection", e.target.value)
             }
@@ -173,7 +228,7 @@ const PlanningDIsmissal = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={formState.fit_for_hiring}
+                checked={formData.fit_for_hiring}
                 onChange={(e) =>
                   handleChange("fit_for_hiring", e.target.checked)
                 }
@@ -188,7 +243,7 @@ const PlanningDIsmissal = () => {
             fullWidth
             multiline
             rows={4}
-            value={formState.fit_for_hiring_reason}
+            value={formData.fit_for_hiring_reason}
             onChange={(e) =>
               handleChange("fit_for_hiring_reason", e.target.value)
             }

@@ -25,13 +25,13 @@ const PlanningLogin = () => {
       .then((result) => {
         if (result.data.loginStatus) {
           navigate("/planning_dashboard/planning_manage");
+          localStorage.setItem('token',result.data.token)
         } else {
           setError(result.data.Error);
         }
       })
       .catch((err) => console.log(err));
   };
-
 
   return (
     <div className="vh-100 loginPage">
