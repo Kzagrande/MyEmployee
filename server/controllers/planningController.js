@@ -5,25 +5,29 @@ import PlanningModel from "../models/planningModel.js";
 import fastcsv from "fast-csv";
 import sgMail from "@sendgrid/mail";
 import moment from "moment";
+import Employee from "../models/Employee.js";
 
 class PlanningController {
   login(req, res) {
     const sql =
-      "SELECT * FROM employees.users_sys WHERE employee_id = ? AND password_ = ? AND status_ BETWEEN 5 AND 10;"
+      "SELECT * FROM employees.users_sys WHERE employee_id = ? AND password_ = ? AND status_ BETWEEN 5 AND 10;";
+
     pool.query(
       sql,
-      [req.body.id_employee, req.body.password,req.body.password],
+      [req.body.id_employee, req.body.password],
       (err, result) => {
+        // console.log('result',req.body)
         if (err) return res.json({ loginStatus: false, Error: "Query error" });
         if (result.length > 0) {
           const employee_id = result[0].employee_id;
+          const user_name = result[0].name;
           const token = jwt.sign(
-            { role: "planning", employee_id: employee_id, id: result[0].id,name:result[0].name },
+            { role: "planning", employee_id: employee_id,user_name: user_name, id: result[0].id },
             "jwt_secret_key",
             { expiresIn: "1d" }
           );
           res.cookie("token", token);
-          return res.json({ loginStatus: true });
+          return res.json({ loginStatus: true, token, result });
         } else {
           return res.json({
             loginStatus: false,
@@ -34,6 +38,22 @@ class PlanningController {
     );
   }
 
+  async findEmployeeById(req, res) {
+    try {
+      const employeeId = req.params.employeeId;
+      console.log('req', req.params);
+      const employee = await Employee.findOne({ where: { employee_id: employeeId } });
+  
+      if (employee) {
+        res.json({ name: employee.name, bu: employee.bu });
+      } else {
+        res.status(404).json({ error: 'Colaborador não encontrado' });
+      }
+    } catch (error) {
+      console.error('Erro ao buscar informações do colaborador:', error);
+      res.status(500).json({ error: 'Erro ao buscar informações do colaborador' });
+    }
+  }
   async uplaodPdInfos(req, res) {
     const dadosCSV = req.body.csvFile;
     this.dbTable = req.body.dbTable;
@@ -372,10 +392,13 @@ class PlanningController {
         employee_name,
         bu,
         reason,
+        termination_type,
         observation_disconnection,
         fit_for_hiring,
         fit_for_hiring_reason,
       } = req.body;
+
+      const dismissal_date = new Date()
 
       const updateStatusQuery = `
         UPDATE employees.company_infos 
@@ -386,7 +409,7 @@ class PlanningController {
 
       const insertQuery = `
         INSERT INTO employees.dismissal_employees (
-          employee_id, manager_id, requesting_manager, employee_name, bu, reason, observation_disconnection, fit_for_hiring, fit_for_hiring_reason
+          employee_id, manager_id, requesting_manager, employee_name,dismissal_date, bu, reason,termination_type, observation_disconnection, fit_for_hiring, fit_for_hiring_reason
         )
         VALUES ?`;
 
@@ -396,8 +419,10 @@ class PlanningController {
           manager_id,
           requesting_manager,
           employee_name,
+          dismissal_date,
           bu,
           reason,
+          termination_type,
           observation_disconnection,
           fit_for_hiring,
           fit_for_hiring_reason,
@@ -410,12 +435,12 @@ class PlanningController {
         this.executeQueryValues(insertQuery, [values]),
       ]);
 
-      this.createDismissalEmail(
-        "bortoletoyan@gmail.com",
-        { name: "Yan", email: "bortoletoyan@gmail.com" },
-        "d-d066fb34ceec47bca52cc89c608a802b",
-        req.body
-      );
+      // this.createDismissalEmail(
+      //   "bortoletoyan@gmail.com",
+      //   { name: "Yan", email: "bortoletoyan@gmail.com" },
+      //   "d-d066fb34ceec47bca52cc89c608a802b",
+      //   req.body
+      // );
 
       return res
         .status(200)

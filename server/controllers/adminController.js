@@ -36,6 +36,8 @@ class AdminController {
     );
   }
 
+  
+
   async addEmployee(req, res) {
     try {
       const {
