@@ -12,13 +12,13 @@ class PlanningController {
       "SELECT * FROM employees.users_sys WHERE employee_id = ? AND password_ = ? AND status_ BETWEEN 5 AND 10;"
     pool.query(
       sql,
-      [req.body.id_employee, req.body.password],
+      [req.body.id_employee, req.body.password,req.body.password],
       (err, result) => {
         if (err) return res.json({ loginStatus: false, Error: "Query error" });
         if (result.length > 0) {
           const employee_id = result[0].employee_id;
           const token = jwt.sign(
-            { role: "planning", employee_id: employee_id, id: result[0].id },
+            { role: "planning", employee_id: employee_id, id: result[0].id,name:result[0].name },
             "jwt_secret_key",
             { expiresIn: "1d" }
           );

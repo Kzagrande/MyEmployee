@@ -17,7 +17,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { useEffect } from "react";
 import http from "@config/http";
 
-const FiredForm = ({ updateMode, employeeData, onClose, openFormModal }) => {
+const HrFiredForm = ({ updateMode, employeeData, onClose, openFormModal }) => {
   const [formData, setFormData] = useState({
     name: employeeData ? employeeData.name : "",
     employee_id: employeeData ? employeeData.employee_id : null,
@@ -264,6 +264,6 @@ const FiredForm = ({ updateMode, employeeData, onClose, openFormModal }) => {
   );
 };
 
-FiredForm.displayName = "FiredForm";
+HrFiredForm.displayName = "HrFiredForm";
 
-export default FiredForm;
+export default HrFiredForm;

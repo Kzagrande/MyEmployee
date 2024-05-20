@@ -9,8 +9,8 @@ import dissmissalModel from "../models/adminModel.js";
 class AdminController {
   login(req, res) {
     const sql =
-      "SELECT * FROM employees.users_sys WHERE employee_id = ? AND password_ = ? AND status_ BETWEEN 0 AND 4;"
-    
+      "SELECT * FROM employees.users_sys WHERE employee_id = ? AND password_ = ? AND status_ BETWEEN 0 AND 4;";
+
     pool.query(
       sql,
       [req.body.id_employee, req.body.password],
@@ -25,7 +25,7 @@ class AdminController {
             { expiresIn: "1d" }
           );
           res.cookie("token", token);
-          return res.json({ loginStatus: true,token,result });
+          return res.json({ loginStatus: true, token, result });
         } else {
           return res.json({
             loginStatus: false,
@@ -176,7 +176,8 @@ class AdminController {
 
   async updateDismissalEmployee(req, res) {
     try {
-      const { employee_register, company_infos, dismissal_infos } = req.body.data;
+      const { employee_register, company_infos, dismissal_infos } =
+        req.body.data;
 
       const update_register_query = `
       UPDATE employees.employee_register 
@@ -253,7 +254,7 @@ class AdminController {
       await this.executeQueryParams(update_company_query, company_values);
       await this.executeQueryParams(update_dismissal_query, dismissal_values);
 
-      this.editsLog(req.body.oldData,req.body.newData,req.body.ids)
+      this.editsLog(req.body.oldData, req.body.newData, req.body.ids);
 
       return res
         .status(200)
@@ -263,7 +264,6 @@ class AdminController {
       return res.status(500).json({ Status: false, Error: err.message });
     }
   }
-  ;
   async updateStatus(DModel, updateStatusQuery) {
     // Extract employee_ids from DModel
     const employeeIds = DModel.map((data) => data.employee_id);
@@ -389,7 +389,7 @@ class AdminController {
         throw error;
       }
       // A atualização foi bem-sucedida
-      this.editsLog(req.body.oldData,req.body.newData,req.body.ids)
+      this.editsLog(req.body.oldData, req.body.newData, req.body.ids);
 
       return res
         .status(200)
@@ -400,44 +400,42 @@ class AdminController {
     }
   }
 
-  async editsLog(oldData,newData,ids){
-
+  async editsLog(oldData, newData, ids) {
     const editedFields = Object.keys(newData);
     try {
-    for (const field of editedFields) {
-      // Montar o objeto de dados para inserção na tabela edit_history
-      const logData = {
-        editor_id: ids.editor_id,
-        employee_id: ids.employee_id,
-        edited_field: field,
-        old_value: oldData[field],
-        new_value: newData[field]
-      };
-      pool.query('INSERT INTO edit_history SET ?', logData)
-    }
-    console.log("Registros de edição inseridos com sucesso.");
-    
+      for (const field of editedFields) {
+        // Montar o objeto de dados para inserção na tabela edit_history
+        const logData = {
+          editor_id: ids.editor_id,
+          employee_id: ids.employee_id,
+          edited_field: field,
+          old_value: oldData[field],
+          new_value: newData[field],
+        };
+        pool.query("INSERT INTO edit_history SET ?", logData);
+      }
+      console.log("Registros de edição inseridos com sucesso.");
     } catch (error) {
       console.error("Erro ao inserir registros de edição:", error);
     }
   }
 
-  
+  async registerUser(req, res) {
+    try {
+      const new_user = req.body;
 
-async  registerUser(req, res) {
-  try {
-    const new_user = req.body;
+      // Insira o novo usuário no banco de dados
+      await pool
+        .promise()
+        .query("INSERT INTO employees.users_sys SET ?", new_user);
 
-    // Insira o novo usuário no banco de dados
-    await pool.promise().query('INSERT INTO employees.users_sys SET ?', new_user);
-
-    console.log('Novo usuário adicionado:', new_user);
-    res.status(201).send('Usuário registrado com sucesso.');
-  } catch (error) {
-    console.error('Erro ao registrar o usuário:', error);
-    res.status(500).send('Erro ao registrar o usuário.');
+      console.log("Novo usuário adicionado:", new_user);
+      res.status(201).send("Usuário registrado com sucesso.");
+    } catch (error) {
+      console.error("Erro ao registrar o usuário:", error);
+      res.status(500).send("Erro ao registrar o usuário.");
+    }
   }
-}
 
   async fireEmployee(req, res) {
     try {
@@ -678,6 +676,10 @@ async  registerUser(req, res) {
         }
       });
     });
+  }
+
+  raisePromotions(req,res){
+    console.log(req.body)
   }
 
   logout(req, res) {
