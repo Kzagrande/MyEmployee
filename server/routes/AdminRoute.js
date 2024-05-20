@@ -21,8 +21,6 @@ router.post("/register_user", (req, res) => {
   adminController.registerUser(req, res);
 });
 
-
-
 router.post("/update_dismissal_employee", (req, res) => {
   adminController.updateDismissalEmployee(req, res);
 });
@@ -46,10 +44,15 @@ router.get("/export_dismissal_hc", (req, res) => {
   adminController.exportDismissaHc(req, res);
 });
 
-
 router.post("/update_dismissal_group", (req, res) => {
   adminController.updateDismissalGroup(req, res);
 });
+
+router.post("/raise_promotions", (req, res) => {
+  adminController.raisePromotions(req, res);
+});
+
+
 
 router.get('/logout', (req, res) => {
   adminController.logout(req, res);

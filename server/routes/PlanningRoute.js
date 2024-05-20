@@ -9,6 +9,11 @@ router.post("/planning_login", (req, res) => {
   planningController.login(req, res);
 });
 
+
+router.get("/find_employee/:employeeId", (req, res) => {
+  planningController.findEmployeeById(req, res);
+});
+
 router.get("/list_employee", (req, res) => {
   planningController.listEmployee(req, res);
 });

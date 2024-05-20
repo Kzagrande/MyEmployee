@@ -11,10 +11,20 @@ import { agencyRouter } from "./routes/AgencyRoute.js";
 import errorHandler from "./middleware/errorHandler.js";
 import verifyUser from "./middleware/verifyUser.js";
 import dotenv from "dotenv";
+import sequelize from "./utils/db_orm.js";
 
 dotenv.config();
 
 const app = express();
+
+(async () => {
+    try {
+      await sequelize.sync();
+      console.log('Database & tables created!');
+    } catch (error) {
+      console.error('Unable to sync the database:', error);
+    }
+  })();
 
 app.use(cors({
     origin: [process.env.CORS_ORIGIN],
