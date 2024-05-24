@@ -108,13 +108,13 @@ const HrFiredForm = ({ updateMode, employeeData, onClose, openFormModal,requeste
 
     {
       name: "termination_type",
-      label: "Natureza",
+      label: "Natureza do desligamento",
       size: "small",
       selectItems: ["VOLUNTARIO", "INVOLUNTARIO", "DESISTENCIA", "EFETIVACAO"],
     },
     {
       name: "reason",
-      label: "Motivo",
+      label: "Motivo do desligamento",
       size: "small",
       selectItems: [
         "ABANDONO DE TRABALHO",
@@ -128,7 +128,7 @@ const HrFiredForm = ({ updateMode, employeeData, onClose, openFormModal,requeste
         "HORARIO INCOMPATIVEL",
         "MA CONDUTA",
         "MOTIVOS PESSOAIS/FAMILIAR",
-        "NAO CONTABILIZAR TO",
+        "NAO CONTABILIZAR",
         "NOVA OPORTUNIDADE PROFISSIONAL",
         "READQUACAO DE QUADRO",
         "REESTRUTURACAO ORGANIZACIONAL",
@@ -137,7 +137,7 @@ const HrFiredForm = ({ updateMode, employeeData, onClose, openFormModal,requeste
     { name: "fit_for_hiring", label: "Apto a futura contratação", size: "small" ,
     selectItems: [
       "SIM",
-      "NÃO"],
+      "NAO"],
     },
     { name: "fit_for_hiring_reason", label: "Motivo para não contratar", size: "small" },
     { name: "observation", label: "Observação", size: "small" },

@@ -147,17 +147,23 @@ class AdminController {
       const DModel = dadosCSV.map(
         (registro) =>
           new dissmissalModel({
-            employee_id: registro[0],
-            employee_name: registro[1],
-            dismissal_date: this.formatDate(registro[2]),
-            termination_type: registro[3],
-            reason: registro[4],
+            requester_id : registro[0],
+            requester_name : registro[1],
+            employee_id : registro[2],
+            employee_name : registro[3],
+            termination_type : registro[4],
+            reason : registro[5],
+            observation : registro[6],
+            fit_for_hiring : registro[7],
+            fit_for_hiring_reason : registro[8],
+            dismissal_date : this.formatDate(registro[9]),
+            comunication_date: registro[10],
           })
       );
 
       const insertQuery = `
         INSERT INTO employees.dismissal_employees (
-          employee_id, employee_name, dismissal_date, termination_type, reason,comunication_date
+          requester_id,requester_name,employee_id,employee_name,termination_type,reason,observation,fit_for_hiring,fit_for_hiring_reason,dismissal_date,comunnication_date
         ) VALUES ?`;
 
       const updateStatusQuery = `
