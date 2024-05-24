@@ -25,6 +25,7 @@ import HrAddForm from "./HrAddFomr";
 import http from "@config/http";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
 import HrFiredForm from "./HrFiredForm";
+import { jwtDecode } from "jwt-decode";
 
 const visuallyHidden = {
   position: "absolute",
@@ -63,6 +64,7 @@ const HrEmployeeTable = () => {
   const [openModal, setOpenModal] = useState(false);
   const [dismissalModal, setDismissalModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [requesterInfos, setrequesterInfos] = useState(null);
 
   useEffect(() => {
     fetchData(); //When components start apply this function
@@ -86,6 +88,21 @@ const HrEmployeeTable = () => {
     setSelectedEmployee(selectedEmployeeData);
     setDismissalModal(true);
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decoded = jwtDecode(token);
+      const requester_id = decoded.employee_id;
+      const requester_name = decoded.user_name;
+      setrequesterInfos((prevFormData) => ({
+        ...prevFormData,
+        requester_id: requester_id,
+        requester_name: requester_name,
+      }));
+    }
+  }, []);
+
 
   const fetchData = async () => {
     try {
@@ -496,6 +513,7 @@ const HrEmployeeTable = () => {
             employeeData={selectedEmployee}
             onClose={() => setDismissalModal(false)}
             openFormModal={dismissalModal}
+            requester_infos = {requesterInfos}
           />
         </Modal>
       </Grid>

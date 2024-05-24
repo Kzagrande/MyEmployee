@@ -41,7 +41,7 @@ class PlanningController {
   async findEmployeeById(req, res) {
     try {
       const employeeId = req.params.employeeId;
-      console.log('req', req.params);
+      // console.log('req', req.params);
       const employee = await Employee.findOne({ where: { employee_id: employeeId } });
   
       if (employee) {
@@ -400,15 +400,15 @@ class PlanningController {
 
       const dismissal_date = new Date()
 
-      const updateStatusQuery = `
-        UPDATE employees.company_infos 
-        SET
-        status = 'TO BE FIRED'
-        WHERE
-          employee_id = ?`;
+      // const updateStatusQuery = `
+      //   UPDATE employees.company_infos 
+      //   SET
+      //   status = 'TO BE FIRED'
+      //   WHERE
+      //     employee_id = ?`;
 
       const insertQuery = `
-        INSERT INTO employees.dismissal_employees (
+        INSERT INTO employees.manager_requests (
           employee_id, manager_id, requesting_manager, employee_name,dismissal_date, bu, reason,termination_type, observation_disconnection, fit_for_hiring, fit_for_hiring_reason
         )
         VALUES ?`;
@@ -431,7 +431,7 @@ class PlanningController {
 
       // Use Promise.all to run queries concurrently
       await Promise.all([
-        this.executeQueryValues(updateStatusQuery, [employee_id]),
+        // this.executeQueryValues(updateStatusQuery, [employee_id]),
         this.executeQueryValues(insertQuery, [values]),
       ]);
 
