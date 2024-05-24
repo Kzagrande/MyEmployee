@@ -17,15 +17,18 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { useEffect } from "react";
 import http from "@config/http";
 
-const HrFiredForm = ({ updateMode, employeeData, onClose, openFormModal }) => {
+const HrFiredForm = ({ updateMode, employeeData, onClose, openFormModal,requester_infos }) => {
   const [formData, setFormData] = useState({
-    name: employeeData ? employeeData.name : "",
+    requester_id: requester_infos.requester_name,
+    requester_name: requester_infos.requester_id,
     employee_id: employeeData ? employeeData.employee_id : null,
-    name: employeeData ? employeeData.name : null,
-    // status: employeeData ? employeeData.status : "",
-    dismissal_date: employeeData ? employeeData.dismissal_date : "",
+    employee_name: employeeData ? employeeData.name : "",
     termination_type: employeeData ? employeeData.termination_type : "",
     reason: employeeData ? employeeData.reason : "",
+    observation: employeeData ? employeeData.observation : "",
+    fit_for_hiring: employeeData ? employeeData.fit_for_hiring : "",
+    fit_for_hiring_reason: employeeData ? employeeData.fit_for_hiring_reason : "",
+    dismissal_date: employeeData ? employeeData.dismissal_date : "",
     // Add other form fields as needed
   });
   const [loading, setLoading] = useState(false);
@@ -91,23 +94,18 @@ const HrFiredForm = ({ updateMode, employeeData, onClose, openFormModal }) => {
     setIsModalOpen(false);
     onClose();
   };
-
+  
   const formFields = [
+    { name: "requester_id", label: "Matrícula do requisitor", size: "small", disabled: true },
+    { name: "requester_name", label: "Nome do requisitor", size: "small", disabled: true },
     {
       name: "employee_id",
-      label: "Matrícula",
+      label: "Matrícula do colaborador",
       size: "small",
       disabled: updateMode ? true : false,
     },
-    { name: "name", label: "Name", size: "small", disabled: true },
+    { name: "employee_name", label: "Nome do colaborador", size: "small", disabled: true },
 
-    // {
-    //   name: "status",
-    //   label: "Status",
-    //   size: "small",
-    //   selectItems: ["ACTIVE", "AWAY", "TO BE FIRED", "FIRED", "NO SHOW"],
-    //   disabled: true,
-    // },
     {
       name: "termination_type",
       label: "Natureza",
@@ -136,7 +134,15 @@ const HrFiredForm = ({ updateMode, employeeData, onClose, openFormModal }) => {
         "REESTRUTURACAO ORGANIZACIONAL",
       ],
     },
+    { name: "fit_for_hiring", label: "Apto a futura contratação", size: "small" ,
+    selectItems: [
+      "SIM",
+      "NÃO"],
+    },
+    { name: "fit_for_hiring_reason", label: "Motivo para não contratar", size: "small" },
+    { name: "observation", label: "Observação", size: "small" },
     { name: "dismissal_date", label: "Dia da demissão", size: "small" },
+
   ];
 
   const renderSelectField = (field) => (
@@ -193,7 +199,7 @@ const HrFiredForm = ({ updateMode, employeeData, onClose, openFormModal }) => {
   );
 
   const renderFormFields = (field) => {
-    if ([ "termination_type", "reason"].includes(field.name)) {
+    if ([ "termination_type", "reason","fit_for_hiring"].includes(field.name)) {
       return renderSelectField(field);
     } else {
       return renderTextField(field);
@@ -221,6 +227,7 @@ const HrFiredForm = ({ updateMode, employeeData, onClose, openFormModal }) => {
         <form>
           <Grid container spacing={1} sx={{ marginBottom: "1em" }}>
             {formFields.map(renderFormFields)}
+            
           </Grid>
           <Box sx={{}}>
             <LoadingButton

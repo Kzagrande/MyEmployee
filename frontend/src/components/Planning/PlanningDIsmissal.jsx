@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Paper,
@@ -12,33 +12,39 @@ import {
   FormControlLabel,
   Snackbar,
   Alert,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
 } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import http from "@config/http";
 import { Box } from "@mui/system";
-import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 
-const PlanningDIsmissal = () => {
-  const [formData, setformData] = useState({
+const PlanningDismissal = () => {
+  const [formData, setFormData] = useState({
     requesting_manager: "",
     manager_id: "",
     employee_id: "",
     employee_name: "",
     bu: "",
     reason: "",
-    termination_type:"",
+    termination_type: "",
     observation_disconnection: "",
-    fit_for_hiring: false,
+    fit_for_hiring: false? "NÃO":"SIM",
     fit_for_hiring_reason: "",
   });
 
   const [loading, setLoading] = useState(false);
   const [msgEP, setMsgEPData] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleChange = (field, value) => {
-    setformData({ ...formData, [field]: value });
+    setFormData((prevData) => ({ ...prevData, [field]: value }));
   };
 
   useEffect(() => {
@@ -47,13 +53,13 @@ const PlanningDIsmissal = () => {
       const decoded = jwtDecode(token);
       const manager_id = decoded.employee_id;
       const user_name = decoded.user_name;
-      setformData((prevFormData) => ({
+      setFormData((prevFormData) => ({
         ...prevFormData,
         manager_id: manager_id,
         requesting_manager: user_name,
       }));
     }
-  }, []); // Executar apenas uma vez, quando o componente é montado
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,11 +68,11 @@ const PlanningDIsmissal = () => {
           const response = await http.get(
             `planning/find_employee/${formData.employee_id}`
           );
-          setformData({
-            ...formData,
+          setFormData((prevData) => ({
+            ...prevData,
             employee_name: response.data.name,
             bu: response.data.bu,
-          });
+          }));
         }
       } catch (error) {
         console.error("Erro ao buscar informações do colaborador:", error);
@@ -83,41 +89,46 @@ const PlanningDIsmissal = () => {
     setSnackbarOpen(false);
   };
 
-  const handleSubmit = async (event) => {
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const handleSubmit = (event) => {
     event.preventDefault();
+    handleDialogOpen();
+  };
+
+  const confirmSubmit = async () => {
     setLoading(true);
     try {
       const response = await http.post(
         "/planning/dismissal_employees",
         formData
       );
-      console.log("ok passei pelo ep", response);
       setMsgEPData(response.data.Message);
-      console.log(response.data.Message);
-      setSnackbarOpen(true); // Open the Snackbar on success
+      setSnackbarOpen(true);
       setLoading(false);
-      setformData(createEmptyformData());
+      setFormData(createEmptyFormData());
     } catch (error) {
-      console.error("erro", error);
-      console.error(error.response.data.Error);
+      console.error("Erro", error);
       setMsgEPData(error.response.data.Error);
-      setSnackbarOpen(true); // Open the Snackbar on success
+      setSnackbarOpen(true);
       setLoading(false);
     }
+    handleDialogClose();
   };
 
-  const createEmptyformData = () => {
-    const emptyformData = {};
-    Object.keys(formData).forEach((key) => {
-      if (key === 'manager_id' || key === 'requesting_manager') {
-        emptyformData[key] = formData[key];
-      } else {
-        emptyformData[key] = "";
-      }
-    });
-    return emptyformData;
+  const createEmptyFormData = () => {
+    const emptyFormData = Object.keys(formData).reduce((acc, key) => {
+      acc[key] = key === 'manager_id' || key === 'requesting_manager' ? formData[key] : "";
+      return acc;
+    }, {});
+    return emptyFormData;
   };
-  
 
   return (
     <Container maxWidth="md">
@@ -128,14 +139,13 @@ const PlanningDIsmissal = () => {
         <Typography variant="body1" paragraph>
           Este formulário registrará seu nome. Preencha-o.
         </Typography>
-        <form>
+        <form onSubmit={handleSubmit}>
           <Box style={{ display: "flex", gap: 15, marginBottom: 15 }}>
             <TextField
               label="Gerente solicitante"
               fullWidth
               required
-              disabled={true}
-
+              disabled
               value={formData.requesting_manager}
               onChange={(e) =>
                 handleChange("requesting_manager", e.target.value)
@@ -145,7 +155,7 @@ const PlanningDIsmissal = () => {
               label="Matrícula do Solicitante"
               fullWidth
               required
-              disabled={true}
+              disabled
               value={formData.manager_id}
               onChange={(e) => handleChange("manager_id", e.target.value)}
             />
@@ -162,14 +172,14 @@ const PlanningDIsmissal = () => {
           <TextField
             label="Nome Colaborador"
             fullWidth
-            disabled={true}
+            disabled
             value={formData.employee_name}
             style={{ marginBottom: 15 }}
           />
           <TextField
             label="Nave"
             fullWidth
-            disabled={true}
+            disabled
             value={formData.bu}
             style={{ marginBottom: 15 }}
           />
@@ -205,12 +215,8 @@ const PlanningDIsmissal = () => {
               onChange={(e) => handleChange("termination_type", e.target.value)}
             >
               <MenuItem value="VOLUNTARIO">Voluntário</MenuItem>
-              <MenuItem value="IVOLUNTARIO">
-                Ivoluntário
-              </MenuItem>
-              <MenuItem value="ABANDONO">
-                Abandono
-              </MenuItem>
+              <MenuItem value="INVOLUNTARIO">Involuntário</MenuItem>
+              <MenuItem value="ABANDONO">Abandono</MenuItem>
             </Select>
           </FormControl>
           <TextField
@@ -254,7 +260,6 @@ const PlanningDIsmissal = () => {
             type="submit"
             variant="contained"
             color="primary"
-            onClick={handleSubmit}
           >
             Enviar
           </LoadingButton>
@@ -277,9 +282,33 @@ const PlanningDIsmissal = () => {
             {msgEP}
           </Alert>
         </Snackbar>
+        <Dialog
+          open={dialogOpen}
+          onClose={handleDialogClose}
+          
+        >
+          <DialogTitle sx={{backgroundColor:'#a33939',color:'white', marginBottom:'1em'}}>Confirmação de Envio</DialogTitle>
+          <DialogContent >
+            <DialogContentText>
+              Você está prestes a enviar os seguintes dados:
+              <br />
+              Matrícula do Colaborador: <strong>{formData.employee_id}
+              <br /></strong>
+              Nome do Colaborador: <strong>{formData.employee_name}</strong>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose} color="primary">
+              Cancelar
+            </Button>
+            <Button onClick={confirmSubmit} sx={{backgroundColor:'#ffffff',color:'red',fontWeight:'bold'}}  >
+              Confirmar
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Paper>
     </Container>
   );
 };
 
-export default PlanningDIsmissal;
+export default PlanningDismissal;

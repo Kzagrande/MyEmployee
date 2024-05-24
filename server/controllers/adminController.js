@@ -19,8 +19,14 @@ class AdminController {
         if (err) return res.json({ loginStatus: false, Error: "Query error" });
         if (result.length > 0) {
           const employee_id = result[0].employee_id;
+          const user_name = result[0].name;
           const token = jwt.sign(
-            { role: "admin", employee_id: employee_id, id: result[0].id },
+            {
+              role: "admin",
+              employee_id: employee_id,
+              user_name: user_name,
+              id: result[0].id,
+            },
             "jwt_secret_key",
             { expiresIn: "1d" }
           );
@@ -35,8 +41,6 @@ class AdminController {
       }
     );
   }
-
-  
 
   async addEmployee(req, res) {
     try {
@@ -441,16 +445,27 @@ class AdminController {
 
   async fireEmployee(req, res) {
     try {
-      const { employee_id, name, dismissal_date, termination_type, reason } =
-        req.body;
+      const {
+        requester_id,
+        requester_name,
+        employee_id,
+        employee_name,
+        termination_type,
+        reason,
+        observation,
+        fit_for_hiring,
+        fit_for_hiring_reason,
+        dismissal_date,
+      } = req.body;
+
       const formattedDismissalDate = this.formatDate(dismissal_date);
       const comunicationDate = moment().format("YYYY-MM-DD");
 
       const insertQuery = `
         INSERT INTO employees.dismissal_employees (
-          employee_id, employee_name, dismissal_date, termination_type, reason, comunication_date
+          requester_id, requester_name, employee_id, employee_name, termination_type, reason, observation, fit_for_hiring, fit_for_hiring_reason, dismissal_date,comunnication_date
         )
-        VALUES (?, ?, ?, ?, ?, ?)`;
+        VALUES (?, ?, ?, ?, ?, ?,?,?,?,?,?)`;
 
       const updateQuery = `
         UPDATE employees.employee_register
@@ -458,13 +473,19 @@ class AdminController {
         WHERE employee_id = ?`;
 
       const insertResult = await this.executeQueryParams(insertQuery, [
+        requester_id,
+        requester_name,
         employee_id,
-        name,
-        formattedDismissalDate,
+        employee_name,
         termination_type,
         reason,
+        observation,
+        fit_for_hiring,
+        fit_for_hiring_reason,
+        formattedDismissalDate,
         comunicationDate,
       ]);
+
       const updateResult = await this.executeQueryParams(updateQuery, [
         employee_id,
       ]);
@@ -680,8 +701,8 @@ class AdminController {
     });
   }
 
-  raisePromotions(req,res){
-    console.log(req.body)
+  raisePromotions(req, res) {
+    console.log(req.body);
   }
 
   logout(req, res) {
