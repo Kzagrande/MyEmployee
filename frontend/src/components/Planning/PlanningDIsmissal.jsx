@@ -34,7 +34,7 @@ const PlanningDismissal = () => {
     reason: "",
     termination_type: "",
     observation_disconnection: "",
-    fit_for_hiring: false? "NÃO":"SIM",
+    fit_for_hiring: false ? "NAO" : "SIM",
     fit_for_hiring_reason: "",
   });
 
@@ -124,7 +124,10 @@ const PlanningDismissal = () => {
 
   const createEmptyFormData = () => {
     const emptyFormData = Object.keys(formData).reduce((acc, key) => {
-      acc[key] = key === 'manager_id' || key === 'requesting_manager' ? formData[key] : "";
+      acc[key] =
+        key === "manager_id" || key === "requesting_manager"
+          ? formData[key]
+          : "";
       return acc;
     }, {});
     return emptyFormData;
@@ -183,40 +186,53 @@ const PlanningDismissal = () => {
             value={formData.bu}
             style={{ marginBottom: 15 }}
           />
-
-          <FormControl fullWidth style={{ marginBottom: 15 }}>
-            <InputLabel>Motivo do desligamento</InputLabel>
-            <Select
-              value={formData.reason}
-              onChange={(e) => handleChange("reason", e.target.value)}
-            >
-              <MenuItem value="ATESTADIS">Atestados</MenuItem>
-              <MenuItem value="ABANDONO DE EMPREGO">
-                Abandono de emprego
-              </MenuItem>
-              <MenuItem value="ABASTENSEISMO ELEVADO">
-                Absenteísmo elevado
-              </MenuItem>
-              <MenuItem value="BAIXA PERFORMANCE">Baixa performance</MenuItem>
-              <MenuItem value="MA CONDUTA">Má conduta</MenuItem>
-              <MenuItem value="PRODUTIVIDADE">Produtividade</MenuItem>
-              <MenuItem value="CONFLITOS COM O GESTOR">
-                Conflitos com o gestor
-              </MenuItem>
-              <MenuItem value="COLABORADOR SOLICITOU O DESLIGAMENTO">
-                Colaborador solicitou o desligamento
-              </MenuItem>
-            </Select>
-          </FormControl>
           <FormControl fullWidth style={{ marginBottom: 15 }}>
             <InputLabel>Natureza do Desligamento</InputLabel>
             <Select
               value={formData.termination_type}
               onChange={(e) => handleChange("termination_type", e.target.value)}
             >
-              <MenuItem value="VOLUNTARIO">Voluntário</MenuItem>
-              <MenuItem value="INVOLUNTARIO">Involuntário</MenuItem>
-              <MenuItem value="ABANDONO">Abandono</MenuItem>
+              <MenuItem value="VOLUNTARIO">VOLUNTARIO</MenuItem>
+              <MenuItem value="INVOLUNTARIO">INVOLUNTARIO</MenuItem>
+              <MenuItem value="DESISTENCIA">DESISTENCIA</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl fullWidth style={{ marginBottom: 15 }}>
+            <InputLabel>Motivo do desligamento</InputLabel>
+            <Select
+              value={formData.reason}
+              onChange={(e) => handleChange("reason", e.target.value)}
+            >
+              <MenuItem value="ABANDONO DE TRABALHO">
+                ABANDONO DE TRABALHO
+              </MenuItem>
+              <MenuItem value="ABSENTEISMO ELEVADO">
+                ABSENTEISMO ELEVADO
+              </MenuItem>
+              <MenuItem value="BAIXA PERFORMANCE">BAIXA PERFORMANCE</MenuItem>
+              <MenuItem value="COMPORTAMENTO">COMPORTAMENTO</MenuItem>
+              <MenuItem value="CONFLITOS COM O GESTOR">
+                CONFLITOS COM O GESTOR
+              </MenuItem>
+              <MenuItem value="DESISTENCIA">DESISTENCIA</MenuItem>
+              <MenuItem value="EFETIVACAO">EFETIVACAO</MenuItem>
+              <MenuItem value="HORARIO INCOMPATIVEL">
+                HORARIO INCOMPATIVEL
+              </MenuItem>
+              <MenuItem value="MA CONDUTA">MA CONDUTA</MenuItem>
+              <MenuItem value="MOTIVOS PESSOAIS/FAMILIAR">
+                MOTIVOS PESSOAIS/FAMILIAR
+              </MenuItem>
+              <MenuItem value="NAO CONTABILIZAR">NAO CONTABILIZAR</MenuItem>
+              <MenuItem value="NOVA OPORTUNIDADE PROFISSIONAL">
+                NOVA OPORTUNIDADE PROFISSIONAL
+              </MenuItem>
+              <MenuItem value="READQUACAO DE QUADRO">
+                READQUACAO DE QUADRO
+              </MenuItem>
+              <MenuItem value="REESTRUTURACAO ORGANIZACIONAL">
+                REESTRUTURACAO ORGANIZACIONAL
+              </MenuItem>
             </Select>
           </FormControl>
           <TextField
@@ -245,7 +261,7 @@ const PlanningDismissal = () => {
             style={{ marginBottom: 15 }}
           />
           <TextField
-            label="Observação"
+            label="Motivo para não contratar"
             fullWidth
             multiline
             rows={4}
@@ -282,18 +298,25 @@ const PlanningDismissal = () => {
             {msgEP}
           </Alert>
         </Snackbar>
-        <Dialog
-          open={dialogOpen}
-          onClose={handleDialogClose}
-          
-        >
-          <DialogTitle sx={{backgroundColor:'#a33939',color:'white', marginBottom:'1em'}}>Confirmação de Envio</DialogTitle>
-          <DialogContent >
+        <Dialog open={dialogOpen} onClose={handleDialogClose}>
+          <DialogTitle
+            sx={{
+              backgroundColor: "#a33939",
+              color: "white",
+              marginBottom: "1em",
+            }}
+          >
+            Confirmação de Envio
+          </DialogTitle>
+          <DialogContent>
             <DialogContentText>
               Você está prestes a enviar os seguintes dados:
               <br />
-              Matrícula do Colaborador: <strong>{formData.employee_id}
-              <br /></strong>
+              Matrícula do Colaborador:{" "}
+              <strong>
+                {formData.employee_id}
+                <br />
+              </strong>
               Nome do Colaborador: <strong>{formData.employee_name}</strong>
             </DialogContentText>
           </DialogContent>
@@ -301,7 +324,14 @@ const PlanningDismissal = () => {
             <Button onClick={handleDialogClose} color="primary">
               Cancelar
             </Button>
-            <Button onClick={confirmSubmit} sx={{backgroundColor:'#ffffff',color:'red',fontWeight:'bold'}}  >
+            <Button
+              onClick={confirmSubmit}
+              sx={{
+                backgroundColor: "#ffffff",
+                color: "red",
+                fontWeight: "bold",
+              }}
+            >
               Confirmar
             </Button>
           </DialogActions>
