@@ -157,13 +157,13 @@ class AdminController {
             fit_for_hiring : registro[7],
             fit_for_hiring_reason : registro[8],
             dismissal_date : this.formatDate(registro[9]),
-            comunication_date: registro[10],
+            communication_date: registro[10],
           })
       );
 
       const insertQuery = `
         INSERT INTO employees.dismissal_employees (
-          requester_id,requester_name,employee_id,employee_name,termination_type,reason,observation,fit_for_hiring,fit_for_hiring_reason,dismissal_date,comunnication_date
+          requester_id,requester_name,employee_id,employee_name,termination_type,reason,observation,fit_for_hiring,fit_for_hiring_reason,dismissal_date,communication_date
         ) VALUES ?`;
 
       const updateStatusQuery = `
@@ -227,7 +227,7 @@ class AdminController {
       dismissal_date =?,
       termination_type = ?,
       reason = ?,
-      comunication_date = ?
+      communication_date = ?
       WHERE
         employee_id = ?`;
 
@@ -465,11 +465,11 @@ class AdminController {
       } = req.body;
 
       const formattedDismissalDate = this.formatDate(dismissal_date);
-      const comunicationDate = moment().format("YYYY-MM-DD");
+      const communicationDate = moment().format("YYYY-MM-DD");
 
       const insertQuery = `
         INSERT INTO employees.dismissal_employees (
-          requester_id, requester_name, employee_id, employee_name, termination_type, reason, observation, fit_for_hiring, fit_for_hiring_reason, dismissal_date,comunnication_date
+          requester_id, requester_name, employee_id, employee_name, termination_type, reason, observation, fit_for_hiring, fit_for_hiring_reason, dismissal_date,communication_date
         )
         VALUES (?, ?, ?, ?, ?, ?,?,?,?,?,?)`;
 
@@ -489,7 +489,7 @@ class AdminController {
         fit_for_hiring,
         fit_for_hiring_reason,
         formattedDismissalDate,
-        comunicationDate,
+        communicationDate,
       ]);
 
       const updateResult = await this.executeQueryParams(updateQuery, [
