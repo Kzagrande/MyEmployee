@@ -518,7 +518,7 @@ class PlanningController {
         WHERE employee_id IN (${no_show_list.join(",")})
       `;
 
-      const dismissalQuery = `INSERT INTO dismissal_employees (employee_id, employee_name,dismissal_date, termination_type, reason, comunication_date)
+      const dismissalQuery = `INSERT INTO dismissal_employees (employee_id, employee_name,dismissal_date, termination_type, reason, communication_date)
       SELECT employee_id, name, NOW(),'DESISTENCIA', 'DESISTENCIA',  NOW()
       FROM employee_register
       WHERE employee_id IN (${no_show_list.join(",")})

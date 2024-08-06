@@ -17,7 +17,7 @@ class dissmissalModel {
     this.fit_for_hiring = fit_for_hiring,
     this.fit_for_hiring_reason = fit_for_hiring_reason,
     this.dismissal_date = dismissal_date,
-    this.comunication_date = this.curdate();
+    this.communication_date = this.curdate();
   }
 
   curdate() {
